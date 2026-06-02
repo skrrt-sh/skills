@@ -125,9 +125,18 @@ aliases, use `<br/>`.
 
 ## Formatting & Lint Rules
 
-A PostToolUse hook enforces markdownlint automatically after every Write/Edit — fix reported violations immediately.
-Do NOT run markdownlint, markdownlint-cli2, or npx lint commands manually — the hook handles all validation.
-If your project has a custom `.markdownlint.json` (or `.jsonc`, `.yaml`, `.yml`), the hook uses it automatically.
+As the final step after writing or editing any markdown file, validate it with the bundled script:
+
+```bash
+bash "${CLAUDE_SKILL_DIR}/scripts/validate-md.sh" <path/to/file.md>
+```
+
+It exits `0` when clean and `2` (printing violations to stderr) when markdownlint fails — fix any
+reported violations and re-run until it passes. If your project has a custom `.markdownlint.json`
+(or `.jsonc`, `.yaml`, `.yml`), the script discovers it by walking up from the file; otherwise it
+falls back to the skill's bundled `config/markdownlint-default.json`. The script prefers a local
+`markdownlint-cli2` (run `npm install` once inside this skill directory) and falls back to
+`npx markdownlint-cli2` when `node_modules` isn't present.
 
 **Line length: 120 chars max.** Code blocks and tables are exempt. Break long prose into multiple lines.
 

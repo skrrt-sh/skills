@@ -1,0 +1,10 @@
+{
+  "name": "skrrt-skills",
+  "skills": [
+    "./skills/ship/commit",
+    "./skills/ship/pr",
+    "./skills/ship/release",
+    "./skills/ship/setup",
+    "./skills/docs/md-writer"
+  ]
+}

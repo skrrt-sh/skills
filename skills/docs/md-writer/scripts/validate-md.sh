@@ -2,13 +2,20 @@
 
 set -eu
 
-# PostToolUse hook: validate markdown files with markdownlint
+# Validate a markdown file with markdownlint.
+# Usage: validate-md.sh <file.md>
 # Walks up from the target file to find a project-level config.
-# Falls back to the plugin's bundled config/markdownlint-default.json.
+# Falls back to the skill's bundled config/markdownlint-default.json.
+# Exit codes: 0 = clean (or skipped), 2 = markdownlint violations.
 
-file_path=$(cat | jq -r '.tool_input.file_path // empty' 2>/dev/null)
+file_path="${1:-}"
 
-if [ -z "$file_path" ] || [[ "$file_path" != *.md ]]; then
+if [ -z "$file_path" ]; then
+  echo "usage: validate-md.sh <file.md>" >&2
+  exit 0
+fi
+
+if [ ! -f "$file_path" ] || [[ "$file_path" != *.md ]]; then
   exit 0
 fi
 
@@ -20,7 +27,9 @@ fi
 # Canonicalize file_path to absolute so it resolves correctly after cd
 file_path="$(cd "$(dirname "$file_path")" 2>/dev/null && pwd)/$(basename "$file_path")"
 
-plugin_dir="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+# Skill root (this script lives in <skill>/scripts/); config/ and node_modules/
+# are siblings of scripts/.
+plugin_dir="${CLAUDE_SKILL_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 
 # Walk up from the markdown file's directory looking for a project config
 config=""
