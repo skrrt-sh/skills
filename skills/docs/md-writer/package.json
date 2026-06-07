@@ -7,6 +7,6 @@
     "lint:fix": "markdownlint-cli2 --fix --config config/markdownlint-default.json '**/*.md' '#node_modules'"
   },
   "dependencies": {
-    "markdownlint-cli2": "0.17.2"
+    "markdownlint-cli2": "0.22.1"
   }
 }
