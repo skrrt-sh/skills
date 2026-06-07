@@ -55,6 +55,10 @@ esac
 file_dir="$(dirname "${file_path}")"
 file_base="$(basename "${file_path}")"
 abs_dir="$(cd "${file_dir}" 2>/dev/null && pwd || true)"
+if [[ -z "${abs_dir}" ]]; then
+  echo "cannot access directory: ${file_dir}" >&2
+  exit 1
+fi
 file_path="${abs_dir}/${file_base}"
 
 # Skill root (this script lives in <skill>/scripts/); config/ and node_modules/
