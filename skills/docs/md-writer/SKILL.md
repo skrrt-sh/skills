@@ -138,6 +138,12 @@ falls back to the skill's bundled `config/markdownlint-default.json`. The script
 `markdownlint-cli2` (run `npm install` once inside this skill directory) and falls back to
 `npx markdownlint-cli2` when `node_modules` isn't present.
 
+The validator targets documentation and knowledge-base content. It deliberately skips
+`.claude/` files and well-known repository meta files (`README`, `CLAUDE`, `AGENTS`,
+`CONTRIBUTING`, `CHANGELOG`, `LICENSE`, `SECURITY`, and similar), which follow their own
+hand-maintained conventions — running them through the doc linter only makes them harder to
+maintain. Those files exit `0` (skipped) without being linted.
+
 **Line length: 120 chars max.** Code blocks and tables are exempt. Break long prose into multiple lines.
 
 **No inline HTML** — use markdown equivalents only.

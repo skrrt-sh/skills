@@ -30,6 +30,20 @@ if [[ "$file_path" == */.claude/* ]]; then
   exit 0
 fi
 
+# Skip well-known repository meta files (READMEs, agent guides, community-health
+# and changelog docs). These follow their own hand-maintained conventions, not
+# documentation/knowledge-base style — linting them only makes them harder to
+# maintain. The validator targets doc content, not repo metadata.
+stem="$(basename "$file_path" .md | tr '[:lower:]' '[:upper:]')"
+case "$stem" in
+  README | CLAUDE | AGENTS | CONTRIBUTING | CHANGELOG | CHANGES | HISTORY \
+  | CODE_OF_CONDUCT | CONDUCT | SECURITY | SUPPORT | GOVERNANCE | MAINTAINERS \
+  | AUTHORS | CONTRIBUTORS | LICENSE | LICENCE | COPYING | NOTICE \
+  | ACKNOWLEDGMENTS | ACKNOWLEDGEMENTS)
+    exit 0
+    ;;
+esac
+
 # Canonicalize file_path to absolute so it resolves correctly after cd
 file_path="$(cd "$(dirname "$file_path")" 2>/dev/null && pwd)/$(basename "$file_path")"
 

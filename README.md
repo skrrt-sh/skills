@@ -1,6 +1,5 @@
 # Skrrt Skills
 
-<!-- markdownlint-disable-next-line MD013 -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?logo=opensourceinitiative&logoColor=white)](LICENSE) [![Claude Code](https://img.shields.io/badge/Claude_Code-v1.0.33+-blueviolet?logo=anthropic&logoColor=white)](https://docs.anthropic.com/en/docs/claude-code)
 
 > Agent skills by skrrt-sh — git shipping workflows and documentation tools, installable with the
@@ -80,7 +79,9 @@ Or just ask Claude to write markdown — the skill activates automatically. As i
 the bundled validator (`skills/docs/md-writer/scripts/validate-md.sh`), which walks up from the file
 for a project-level `.markdownlint.json` (`.jsonc`/`.yaml`/`.yml` also work) and falls back to the
 skill's bundled default. Run `npm install` once inside the skill directory for a local
-`markdownlint-cli2`, or the validator falls back to `npx`.
+`markdownlint-cli2`, or the validator falls back to `npx`. It lints documentation and
+knowledge-base content only — well-known repo files (`README`, `CLAUDE`, `CONTRIBUTING`, …) and
+`.claude/` files are skipped.
 
 ## Requirements
 
