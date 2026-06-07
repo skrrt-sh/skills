@@ -30,16 +30,22 @@ if [[ "$file_path" == */.claude/* ]]; then
   exit 0
 fi
 
-# Skip well-known repository meta files (READMEs, agent guides, community-health
-# and changelog docs). These follow their own hand-maintained conventions, not
-# documentation/knowledge-base style — linting them only makes them harder to
-# maintain. The validator targets doc content, not repo metadata.
+# Skip well-known repository meta files (READMEs, agent guides, the standard
+# GitHub community-health docs, license, changelog). These follow their own
+# hand-maintained conventions, not documentation/knowledge-base style — linting
+# them only makes them harder to maintain. The validator targets doc content,
+# not repo metadata.
+#
+# The list is intentionally limited to names that are unambiguously metadata
+# wherever they appear. Generic English words (CHANGES, HISTORY, SUPPORT,
+# AUTHORS, NOTICE, GOVERNANCE, …) are deliberately excluded: a knowledge base
+# may legitimately have a `docs/support.md` or `docs/history.md` page, and those
+# should be linted like any other doc rather than silently skipped.
 stem="$(basename "$file_path" .md | tr '[:lower:]' '[:upper:]')"
 case "$stem" in
-  README | CLAUDE | AGENTS | CONTRIBUTING | CHANGELOG | CHANGES | HISTORY \
-  | CODE_OF_CONDUCT | CONDUCT | SECURITY | SUPPORT | GOVERNANCE | MAINTAINERS \
-  | AUTHORS | CONTRIBUTORS | LICENSE | LICENCE | COPYING | NOTICE \
-  | ACKNOWLEDGMENTS | ACKNOWLEDGEMENTS)
+  README | CLAUDE | AGENTS | CONTRIBUTING | CHANGELOG | CODE_OF_CONDUCT \
+  | SECURITY | LICENSE | LICENCE | COPYING)
+    echo "skipping well-known meta file (not linted): $file_path" >&2
     exit 0
     ;;
 esac
