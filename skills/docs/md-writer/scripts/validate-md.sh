@@ -6,17 +6,23 @@ set -eu
 # Usage: validate-md.sh <file.md>
 # Walks up from the target file to find a project-level config.
 # Falls back to the skill's bundled config/markdownlint-default.json.
-# Exit codes: 0 = clean (or skipped), 2 = markdownlint violations.
+# Exit codes: 0 = clean (or skipped), 1 = invalid invocation, 2 = markdownlint violations.
 
 file_path="${1:-}"
 
 if [ -z "$file_path" ]; then
   echo "usage: validate-md.sh <file.md>" >&2
-  exit 0
+  exit 1
 fi
 
-if [ ! -f "$file_path" ] || [[ "$file_path" != *.md ]]; then
-  exit 0
+if [ ! -f "$file_path" ]; then
+  echo "file not found: $file_path" >&2
+  exit 1
+fi
+
+if [[ "$file_path" != *.md ]]; then
+  echo "not a markdown file: $file_path" >&2
+  exit 1
 fi
 
 # Skip anything inside a .claude/ directory (plans, memory, etc.)
