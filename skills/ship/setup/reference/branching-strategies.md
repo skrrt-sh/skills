@@ -127,8 +127,8 @@ Never rebase — Gitflow relies on merge commits to preserve branch topology.
 or rebase merge — Gitflow requires visible merge points.
 
 **Agent lifecycle — features:** branch from `develop` → commit → PR to `develop` → `--no-ff` merge.
-**Agent lifecycle — releases:** `release/*` from `develop` → stabilize → PR to `main` (`--no-ff`)
-+ tag → PR back to `develop` (`--no-ff`).
+**Agent lifecycle — releases:** `release/*` from `develop` → stabilize → PR to `main` (`--no-ff`),
+then tag → PR back to `develop` (`--no-ff`).
 **Agent lifecycle — hotfixes:** `hotfix/*` from `main` → fix → PR to `main` (`--no-ff`) + tag
 → PR to `develop` or active `release/*` (`--no-ff`).
 
@@ -170,7 +170,7 @@ for consistency.
 
 All tags follow SemVer 2.0.0 with a `v` prefix:
 
-```
+```text
 v{MAJOR}.{MINOR}.{PATCH}[-{label}.{n}]
 ```
 
@@ -181,6 +181,7 @@ v{MAJOR}.{MINOR}.{PATCH}[-{label}.{n}]
 | `vX.Y.Z-{env}.N` | Custom environment promotion | `v1.2.3-qa.1`, `v1.2.3-uat.2` |
 
 Rules:
+
 - Always use **annotated tags** (`git tag -a`), which store tagger, date, and message.
 - The `v` prefix is mandatory — it is the dominant convention across Go modules, npm, GitHub
   Releases, and most CI tooling.
@@ -201,6 +202,7 @@ production (see "Custom Environments" below).
 | **Production** | Live/end-user traffic | Tag `vX.Y.Z` pushed | Yes |
 
 Notes:
+
 - **Preview/ephemeral environments** (per-PR) are triggered by PR events, not tags. They use
   the commit SHA as identifier and are destroyed when the PR closes.
 - Dev deploys on every merge to the integration branch. No human action needed.
@@ -257,7 +259,7 @@ Notes:
 Projects with more than three tiers (e.g., dev, QA, staging, UAT, production) extend the
 model by adding pre-release labels:
 
-```
+```text
 v1.2.3-qa.1     → deploys to QA
 v1.2.3-uat.1    → deploys to UAT
 v1.2.3-rc.1     → deploys to staging
@@ -265,6 +267,7 @@ v1.2.3          → deploys to production
 ```
 
 Rules for custom environments:
+
 - Each environment gets a unique lowercase label.
 - Labels sort lexically, so choose names that reflect promotion order when possible
   (or rely on CI pattern matching rather than sort order).
@@ -346,6 +349,7 @@ jobs:
 ```
 
 Manual dispatch is useful for:
+
 - Promoting a specific commit to an environment outside the normal tag flow.
 - Hotfix validation on staging before tagging.
 - Environments that do not map to a tag label (e.g., internal demo, load-test).

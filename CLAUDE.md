@@ -1,3 +1,5 @@
+# Skrrt Skills — Agent Guide
+
 <!-- skrrt:ship -->
 ## Git workflow — skrrt skills
 
@@ -27,13 +29,15 @@ This project uses **Trunk-Based Development**. All agents and contributors must 
 - No code freezes, no integration phases.
 - PRs always target `main`.
 - Releases are cut by tagging commits on `main`; CI/CD deployment is triggered by tags.
-- Just-in-time `release/*` branches may be cut from `main` when needed; fixes go to `main` first, then cherry-pick to the release branch.
+- Just-in-time `release/*` branches may be cut from `main` when needed; fixes go to `main`
+  first, then cherry-pick to the release branch.
 - Do not create `develop` or `hotfix/*` branches.
 - **Skrrt convention:** No more than 3 active branches at any time.
 
 ### Branch naming
 
 Use `<type>/<short-description>` with lowercase and hyphens:
+
 - Features: `feat/add-auth`, `feat/search-index`
 - Fixes: `fix/login-redirect`, `fix/null-check`
 - Other: `docs/api-guide`, `chore/update-deps`, `refactor/auth-module`

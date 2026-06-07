@@ -184,7 +184,8 @@ Before creating a PR or MR, check the project's agent instruction file for a
 `.claude/CLAUDE.md`, `.github/AGENTS.md`. If present, respect the configured strategy:
 
 - **GitHub Flow**: PRs always target `main`. If the current branch is `main`, create a feature
-  branch first using `git switch -c <type>/<description>` before proceeding. Before pushing, rebase the branch onto `main` with
+  branch first using `git switch -c <type>/<description>` before proceeding. Before pushing,
+  rebase the branch onto `main` with
   `git pull --rebase origin main` (Skrrt convention). The PR should be squash merged by the
   forge (Skrrt convention).
 - **Trunk-Based**: PRs always target `main`. If the current branch is `main`, create a short-lived
@@ -241,7 +242,7 @@ GitLab example:
 Dependency labels:
 
 | Label | Meaning |
-|-------|---------|
+| ------- | --------- |
 | `depends on` | This PR requires the linked PR to merge first |
 | `required by` | The linked PR requires this one to merge first |
 | `related to` | Sibling PRs with no strict merge ordering |

@@ -1,5 +1,6 @@
 # Skrrt Skills
 
+<!-- markdownlint-disable-next-line MD013 -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?logo=opensourceinitiative&logoColor=white)](LICENSE) [![Claude Code](https://img.shields.io/badge/Claude_Code-v1.0.33+-blueviolet?logo=anthropic&logoColor=white)](https://docs.anthropic.com/en/docs/claude-code)
 
 > Agent skills by skrrt-sh — git shipping workflows and documentation tools, installable with the
@@ -84,8 +85,7 @@ skill's bundled default. Run `npm install` once inside the skill directory for a
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) v1.0.33+
-- Node.js 18+
-- `jq` (used by helper scripts)
+- Node.js 18+ (for the `npx skills` installer and the `md-writer` validator's `markdownlint-cli2`)
 
 ## Repository Structure
 
