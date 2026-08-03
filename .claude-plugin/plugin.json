@@ -1,6 +1,6 @@
 {
   "name": "skrrt-skills",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Git shipping workflow — conventional commits with gitmojis, PRs and MRs with the matching forge CLI, curated releases — plus structured markdown authoring.",
   "author": {
     "name": "skrrt-sh",
