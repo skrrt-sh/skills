@@ -45,11 +45,13 @@ block from `CLAUDE.md`, `AGENTS.md`, `.claude/CLAUDE.md`, or `.github/AGENTS.md`
 No block found → tell the user to run `/setup` and stop.
 
 Never commit to a protected branch (`main`, `master`, and `develop` under Gitflow, where only
-release preparation is allowed). If the branch is wrong, fix it before staging:
+release preparation is allowed). If the branch is wrong, fix it before staging — branching from
+the base the strategy dictates, which is `main` under GitHub Flow and Trunk-Based but `develop`
+for Gitflow feature work (Gitflow hotfixes branch from `main`):
 
 ```bash
 git fetch origin
-git switch main && git pull --ff-only origin main
+git switch <base> && git pull --ff-only origin <base>
 git switch -c <type>/<description>
 ```
 

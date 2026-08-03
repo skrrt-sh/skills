@@ -15,7 +15,9 @@ Push a branch and open or update a review request with the forge's own CLI — `
 1. **Branch guard** — run `git branch --show-current` and read the `<!-- skrrt:branching -->`
    block from `CLAUDE.md`, `AGENTS.md`, `.claude/CLAUDE.md`, or `.github/AGENTS.md` (first
    match). No block found → tell the user to run `/setup` and stop. Never push a PR from a
-   protected branch; if the branch is wrong, branch off fresh `main` first.
+   protected branch; if the branch is wrong, branch off the base the strategy dictates —
+   `main` under GitHub Flow and Trunk-Based, `develop` for Gitflow feature work — after
+   `git fetch origin` and a fast-forward pull of that base.
 2. **Detect the forge:**
 
    ```bash
@@ -67,8 +69,10 @@ GitLab:
 - `required by` — the linked PR needs this one first.
 - `related to` — no strict order. This is the default; never invent an order.
 
-Keep references bidirectional: when a sibling is opened, update the open ones
-(`gh pr edit <n> --repo <owner/repo> --body-file <file>`). Strike through entries as they merge.
+Keep references bidirectional: when a sibling is opened, update the open ones with
+`gh pr edit <n> --repo <owner/repo> --body-file <file>` or
+`glab mr update <n> --repo <group/project> --description "$(cat <file>)"` — `glab` has no
+`--body-file`. Strike through entries as they merge.
 
 ## PR Follow-Up
 

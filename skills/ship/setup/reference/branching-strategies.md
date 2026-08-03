@@ -30,8 +30,10 @@ Gather what is available; weight by what you actually find.
    GitHub Flow and TBD also keep `main` deployable — Gitflow's only edge is the dedicated
    stabilization branch.
 4. **Recommend migrating off Gitflow** when `develop` exists but nothing stabilizes on
-   `release/*`, or the team and deployment model are simple. Migration: merge `develop` into
-   `main`, delete `develop`, update CI that references it.
+   `release/*`, or the team and deployment model are simple. Migration goes through review like
+   any other change — `develop` may hold unreleased work: open a PR from `develop` to `main`,
+   confirm CI and release readiness on it, merge, then delete `develop` and update any CI that
+   references it. Never merge the branches locally and push.
 5. **Never recommend Gitflow just because `develop` exists** — that is a signal to investigate.
 
 ## Tagging and Environment (Skrrt Convention)
@@ -57,7 +59,8 @@ canonical models.
 | Event | Environment | Strategies |
 | --- | --- | --- |
 | PR opened/updated | Preview (optional) | All |
-| Merge to `main` (or `develop`) | Dev | All |
+| Merge to `main` | Dev | GitHub Flow, TBD |
+| Merge to `develop` | Dev | Gitflow |
 | Push to `release/*` | Staging | Gitflow |
 | Tag `vX.Y.Z-rc.N` | Staging | GitHub Flow, TBD |
 | Tag `vX.Y.Z-<env>.N` | Custom tier | All |

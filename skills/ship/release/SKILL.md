@@ -28,7 +28,10 @@ GitLab. Use only when the user asks for a release, a draft, or release notes.
    merged to `main`; if not, stop and tell the user to open that PR with `/pr`. After tagging,
    remind them of the sync-back PR to `develop`.
 4. Inspect tags and history for the release range (`git describe --tags --abbrev=0`,
-   `git log --oneline <range>`).
+   `git log --oneline <range>`). That command fails on a repo with no tags — treat that as the
+   initial release: run the range from the root commit
+   (`git log --oneline $(git rev-list --max-parents=0 HEAD)..HEAD`), say in the notes that no
+   previous release tag was found, and omit the compare link.
 5. Draft the notes, update an existing `CHANGELOG.md` if the repo has one, then publish.
 
 ## Tags

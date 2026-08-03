@@ -36,9 +36,9 @@ Append these verbatim, markers included.
 <!-- skrrt:ship -->
 ## Git workflow — skrrt skills
 
-Use `/commit` for commits, `/pr` for pull and merge requests, and `/release` for releases.
-Do not hand-write `git commit`, `gh pr create`, `gh release create`, `glab mr create`, or
-`glab release create`.
+Use `/commit` for commits, `/pr` for pull and merge requests, and `/release` for releases —
+prefixed `/skrrt-skills:` when installed as a Claude Code plugin. Do not hand-write
+`git commit`, `gh pr create`, `gh release create`, `glab mr create`, or `glab release create`.
 
 Tags are annotated and immutable: `vX.Y.Z` production, `vX.Y.Z-rc.N` staging,
 `vX.Y.Z-<env>.N` other tiers. A bad release means a new patch version, never a moved tag.

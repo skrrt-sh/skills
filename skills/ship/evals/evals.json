@@ -74,7 +74,7 @@
     {
       "id": 11,
       "prompt": "I'm on a short-lived branch using Trunk-Based Development. Commit and open a PR for the search feature.",
-      "expected_output": "The agent detects TBD from the branching block. Commits using /commit. Rebases onto main before PR. Opens a PR targeting main using /pr. Squash merge is expected.",
+      "expected_output": "The agent detects TBD from the branching block. Commits using /commit. Opens a PR targeting main using /pr. It does not impose a rebase or a squash merge — those are GitHub Flow conventions; TBD defers to the repository's configured merge strategy.",
       "files": [],
       "skill": "ship:pr"
     },

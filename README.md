@@ -18,8 +18,8 @@
 
 Two ways in, two philosophies. **The [Claude Code plugin](https://code.claude.com/docs/en/plugins)**
 installs the whole set as a managed, read-only bundle that updates when we ship — you subscribe
-rather than fork. **[skills.sh](https://skills.sh)** copies editable skill files into your project,
-so you can hack on them and make them your own. Pick one — installing both leaves you with every
+rather than fork. **[skills.sh](https://skills.sh)** puts editable skill files in your project, so
+you can hack on them and make them your own. Pick one — installing both leaves you with every
 skill twice.
 
 ### 1. Get the skills
@@ -65,8 +65,11 @@ Use the same installer, on any agent — including Claude Code:
 npx skills add skrrt-sh/skills
 ```
 
-It writes the skills into your repo as ordinary files you own and can edit. Nothing updates behind
-your back; pull the latest changes when you want them with `npx skills update`.
+It writes the skills into your repo as ordinary files you own and can edit — by default a
+canonical copy under `.agents/skills/`, symlinked into each agent's directory, so one edit
+reaches every agent. Pass `--copy` for independent per-agent copies instead, which you need on
+filesystems without symlink support. Nothing updates behind your back; pull the latest changes
+when you want them with `npx skills update`.
 
 Working on the skills themselves? Symlink every one of them into `~/.claude/skills` instead:
 
@@ -76,28 +79,32 @@ Working on the skills themselves? Symlink every one of them into `~/.claude/skil
 
 </details>
 
-### 2. Run `/setup`
+### 2. Run the setup skill
 
-In your agent, run it once per repo. It will:
+In your agent, run it once per repo — `/skrrt-skills:setup` on a plugin install, `/setup` on a
+skills.sh install (see the note on skill names below). It will:
 
 - Detect your agent instruction file (`CLAUDE.md`, `AGENTS.md`, `.claude/CLAUDE.md`, or
   `.github/AGENTS.md`) and add the ship workflow block
 - Analyze the repo — CI, feature flags, contributor count, deploy cadence, existing branches —
   and recommend a **branching strategy** (GitHub Flow, Trunk-Based Development, or Gitflow),
   with all three presented so you make the final call
-- Write the chosen strategy's rules so `/commit`, `/pr`, and `/release` respect the right target
-  branches, merge rules, and tagging conventions
+- Write the chosen strategy's rules so the commit, pr, and release skills respect the right
+  target branches, merge rules, and tagging conventions
 
 ### 3. Bam — you're ready to go
 
 ```text
-/commit prepare a clean conventional commit for the auth refresh-token changes
-/pr open a review request for the auth refresh-token branch
-/release draft release notes for v1.4.0
+/skrrt-skills:commit prepare a clean conventional commit for the auth refresh-token changes
+/skrrt-skills:pr open a review request for the auth refresh-token branch
+/skrrt-skills:release draft release notes for v1.4.0
 ```
 
-Plugin installs namespace the skills, so use `/skrrt-skills:commit` if a name collides with
-something else you have installed.
+**Skill names depend on how you installed.** Claude Code namespaces plugin skills by plugin
+name, so a plugin install gives you `/skrrt-skills:commit`, `/skrrt-skills:pr`,
+`/skrrt-skills:release`, `/skrrt-skills:setup`, and `/skrrt-skills:md-writer`. A skills.sh or
+`~/.claude/skills` install uses the bare names — `/commit`, `/pr`, `/release`, `/setup`,
+`/md-writer`. The rest of this README uses the bare names for brevity.
 
 ## Skills
 
@@ -118,8 +125,9 @@ forge CLI. Bucket index: [`skills/ship/`](skills/ship/README.md).
 - **[release](skills/ship/release/SKILL.md)** — Draft curated release notes from the commit range,
   update an existing changelog, and publish the release.
 
-**Recommended permissions:** Claude Code permissions live in `.claude/settings.json`, not in
-`SKILL.md`. A template ships at [`templates/claude-settings.json`](templates/claude-settings.json)
+**Recommended permissions:** these skills set no `allowed-tools` of their own, so the project's
+shared allow/ask/deny rules in `.claude/settings.json` govern them. A template ships at
+[`templates/claude-settings.json`](templates/claude-settings.json)
 — merge it into your project's `.claude/settings.json` for read-only git allowed automatically,
 mutating git/`gh`/`glab` escalated with `permissions.ask`, force-push escalated to human approval,
 and destructive commands such as `git reset --hard` denied.
@@ -229,7 +237,8 @@ artifacts from running evals, not committed.
 3. Add a linked entry to the bucket's `README.md` and to the [Skills](#skills) section above.
 
 `.claude-plugin/marketplace.json` needs no edit — it points at the repo root, so the plugin
-ships whatever `plugin.json` declares. Bump `version` there when cutting a release tag.
+ships whatever `plugin.json` declares. When cutting a release tag, bump `version` in
+`.claude-plugin/plugin.json`, which is where Claude Code reads the plugin version.
 
 ### Project Layout for Dev Files
 
