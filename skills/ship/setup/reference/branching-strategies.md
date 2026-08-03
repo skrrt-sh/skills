@@ -53,6 +53,12 @@ canonical models.
   SHA-scoped and die with the PR.
 - **Tag only from `main`** (Gitflow excepted: RC tags live on `release/*`). Keep tagged tiers
   minimal — most projects need at most one pre-production tier.
+- **Fetch tags before deriving a version.** `git tag --list` and `git describe` read local refs,
+  so a stale clone reports an old latest release and produces a colliding version.
+- **A name-prefixed tag namespace is not a format inconsistency.** Per-plugin
+  (`skrrt-skills--v2.1.0`, via `claude plugin tag`) or per-service (`api/v1.2.3`) tags coexist
+  with `vX.Y.Z`, because the `v[0-9]*` CI globs do not match them. Keep `vX.Y.Z` as the release
+  of record and let the prefixed namespace serve its own tooling.
 
 ### CI triggers
 
