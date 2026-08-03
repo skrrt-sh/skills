@@ -49,6 +49,15 @@ messages, notes, and actor aliases. A real newline breaks a line only inside a M
 String (a backtick-quoted label in a flowchart or mindmap). Never write a literal `\n` and
 expect it to render.
 
+Both working forms:
+
+```mermaid
+flowchart TD
+    A["HTML break<br/>second line"]
+    B["`Markdown String
+second line`"]
+```
+
 ## Formatting
 
 - **120 character lines max**, prose only — code blocks and tables are exempt.
