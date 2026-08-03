@@ -27,7 +27,8 @@ GitLab. Use only when the user asks for a release, a draft, or release notes.
    to `main` and pull first. Gitflow: the `release/*` (or `hotfix/*`) branch must already be
    merged to `main`; if not, stop and tell the user to open that PR with `/pr`. After tagging,
    remind them of the sync-back PR to `develop`.
-4. Inspect tags and history for the release range (`git describe --tags --abbrev=0`,
+4. `git fetch origin --tags`, then inspect tags and history for the release range
+   (`git describe --tags --abbrev=0`,
    `git log --oneline <range>`). That command fails on a repo with no tags — treat that as the
    initial release: run the range from the root commit
    (`git log --oneline $(git rev-list --max-parents=0 HEAD)..HEAD`), say in the notes that no
@@ -39,6 +40,26 @@ GitLab. Use only when the user asks for a release, a draft, or release notes.
 Annotated, on `main` only (Gitflow may carry `-rc.N` tags on `release/*`). Format:
 `vX.Y.Z` for production, `vX.Y.Z-rc.N` for staging, `vX.Y.Z-<env>.N` for other tiers. Tags are
 immutable — a bad release means a new patch version, never a moved tag.
+
+**Always `git fetch origin --tags` before deriving a version.** `git tag --list` and
+`git describe` read local refs, so a stale clone will report an old latest release and produce
+a version that collides with a tag already published.
+
+### Claude Code plugin repos
+
+When `.claude-plugin/plugin.json` exists, bump its `version` to match the release *before*
+tagging — it must be on the commit the tag points at, which under strategies that forbid
+committing to `main` means it lands through a PR. After the `vX.Y.Z` tag, add the plugin tag:
+
+```bash
+claude plugin tag --push -m "%s"
+```
+
+That creates `<plugin-name>--vX.Y.Z` and refuses to run unless `plugin.json` and the enclosing
+marketplace entry agree. It is a separate namespace from `vX.Y.Z`, not a competing format:
+`vX.Y.Z` stays the release of record that CI globs and GitHub Releases key off, and the
+name-prefixed tag is the marker Claude Code tooling reads. Run `--dry-run` first to see the tag
+name and confirm validation passes.
 
 ## Release Text
 
