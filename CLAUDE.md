@@ -1,126 +1,60 @@
 <!-- skrrt:ship -->
 ## Git workflow — skrrt skills
 
-Use the installed skrrt skills for all git shipping operations:
+Use `/commit` for commits, `/pr` for pull and merge requests, and `/release` for releases —
+prefixed `/skrrt-skills:` when installed as a Claude Code plugin. Do not hand-write
+`git commit`, `gh pr create`, `gh release create`, `glab mr create`, or `glab release create`.
 
-- **Commits**: Use `/commit` to stage changes and write conventional commits with gitmojis.
-- **Pull requests**: Use `/pr` to push branches and open PRs or MRs with the matching forge CLI.
-- **Releases**: Use `/release` to draft release notes and publish releases.
-
-Outside these skill workflows, do not manually author raw `git commit`, `gh pr create`,
-`gh release create`, `glab mr create`, or `glab release create` commands. Within a skill,
-use its allowed command subset.
+Tags are annotated and immutable: `vX.Y.Z` production, `vX.Y.Z-rc.N` staging,
+`vX.Y.Z-<env>.N` other tiers. A bad release means a new patch version, never a moved tag.
+Build once and promote the same artifact — never rebuild from a tag. Dev needs no tag.
+<!-- /skrrt:ship -->
 
 <!-- skrrt:branching -->
 ## Branching strategy — Trunk-Based Development
 
-This project uses **Trunk-Based Development**. All agents and contributors must follow these rules:
-
-### Branch rules
-
-- `main` is the only long-lived branch.
-- Agents always use short-lived branches with PRs — never commit directly to `main`.
-- Short-lived branches last at most 2 days, ideally less than 1 day.
-- One developer or agent per short-lived branch.
-- CI runs on every commit to `main` — broken builds are highest priority.
-- Feature flags hide incomplete work and control rollout.
-- No code freezes, no integration phases.
-- PRs always target `main`.
-- Releases are cut by tagging commits on `main`; CI/CD deployment is triggered by tags.
-- Just-in-time `release/*` branches may be cut from `main` when needed; fixes go to `main` first, then cherry-pick to the release branch.
-- Do not create `develop` or `hotfix/*` branches.
-- **Skrrt convention:** No more than 3 active branches at any time.
-
-### Branch naming
-
-Use `<type>/<short-description>` with lowercase and hyphens:
-- Features: `feat/add-auth`, `feat/search-index`
-- Fixes: `fix/login-redirect`, `fix/null-check`
-- Other: `docs/api-guide`, `chore/update-deps`, `refactor/auth-module`
-
-### Keeping branches up to date
-
-- Short-lived branches should rarely need syncing — if they diverge, the branch has lived too long.
-- If the forge requires the branch to be up to date, sync with `git pull origin main`.
-
-### PR merge strategy
-
-- Respect the repository's configured merge strategy in the forge settings.
-- TBD has no strong opinion on merge strategy — branches are so short-lived it rarely matters.
-
-### Branch guard
-
-Before any shipping operation (`/commit`, `/pr`), check the current branch with
-`git branch --show-current`. If on `main`, create a short-lived branch first:
-
-```bash
-git switch -c <type>/<description>
-```
-
-Never commit directly to `main`. This check is automatic — do not ask the user to
-create the branch manually.
-
-### Agent lifecycle (full auto)
-
-1. Verify you are on a short-lived branch (see "Branch guard" above).
-2. Make small, incremental changes and commit using `/commit`.
-3. Push and open a PR using `/pr` — target is always `main`.
-4. After PR merge, the branch is deleted automatically by the forge.
-5. To release, tag a commit on `main` using `/release`.
-
-### Correlated PRs
-
-When a feature spans multiple repositories in a workspace or multiple apps/services
-inside a monorepo, the resulting PRs form a **correlated set**. All PRs in the set
-must reference each other:
-
-- Add a `## Related PRs` section to each PR description listing every sibling PR
-  with its repo, number, and a short label. Use the correct forge format:
-  GitHub `owner/repo#N`, GitLab `group/project!N`.
-- Mark dependency direction when merge order matters. Use `depends on` for PRs that
-  must merge first and `required by` for PRs that depend on this one.
-- If no strict ordering exists, mark them as `related to`.
-- Keep the related-PRs section updated as new PRs are opened or existing ones merge.
-
-### PR follow-up
-
-When the user reports problems after a PR was created, check the PR state before
-making any fixes:
-
-1. Run `gh pr view --json state` (or `glab mr view`) to determine if the PR is
-   open, merged, or closed.
-2. **If the PR is still open** — stay on (or switch to) the PR's source branch,
-   commit fixes with `/commit`, and push. The existing PR updates automatically.
-   Do not create a new PR.
-3. **If the PR was merged** — switch to `main`, run `git pull origin main`, create
-   a new short-lived branch from the updated `main`, apply fixes, and open a new
-   PR with `/pr`. Do not attempt to reuse a branch that the forge already deleted.
-4. **If the PR was closed without merge** — ask the user whether to reopen the
-   existing branch or start a fresh one.
-
-If the agent is on `main` when the user references a PR issue, identify the PR's
-source branch first and switch to it (for open PRs) before making changes.
+- `main` is the only long-lived branch. Agents always work on short-lived
+  `<type>/<description>` branches with PRs — never commit to `main` directly.
+- Branches last under 2 days, ideally under 1, with one owner each. If a branch needs syncing
+  it has lived too long.
+- CI runs on every commit to `main`; a broken build is the top priority. Feature flags hide
+  incomplete work — deploy is not release. No code freezes, no integration phases.
+- Just-in-time `release/*` branches may be cut from `main`; fixes land on `main` first, then
+  cherry-pick. No `develop` or `hotfix/*` branches.
+- **Skrrt convention:** rebase onto `main` before opening a PR (`git pull --rebase origin main`);
+  abort and ask for help if it will not resolve cleanly. Squash merge, so one PR is one commit.
+  Trunk-Based itself leaves merge strategy to preference — these are house rules, kept identical
+  to GitHub Flow's. They earn their keep here because `main` moves fastest under TBD, so a branch
+  goes stale quickest, and continuous deployment makes a one-commit revert the fastest way out of
+  a bad deploy.
+- **Skrrt convention:** at most 3 active branches at a time.
+- **Skrrt convention:** tag on `main` only. At high cadence tags are optional and every merge
+  can ship; at weekly/monthly cadence use `vX.Y.Z-rc.N` for staging and `vX.Y.Z` for production.
 <!-- /skrrt:branching -->
 
 ## Repository structure
 
-This repo ships agent skills via the [`skills`](https://skills.sh) CLI, using the
-single-manifest layout: one root `.claude-plugin/plugin.json` with a `skills` array, and a flat
-`skills/` tree organized into buckets.
+This repo ships agent skills two ways from one manifest: as a Claude Code plugin
+(`.claude-plugin/marketplace.json` → `.claude-plugin/plugin.json`) and via the
+[`skills`](https://skills.sh) CLI, which reads the same `plugin.json`. The `skills/` tree is
+flat and organized into buckets.
 
 - `skills/ship/` — git shipping workflow: `commit`, `pr`, `release`, `setup`.
 - `skills/docs/` — documentation tools: `md-writer`.
 
 Each skill lives at `skills/<bucket>/<name>/SKILL.md` with its supporting files co-located
-(`reference/`, `scripts/`, `config/`, `evals/`). There are no per-plugin manifests, no
-`marketplace.json`, and no plugin-level hooks — a skill that needs a script bundles it under its own
-`scripts/` and invokes it from `SKILL.md`.
+(`reference/`, `scripts/`, `config/`, `evals/`). There are no per-skill manifests and no
+plugin-level hooks — a skill that needs a script bundles it under its own `scripts/` and
+invokes it from `SKILL.md`.
 
 When adding or renaming a skill, keep three places in sync:
 
 1. The `skills` array in `.claude-plugin/plugin.json`.
 2. The bucket's `README.md` (one linked line per skill).
 3. The Skills section in the root `README.md`.
+
+`marketplace.json` points at the repo root and never needs editing for a new skill. Bump
+`version` in `plugin.json` when cutting a release tag.
 
 Helper scripts: `scripts/list-skills.sh` lists every `SKILL.md`; `scripts/link-skills.sh` symlinks
 each skill into `~/.claude/skills` for local use.

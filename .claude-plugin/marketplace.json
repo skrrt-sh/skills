@@ -1,0 +1,24 @@
+{
+  "name": "skrrt",
+  "owner": {
+    "name": "skrrt-sh",
+    "url": "https://github.com/skrrt-sh"
+  },
+  "description": "Skrrt agent skills as an installable Claude Code plugin.",
+  "plugins": [
+    {
+      "name": "skrrt-skills",
+      "source": "./",
+      "description": "Git shipping workflow — conventional commits with gitmojis, PRs and MRs with the matching forge CLI, curated releases — plus structured markdown authoring.",
+      "category": "workflow",
+      "keywords": [
+        "git",
+        "conventional-commits",
+        "gitmoji",
+        "pull-requests",
+        "releases",
+        "markdown"
+      ]
+    }
+  ]
+}

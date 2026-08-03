@@ -7,101 +7,40 @@ user-invocable: true
 
 # Git Release Skill
 
-> Skill instructions for preparing release text and publishing releases with the matching forge CLI.
-
-This skill is reserved for release work. Use it only when the user asks for a release, a release draft, or
-release notes.
-
-## Requirements
-
-- `git` must be installed and available on `PATH`.
-- `gh` is required for GitHub remotes.
-- `glab` is required for GitLab remotes.
-- If the matching CLI is missing, stop and tell the user exactly what is missing.
-- When the project uses agent permission settings, prefer `permissions.ask` for
-  mutating git and forge commands, including force-push variants.
-
-## Forge Detection
-
-Before any release command, run:
-
-```bash
-bash "${CLAUDE_SKILL_DIR}/scripts/detect-forge-cli.sh"
-```
-
-Only continue when:
-
-- `FORGE=github` and `MATCHED_CLI=gh`, or
-- `FORGE=gitlab` and `MATCHED_CLI=glab`
-
-If the repository forge and installed CLI do not match, stop and report the mismatch.
+Prepare release text and publish it with the forge's own CLI — `gh` for GitHub, `glab` for
+GitLab. Use only when the user asks for a release, a draft, or release notes.
 
 ## Workflow
 
-1. **Check the branching strategy** — read the branching block from the agent instruction file
-   (see "Branching Strategy Awareness" below). Determine the correct release flow before
-   proceeding. If no block is found, tell the user to run `/setup` and stop.
-2. Run the forge detection script.
-3. **Validate the release context** per the configured strategy:
-   - GitHub Flow / TBD: verify you are on `main` or the tag points to a `main` commit.
-     If the current branch is not `main`, switch to `main` and pull the latest before
-     tagging or publishing.
-   - Gitflow: verify the `release/*` branch has been merged to `main`. If the sync-back
-     PR to `develop` has not been opened, remind the user to open one using `/pr`.
-4. Inspect tags and commit history to identify the release range.
-5. Check whether the repository has a changelog file such as `CHANGELOG.md`, `Changelog.md`,
-   or `changelog.md`.
-6. Summarize user-facing changes, fixes, and migration notes.
-7. Draft release text in the required house format.
-8. If a changelog file exists, update it for the new release before publishing.
-9. Create the release with the matched CLI only after the text is ready.
+1. **Read the strategy** — find the `<!-- skrrt:branching -->` block in `CLAUDE.md`,
+   `AGENTS.md`, `.claude/CLAUDE.md`, or `.github/AGENTS.md` (first match). No block found →
+   tell the user to run `/setup` and stop.
+2. **Detect the forge:**
 
-## Git Command Subset
+   ```bash
+   bash "${CLAUDE_SKILL_DIR}/scripts/detect-forge-cli.sh"
+   ```
 
-Stay within this `git` subset unless the user explicitly asks for more:
+   Continue only when `FORGE` and `MATCHED_CLI` agree (`github`/`gh`, `gitlab`/`glab`);
+   otherwise stop and report the mismatch.
+3. **Validate the release context.** GitHub Flow / Trunk-Based: tag a commit on `main` — switch
+   to `main` and pull first. Gitflow: the `release/*` (or `hotfix/*`) branch must already be
+   merged to `main`; if not, stop and tell the user to open that PR with `/pr`. After tagging,
+   remind them of the sync-back PR to `develop`.
+4. Inspect tags and history for the release range (`git describe --tags --abbrev=0`,
+   `git log --oneline <range>`). That command fails on a repo with no tags — treat that as the
+   initial release: run the range from the root commit
+   (`git log --oneline $(git rev-list --max-parents=0 HEAD)..HEAD`), say in the notes that no
+   previous release tag was found, and omit the compare link.
+5. Draft the notes, update an existing `CHANGELOG.md` if the repo has one, then publish.
 
-- `git tag --list`
-- `git describe --tags --abbrev=0`
-- `git log --oneline <range>`
-- `git diff --stat <range>`
-- `git remote get-url origin`
-- `git diff --name-only <range>`
-- `git branch --show-current`
-- `git branch --list`
-- `git switch <branch>` (for switching to `main` before tagging)
-- `git pull origin <branch>` (for syncing `main` before release)
-- `git branch --contains <commit>` (to verify a commit is on a specific branch)
-- `git cherry-pick <commit>` (only for TBD just-in-time release branch fixes)
+## Tags
 
-Stay within this file-discovery subset unless the user explicitly asks for more:
+Annotated, on `main` only (Gitflow may carry `-rc.N` tags on `release/*`). Format:
+`vX.Y.Z` for production, `vX.Y.Z-rc.N` for staging, `vX.Y.Z-<env>.N` for other tiers. Tags are
+immutable — a bad release means a new patch version, never a moved tag.
 
-- `rg --files -g 'CHANGELOG*.md'`
-- `rg --files -g 'changelog*.md'`
-
-## CLI Command Subset
-
-For GitHub with `gh`:
-
-- `gh release create <tag> --title <title> --notes-file <file>`
-- `gh release view <tag>`
-
-For GitLab with `glab`:
-
-- `glab release create <tag> --name <title> --notes-file <file>`
-- `glab release view <tag>`
-
-## Release Text Rules
-
-- Make the title stable and version-oriented.
-- Prefer a curated summary over raw commit logs.
-- Group notable changes by theme using conventional-commit intent when possible.
-- Include testing only if it is known.
-- Include migration, rollout, or breaking-change notes when relevant.
-- Add a compare link when the forge and previous tag are known.
-- End the release text with the co-authorship line unless the user asks not to:
-  `Co-Authored-By: Skrrt Bot <bot@skrrt.sh>`
-
-Preferred structure:
+## Release Text
 
 ```markdown
 ## What's Changed
@@ -123,54 +62,22 @@ Preferred structure:
 Co-Authored-By: Skrrt Bot <bot@skrrt.sh>
 ```
 
-Section rules:
+- Curate for readers; do not restate commit messages or paste a raw log.
+- Omit empty sections. Breaking changes always get their own section.
+- `docs`/`chore`/`ci`/`build`/refactors go under Internal only when readers care.
+- Include testing only when it is actually known.
 
-- Omit an empty section instead of filling it with noise.
-- `feat` usually maps to `✨ Features`.
-- `fix` usually maps to `🐛 Fixes`.
-- Breaking changes always get a dedicated `⚠️ Breaking Changes` section.
-- `docs`, `chore`, `ci`, `build`, and purely internal refactors usually belong
-  in `🧰 Internal` only when they matter to release readers.
-- Prefer reader-facing summaries over commit-message restatements.
+## Changelog
 
-## Changelog Rules
-
-- Always check for an existing changelog before publishing a release.
-- If `CHANGELOG.md`, `Changelog.md`, or `changelog.md` exists, update it as part of the release workflow.
-- If the changelog follows Keep a Changelog, preserve its structure and add the new version entry in the existing style.
-- If the changelog does not follow Keep a Changelog, still preserve the repository's established style.
-- Do not create a brand-new changelog unless the user asks for one.
-- Keep the release text and changelog entry consistent, but adapt the changelog to the repository's existing format.
-
-## Branching Strategy Awareness
-
-Before creating a release, check the project's agent instruction file for a
-`<!-- skrrt:branching -->` block. Search these locations in order: `CLAUDE.md`, `AGENTS.md`,
-`.claude/CLAUDE.md`, `.github/AGENTS.md`. If present, respect the configured strategy:
-
-- **GitHub Flow / Trunk-Based**: Releases are created from tags on `main`. Verify the tag points to
-  a commit on `main` before proceeding.
-- **Gitflow**: Releases follow the `release/*` → `main` promotion flow:
-  1. Verify the `release/*` branch has been merged to `main` via PR.
-  2. Tag the merge commit on `main` and create the release with release notes.
-  3. Remind the user to open a PR from the release branch to `develop` using `/pr` if not
-     already done.
-  If the `release/*` branch has not been merged to `main` yet, stop and tell the user to
-  open a PR from the release branch to `main` first using `/pr`.
-
-If no branching strategy block is found, tell the user to run `/setup` to configure a branching
-strategy before proceeding. Do not guess or assume a default release flow.
+If `CHANGELOG.md` (any casing) exists, update it as part of the release and match its existing
+style — Keep a Changelog or otherwise. Do not create one that does not exist unless asked.
 
 ## Guardrails
 
-- Never create a release against an unknown forge.
-- Never use the wrong CLI for the remote host.
-- Never invent release notes from guesswork; derive them from tags, commits, diffs, and user context.
-- Never publish a release silently when the user only asked for draft text.
-- Stop if the detector reports `unknown-remote`, `no-remote`, or `no-compatible-cli`.
-- Never skip updating an existing changelog for a real release unless the user explicitly asks you not to.
-- Never use `git push --force`, `git push -f`, or `git push --force-with-lease` as part of the release flow.
-- Treat release creation as a human-approval action when the project uses agent permission rules.
+- Never publish when the user asked only for draft text.
+- Never invent notes from guesswork — derive them from tags, commits, and diffs.
+- Never force-push as part of a release.
+- Stop on `unknown-remote`, `no-remote`, or `no-compatible-cli`.
 
 ## Task
 

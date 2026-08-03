@@ -24,8 +24,10 @@ if [[ "${file_path}" != *.md ]]; then
   exit 1
 fi
 
-# Skip anything inside a .claude/ directory (plans, memory, etc.)
-if [[ "${file_path}" == */.claude/* ]]; then
+# Skip anything inside a .claude/ directory (plans, memory, etc.). The second
+# pattern catches a repo-relative path like `.claude/notes.md`, which has no
+# leading path segment for the first pattern to match.
+if [[ "${file_path}" == */.claude/* || "${file_path}" == .claude/* ]]; then
   exit 0
 fi
 
