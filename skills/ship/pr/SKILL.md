@@ -30,8 +30,9 @@ Push a branch and open or update a review request with the forge's own CLI — `
 4. Push with `git push -u origin HEAD`, summarize the diff, then create or update the review
    request non-interactively with `--base` / `--target-branch` set to the strategy's target.
 
-Target branch by strategy: **GitHub Flow / Trunk-Based** — always `main`; rebase onto `main`
-first under GitHub Flow. **Gitflow** — feature branches target `develop`, never `main` (warn
+Target branch by strategy: **GitHub Flow / Trunk-Based** — always `main`, rebasing onto it
+first (`git pull --rebase origin main`) and squash merging. **Gitflow** — feature branches
+target `develop`, never `main` (warn
 if the user asks otherwise); `release/*` and `hotfix/*` target `main`, and after they merge
 remind the user to open the sync-back PR to `develop` (or the active `release/*`). Never
 rebase under Gitflow.

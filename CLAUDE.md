@@ -21,7 +21,12 @@ Build once and promote the same artifact — never rebuild from a tag. Dev needs
   incomplete work — deploy is not release. No code freezes, no integration phases.
 - Just-in-time `release/*` branches may be cut from `main`; fixes land on `main` first, then
   cherry-pick. No `develop` or `hotfix/*` branches.
-- Merge strategy follows the forge setting — branches are too short-lived for it to matter.
+- **Skrrt convention:** rebase onto `main` before opening a PR (`git pull --rebase origin main`);
+  abort and ask for help if it will not resolve cleanly. Squash merge, so one PR is one commit.
+  Trunk-Based itself leaves merge strategy to preference — these are house rules, kept identical
+  to GitHub Flow's. They earn their keep here because `main` moves fastest under TBD, so a branch
+  goes stale quickest, and continuous deployment makes a one-commit revert the fastest way out of
+  a bad deploy.
 - **Skrrt convention:** at most 3 active branches at a time.
 - **Skrrt convention:** tag on `main` only. At high cadence tags are optional and every merge
   can ship; at weekly/monthly cadence use `vX.Y.Z-rc.N` for staging and `vX.Y.Z` for production.
