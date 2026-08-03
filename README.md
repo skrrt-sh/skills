@@ -1,9 +1,9 @@
 # Skrrt Skills
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?logo=opensourceinitiative&logoColor=white)](LICENSE) [![Claude Code](https://img.shields.io/badge/Claude_Code-v1.0.33+-blueviolet?logo=anthropic&logoColor=white)](https://docs.anthropic.com/en/docs/claude-code)
+[![skills.sh](https://skills.sh/b/skrrt-sh/skills)](https://skills.sh/skrrt-sh/skills) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?logo=opensourceinitiative&logoColor=white)](LICENSE) [![Claude Code](https://img.shields.io/badge/Claude_Code-plugin-blueviolet?logo=anthropic&logoColor=white)](https://code.claude.com/docs/en/plugins)
 
-> Agent skills by skrrt-sh — git shipping workflows and documentation tools, installable with the
-> [`skills`](https://skills.sh) CLI.
+> Agent skills by skrrt-sh — ship your git work properly. Conventional commits, pull and merge
+> requests, releases, and the markdown that documents them.
 
 ## Table of Contents
 
@@ -16,76 +16,138 @@
 
 ## Installation
 
-Install with the `skills` CLI and pick the skills and agents you want:
+Two ways in, two philosophies. **The [Claude Code plugin](https://code.claude.com/docs/en/plugins)**
+installs the whole set as a managed, read-only bundle that updates when we ship — you subscribe
+rather than fork. **[skills.sh](https://skills.sh)** copies editable skill files into your project,
+so you can hack on them and make them your own. Pick one — installing both leaves you with every
+skill twice.
+
+### 1. Get the skills
+
+<details>
+<summary><strong>Claude Code</strong></summary>
+
+```bash
+claude plugin marketplace add skrrt-sh/skills
+claude plugin install skrrt-skills@skrrt
+```
+
+Or, from inside a session:
+
+```text
+/plugin marketplace add skrrt-sh/skills
+/plugin install skrrt-skills@skrrt
+```
+
+These skills are not in Claude Code's official marketplace, so the `marketplace add` step is
+required once — after that, `claude plugin update skrrt-skills` pulls new versions.
+
+</details>
+
+<details>
+<summary><strong>Codex, and other agents</strong></summary>
 
 ```bash
 npx skills add skrrt-sh/skills
 ```
 
-The CLI reads [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) and installs the listed
-skills into your chosen coding agents.
+Pick the skills you want, and which coding agents to install them on. **The installer lets you
+choose which skills to take — make sure `setup` is one of them.**
 
-To use every skill locally with the Claude CLI without the installer, symlink them into
-`~/.claude/skills`:
+</details>
+
+<details>
+<summary><strong>For tinkerers</strong></summary>
+
+Use the same installer, on any agent — including Claude Code:
+
+```bash
+npx skills add skrrt-sh/skills
+```
+
+It writes the skills into your repo as ordinary files you own and can edit. Nothing updates behind
+your back; pull the latest changes when you want them with `npx skills update`.
+
+Working on the skills themselves? Symlink every one of them into `~/.claude/skills` instead:
 
 ```bash
 ./scripts/link-skills.sh
 ```
 
-## Skills
+</details>
 
-Skills are grouped into buckets under [`skills/`](skills/).
+### 2. Run `/setup`
 
-### ship
+In your agent, run it once per repo. It will:
 
-Git shipping workflow — conventional commits, pull/merge requests, and releases with the matching
-forge CLI. See the bucket index at [`skills/ship/`](skills/ship/README.md).
+- Detect your agent instruction file (`CLAUDE.md`, `AGENTS.md`, `.claude/CLAUDE.md`, or
+  `.github/AGENTS.md`) and add the ship workflow block
+- Analyze the repo — CI, feature flags, contributor count, deploy cadence, existing branches —
+  and recommend a **branching strategy** (GitHub Flow, Trunk-Based Development, or Gitflow),
+  with all three presented so you make the final call
+- Write the chosen strategy's rules so `/commit`, `/pr`, and `/release` respect the right target
+  branches, merge rules, and tagging conventions
 
-- **[commit](skills/ship/commit/SKILL.md)** — Conventional commits with gitmojis, split into focused changes.
-- **[pr](skills/ship/pr/SKILL.md)** — Push branches and open GitHub PRs or GitLab MRs with the matching CLI.
-- **[release](skills/ship/release/SKILL.md)** — Draft curated release notes and publish GitHub or GitLab releases.
-- **[setup](skills/ship/setup/SKILL.md)** — Wire ship skills into `CLAUDE.md`/`AGENTS.md`; pick a branch strategy.
-
-**Recommended first step — run `/setup`:** it wires directives into your project's `CLAUDE.md` (or
-`AGENTS.md`) so Claude uses the ship skills automatically whenever it commits, opens a PR/MR, or
-prepares a release, and configures a **branching strategy** (GitHub Flow, Trunk-Based Development,
-or Gitflow) so all skills respect the correct target branches, merge rules, and release workflows.
+### 3. Bam — you're ready to go
 
 ```text
-/setup wire skrrt skills into this project
 /commit prepare a clean conventional commit for the auth refresh-token changes
 /pr open a review request for the auth refresh-token branch
 /release draft release notes for v1.4.0
 ```
 
+Plugin installs namespace the skills, so use `/skrrt-skills:commit` if a name collides with
+something else you have installed.
+
+## Skills
+
+Skills are grouped into buckets under [`skills/`](skills/). Every one is user-invocable by name;
+the model also reaches for them on its own when the task fits.
+
+### ship
+
+Git shipping workflow — conventional commits, pull/merge requests, and releases with the matching
+forge CLI. Bucket index: [`skills/ship/`](skills/ship/README.md).
+
+- **[setup](skills/ship/setup/SKILL.md)** — Wire the ship skills into `CLAUDE.md`/`AGENTS.md` and
+  pick a branching strategy. Run once per repo, before the rest.
+- **[commit](skills/ship/commit/SKILL.md)** — Split the worktree into focused conventional commits
+  with a mandatory gitmoji, guarding against commits on a protected branch.
+- **[pr](skills/ship/pr/SKILL.md)** — Push the branch and open a GitHub PR or GitLab MR with the
+  forge's own CLI, targeting the branch your strategy dictates.
+- **[release](skills/ship/release/SKILL.md)** — Draft curated release notes from the commit range,
+  update an existing changelog, and publish the release.
+
 **Recommended permissions:** Claude Code permissions live in `.claude/settings.json`, not in
-`SKILL.md`. A recommended template ships at
-[`templates/claude-settings.json`](templates/claude-settings.json) — merge it into your project's
-`.claude/settings.json` for read-only git allowed automatically, mutating git/`gh`/`glab`
-escalated with `permissions.ask`, force-push escalated to human approval, and destructive commands
-such as `git reset --hard` denied.
+`SKILL.md`. A template ships at [`templates/claude-settings.json`](templates/claude-settings.json)
+— merge it into your project's `.claude/settings.json` for read-only git allowed automatically,
+mutating git/`gh`/`glab` escalated with `permissions.ask`, force-push escalated to human approval,
+and destructive commands such as `git reset --hard` denied.
 
 ### docs
 
-Documentation authoring tools. See the bucket index at [`skills/docs/`](skills/docs/README.md).
+Documentation authoring tools. Bucket index: [`skills/docs/`](skills/docs/README.md).
 
-- **[md-writer](skills/docs/md-writer/SKILL.md)** — Structured markdown: frontmatter, Mermaid diagrams, lint-clean.
+- **[md-writer](skills/docs/md-writer/SKILL.md)** — Knowledge-base markdown with YAML frontmatter,
+  Mermaid diagrams, bidirectional cross-links, and a lint-clean finish.
 
 ```text
 /md-writer API integration guide for the payments service
 ```
 
-Or just ask Claude to write markdown — the skill activates automatically. As its final step it runs
-the bundled validator (`skills/docs/md-writer/scripts/validate-md.sh`), which walks up from the file
-for a project-level `.markdownlint.json` (`.jsonc`/`.yaml`/`.yml` also work) and falls back to the
+Or just ask for markdown — the skill activates on its own. As its final step it runs the bundled
+validator (`skills/docs/md-writer/scripts/validate-md.sh`), which walks up from the file for a
+project-level `.markdownlint.json` (`.jsonc`/`.yaml`/`.yml` also work) and falls back to the
 skill's bundled default. Run `npm install` once inside the skill directory for a local
-`markdownlint-cli2`, or the validator falls back to `npx`. It lints documentation and
-knowledge-base content only — well-known repo files (`README`, `CLAUDE`, `CONTRIBUTING`, …) and
-`.claude/` files are skipped.
+`markdownlint-cli2`, or it falls back to `npx`. It lints documentation and knowledge-base content
+only — well-known repo files (`README`, `CLAUDE`, `CONTRIBUTING`, …) and `.claude/` files are
+skipped.
 
 ## Requirements
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) v1.0.33+
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — any version with plugin
+  marketplace support (`claude plugin marketplace`) for the plugin install; v1.0.33+ otherwise
+- `gh` for GitHub remotes, `glab` for GitLab remotes (used by `/pr` and `/release`)
 - Node.js 18+ (for the `npx skills` installer and the `md-writer` validator's `markdownlint-cli2`)
 
 ## Repository Structure
@@ -93,7 +155,8 @@ knowledge-base content only — well-known repo files (`README`, `CLAUDE`, `CONT
 ```text
 .
 ├── .claude-plugin/
-│   └── plugin.json                # Root manifest: { name, skills: [...] }
+│   ├── marketplace.json           # Claude Code marketplace entry: { name, plugins: [...] }
+│   └── plugin.json                # Plugin manifest: { name, version, skills: [...] }
 ├── scripts/
 │   ├── link-skills.sh             # Symlink every skill into ~/.claude/skills
 │   └── list-skills.sh             # List all SKILL.md files
@@ -102,7 +165,6 @@ knowledge-base content only — well-known repo files (`README`, `CLAUDE`, `CONT
 │   │   ├── README.md
 │   │   ├── commit/
 │   │   │   ├── SKILL.md
-│   │   │   ├── reference/{commit-types.md, gitmojis.md}
 │   │   │   └── evals/{trigger-evals.json, commit-basic.json}
 │   │   ├── pr/
 │   │   │   ├── SKILL.md
@@ -165,6 +227,9 @@ artifacts from running evals, not committed.
 1. Create `skills/<bucket>/<name>/SKILL.md` (plus any `reference/`, `scripts/`, `evals/`).
 2. Add `"./skills/<bucket>/<name>"` to the `skills` array in `.claude-plugin/plugin.json`.
 3. Add a linked entry to the bucket's `README.md` and to the [Skills](#skills) section above.
+
+`.claude-plugin/marketplace.json` needs no edit — it points at the repo root, so the plugin
+ships whatever `plugin.json` declares. Bump `version` there when cutting a release tag.
 
 ### Project Layout for Dev Files
 

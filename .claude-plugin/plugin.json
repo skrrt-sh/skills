@@ -1,5 +1,24 @@
 {
   "name": "skrrt-skills",
+  "version": "1.9.0",
+  "description": "Git shipping workflow — conventional commits with gitmojis, PRs and MRs with the matching forge CLI, curated releases — plus structured markdown authoring.",
+  "author": {
+    "name": "skrrt-sh",
+    "url": "https://github.com/skrrt-sh"
+  },
+  "homepage": "https://github.com/skrrt-sh/skills",
+  "repository": "https://github.com/skrrt-sh/skills",
+  "license": "MIT",
+  "keywords": [
+    "git",
+    "conventional-commits",
+    "gitmoji",
+    "pull-requests",
+    "merge-requests",
+    "releases",
+    "changelog",
+    "markdown"
+  ],
   "skills": [
     "./skills/ship/commit",
     "./skills/ship/pr",

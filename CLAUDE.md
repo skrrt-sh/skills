@@ -29,23 +29,27 @@ Build once and promote the same artifact — never rebuild from a tag. Dev needs
 
 ## Repository structure
 
-This repo ships agent skills via the [`skills`](https://skills.sh) CLI, using the
-single-manifest layout: one root `.claude-plugin/plugin.json` with a `skills` array, and a flat
-`skills/` tree organized into buckets.
+This repo ships agent skills two ways from one manifest: as a Claude Code plugin
+(`.claude-plugin/marketplace.json` → `.claude-plugin/plugin.json`) and via the
+[`skills`](https://skills.sh) CLI, which reads the same `plugin.json`. The `skills/` tree is
+flat and organized into buckets.
 
 - `skills/ship/` — git shipping workflow: `commit`, `pr`, `release`, `setup`.
 - `skills/docs/` — documentation tools: `md-writer`.
 
 Each skill lives at `skills/<bucket>/<name>/SKILL.md` with its supporting files co-located
-(`reference/`, `scripts/`, `config/`, `evals/`). There are no per-plugin manifests, no
-`marketplace.json`, and no plugin-level hooks — a skill that needs a script bundles it under its own
-`scripts/` and invokes it from `SKILL.md`.
+(`reference/`, `scripts/`, `config/`, `evals/`). There are no per-skill manifests and no
+plugin-level hooks — a skill that needs a script bundles it under its own `scripts/` and
+invokes it from `SKILL.md`.
 
 When adding or renaming a skill, keep three places in sync:
 
 1. The `skills` array in `.claude-plugin/plugin.json`.
 2. The bucket's `README.md` (one linked line per skill).
 3. The Skills section in the root `README.md`.
+
+`marketplace.json` points at the repo root and never needs editing for a new skill. Bump
+`version` in `plugin.json` when cutting a release tag.
 
 Helper scripts: `scripts/list-skills.sh` lists every `SKILL.md`; `scripts/link-skills.sh` symlinks
 each skill into `~/.claude/skills` for local use.
