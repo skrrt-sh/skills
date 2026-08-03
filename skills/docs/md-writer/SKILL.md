@@ -44,9 +44,10 @@ of contents once the document has 3+ sections.
 
 Every diagram is Mermaid in a ```mermaid fence — never ASCII art. Any valid diagram type is
 fair game (`flowchart`, `sequenceDiagram`, `stateDiagram-v2`, `erDiagram`, `gantt`, `mindmap`,
-`architecture-beta`, …). Never write a literal `\n` inside Mermaid text: use a real newline in
-flowchart and mindmap strings, and `<br/>` where Mermaid supports it (sequence messages, notes,
-actor aliases).
+`architecture-beta`, …). For line breaks use `<br/>` — it works in flowchart labels, sequence
+messages, notes, and actor aliases. A real newline breaks a line only inside a Mermaid Markdown
+String (a backtick-quoted label in a flowchart or mindmap). Never write a literal `\n` and
+expect it to render.
 
 ## Formatting
 
@@ -61,13 +62,17 @@ Validate as the final step after writing or editing any file:
 bash "${CLAUDE_SKILL_DIR}/scripts/validate-md.sh" <path/to/file.md>
 ```
 
-Exit `0` is clean, `2` prints violations — fix and re-run until it passes. The script finds a
-project `.markdownlint.json` (or `.jsonc`/`.yaml`/`.yml`) by walking up from the file and
-otherwise uses `config/markdownlint-default.json`. It prefers a local `markdownlint-cli2`
-(`npm install` once in this skill directory) and falls back to `npx`. The script itself skips
-only unambiguous meta files (`README`, `CLAUDE`, `AGENTS`, `CONTRIBUTING`, `CHANGELOG`,
-`CODE_OF_CONDUCT`, `SECURITY`, license files) and anything under `.claude/` — those exit `0`
-unlinted. The rest of the scope list above still skips frontmatter but does get linted.
+Exit `2` prints violations — fix and re-run until it passes. Exit `0` means clean **or skipped**,
+so treat it as "nothing to fix" rather than proof the file was linted: the script skips anything
+under `.claude/` and the unambiguous meta files (`README`, `CLAUDE`, `AGENTS`, `CONTRIBUTING`,
+`CHANGELOG`, `CODE_OF_CONDUCT`, `SECURITY`, license files), and also exits `0` when neither a
+local `markdownlint-cli2` nor `npx` is available. Its skip list is deliberately narrower than
+the frontmatter scope above — `GOVERNANCE`, `SUPPORT`, `SKILL.md`, and issue/PR templates skip
+frontmatter but still get linted.
+
+The script finds a project `.markdownlint.json` (or `.jsonc`/`.yaml`/`.yml`) by walking up from
+the file and otherwise uses `config/markdownlint-default.json`. Run `npm install` once in this
+skill directory for the local binary; otherwise it falls back to `npx`.
 
 ## Cross-Referencing
 
