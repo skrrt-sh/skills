@@ -1,9 +1,19 @@
-# Skrrt Skills
+<p align="center">
+  <img src="https://raw.githubusercontent.com/skrrt-sh/skills/main/assets/banner.png" alt="Skills" width="480">
+</p>
 
-[![skills.sh](https://skills.sh/b/skrrt-sh/skills)](https://skills.sh/skrrt-sh/skills) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?logo=opensourceinitiative&logoColor=white)](LICENSE) [![Claude Code](https://img.shields.io/badge/Claude_Code-plugin-blueviolet?logo=anthropic&logoColor=white)](https://code.claude.com/docs/en/plugins)
+<h1 align="center">Skrrt Skills</h1>
 
-> Agent skills by skrrt-sh — ship your git work properly. Conventional commits, pull and merge
-> requests, releases, and the markdown that documents them.
+<p align="center">
+  Agent skills by skrrt-sh — ship your git work properly. Conventional commits,<br>
+  pull and merge requests, releases, and the markdown that documents them.
+</p>
+
+<p align="center">
+  <a href="https://skills.sh/skrrt-sh/skills"><img src="https://skills.sh/b/skrrt-sh/skills" alt="skills.sh"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?logo=opensourceinitiative&logoColor=white" alt="License: MIT"></a>
+  <a href="https://code.claude.com/docs/en/plugins"><img src="https://img.shields.io/badge/Claude_Code-plugin-blueviolet?logo=anthropic&logoColor=white" alt="Claude Code plugin"></a>
+</p>
 
 ## Table of Contents
 
