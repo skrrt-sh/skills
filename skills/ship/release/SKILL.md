@@ -61,6 +61,21 @@ marketplace entry agree. It is a separate namespace from `vX.Y.Z`, not a competi
 name-prefixed tag is the marker Claude Code tooling reads. Run `--dry-run` first to see the tag
 name and confirm validation passes.
 
+**Repos shipping several plugins** — a `marketplace.json` whose entries point at subdirectories,
+each with its own `plugin.json` — have no single repo version to put on `vX.Y.Z`. Drop it and let
+`<plugin-name>--vX.Y.Z` be the release of record for each plugin, released on its own cadence.
+Point the tag command at the plugin directory (`claude plugin tag --push ./path/to/plugin`), cut
+one GitHub release per plugin tag, and derive each one's commit range from that plugin's own
+previous tag, not the repo's:
+
+```bash
+git log --oneline "$(git tag --list '<name>--v*' | sort -V | tail -1)"..HEAD -- ./path/to/plugin
+```
+
+Renaming a plugin is breaking for everyone who installed it under the old name: bump the major,
+and add a `renames` entry to `marketplace.json` mapping the old name to the new one so existing
+installs migrate instead of orphaning.
+
 ## Release Text
 
 ```markdown

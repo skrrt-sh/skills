@@ -1,7 +1,7 @@
 {
-  "name": "skrrt",
+  "name": "ship",
   "version": "4.0.0",
-  "description": "Every skrrt skill in one bundle for the skills.sh CLI — git shipping workflow plus structured markdown authoring. Claude Code installs per bucket instead; see marketplace.json.",
+  "description": "Git shipping workflow — conventional commits with gitmojis, PRs and MRs with the matching forge CLI, curated releases.",
   "author": {
     "name": "skrrt-sh",
     "url": "https://github.com/skrrt-sh"
@@ -16,14 +16,12 @@
     "pull-requests",
     "merge-requests",
     "releases",
-    "changelog",
-    "markdown"
+    "changelog"
   ],
   "skills": [
-    "./skills/ship/commit",
-    "./skills/ship/pr",
-    "./skills/ship/release",
-    "./skills/ship/setup",
-    "./skills/docs/md-writer"
+    "./commit",
+    "./pr",
+    "./release",
+    "./setup"
   ]
 }

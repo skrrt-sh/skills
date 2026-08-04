@@ -2,7 +2,7 @@
 ## Git workflow — skrrt skills
 
 Use `/commit` for commits, `/pr` for pull and merge requests, and `/release` for releases —
-prefixed `/skrrt:` when installed as a Claude Code plugin. Do not hand-write
+prefixed `/ship:` when installed as a Claude Code plugin. Do not hand-write
 `git commit`, `gh pr create`, `gh release create`, `glab mr create`, or `glab release create`.
 
 Tags are annotated and immutable: `vX.Y.Z` production, `vX.Y.Z-rc.N` staging,
@@ -34,10 +34,11 @@ Build once and promote the same artifact — never rebuild from a tag. Dev needs
 
 ## Repository structure
 
-This repo ships agent skills two ways from one manifest: as a Claude Code plugin
-(`.claude-plugin/marketplace.json` → `.claude-plugin/plugin.json`) and via the
-[`skills`](https://skills.sh) CLI, which reads the same `plugin.json`. The `skills/` tree is
-flat and organized into buckets.
+This repo ships agent skills two ways. **Each bucket is its own Claude Code plugin**, so the
+bucket name is the slash namespace — `/ship:commit`, `/docs:md-writer`. The
+[`skills`](https://skills.sh) CLI discovers every `SKILL.md` in the repo by scanning (verified:
+it ignores manifest skill arrays) and installs bare names — `/commit`, `/md-writer`. The root
+`plugin.json` stays as the repo-wide declared inventory for tooling that reads it.
 
 - `skills/ship/` — git shipping workflow: `commit`, `pr`, `release`, `setup`.
 - `skills/docs/` — documentation tools: `md-writer`.
@@ -47,20 +48,28 @@ Each skill lives at `skills/<bucket>/<name>/SKILL.md` with its supporting files 
 plugin-level hooks — a skill that needs a script bundles it under its own `scripts/` and
 invokes it from `SKILL.md`.
 
-When adding or renaming a skill, keep three places in sync:
+When adding or renaming a skill, keep four places in sync:
 
-1. The `skills` array in `.claude-plugin/plugin.json`.
-2. The bucket's `README.md` (one linked line per skill).
-3. The Skills section in the root `README.md`.
+1. The `skills` array in `skills/<bucket>/.claude-plugin/plugin.json` — paths relative to the
+   bucket (`./commit`), and they may not escape it.
+2. The `skills` array in the root `.claude-plugin/plugin.json` — repo-relative paths
+   (`./skills/ship/commit`), the repo-wide aggregate.
+3. The bucket's `README.md` (one linked line per skill).
+4. The Skills section in the root `README.md`.
 
-`marketplace.json` points at the repo root and never needs editing for a new skill.
+`marketplace.json` lists buckets, not skills, so a new skill never touches it. A **new bucket**
+does: add `skills/<bucket>/.claude-plugin/plugin.json` and a marketplace entry whose `source` is
+`./skills/<bucket>`.
 
-Releases carry two tags at the same commit: `vX.Y.Z` is the release of record that GitHub
-Releases and CI globs key off, and `skrrt--vX.Y.Z` is the Claude Code plugin marker,
-created with `claude plugin tag --push`. Bump `version` in `plugin.json` through a PR before
-tagging, since it must be on the tagged commit and `main` takes no direct commits. Always
-`git fetch origin --tags` before picking the version — a stale local tag list will produce a
-number that is already taken.
+Each bucket versions and releases independently. A release carries one tag,
+`<bucket>--vX.Y.Z` — `ship--v4.0.0`, `docs--v1.0.0` — created with `claude plugin tag --push`
+pointed at the bucket directory; it is both the plugin marker and the release of record. There
+is no repo-wide `vX.Y.Z` tag any more: with two independently versioned plugins there is no
+single number it could carry. Bump
+`version` in that bucket's `plugin.json` through a PR before tagging, since it must be on the
+tagged commit and `main` takes no direct commits. The root `plugin.json` version tracks the
+skills.sh bundle and is not tagged. Always `git fetch origin --tags` before picking a version —
+a stale local tag list will produce a number that is already taken.
 
 Helper scripts: `scripts/list-skills.sh` lists every `SKILL.md`; `scripts/link-skills.sh` symlinks
 each skill into `~/.claude/skills` for local use.
