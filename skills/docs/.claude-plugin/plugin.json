@@ -1,0 +1,22 @@
+{
+  "name": "docs",
+  "version": "1.0.0",
+  "description": "Documentation authoring — structured markdown with YAML frontmatter, Mermaid diagrams, and lint-clean output.",
+  "author": {
+    "name": "skrrt-sh",
+    "url": "https://github.com/skrrt-sh"
+  },
+  "homepage": "https://github.com/skrrt-sh/skills",
+  "repository": "https://github.com/skrrt-sh/skills",
+  "license": "MIT",
+  "keywords": [
+    "markdown",
+    "documentation",
+    "mermaid",
+    "knowledge-base",
+    "markdownlint"
+  ],
+  "skills": [
+    "./md-writer"
+  ]
+}

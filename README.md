@@ -29,18 +29,27 @@ skill twice.
 
 ```bash
 claude plugin marketplace add skrrt-sh/skills
-claude plugin install skrrt@skrrt
+claude plugin install ship@skrrt
+claude plugin install docs@skrrt
 ```
 
 Or, from inside a session:
 
 ```text
 /plugin marketplace add skrrt-sh/skills
-/plugin install skrrt@skrrt
+/plugin install ship@skrrt
+/plugin install docs@skrrt
 ```
 
-These skills are not in Claude Code's official marketplace, so the `marketplace add` step is
-required once — after that, `claude plugin update skrrt` pulls new versions.
+Each bucket is its own plugin, versioned and released independently — install only the ones you
+want. These skills are not in Claude Code's official marketplace, so the `marketplace add` step is
+required once; after that, `claude plugin update ship` pulls new versions.
+
+> **Upgrading from the single `skrrt` plugin?** It was split into `ship` and `docs` so the slash
+> namespace names the bucket — `/skrrt:commit` is now `/ship:commit`. The marketplace declares the
+> `skrrt` → `ship` rename, so an updated marketplace migrates your install automatically; if skills
+> go missing afterwards, `claude plugin install ship@skrrt` repairs it. `docs` is new either way —
+> install it explicitly.
 
 </details>
 
@@ -81,7 +90,7 @@ Working on the skills themselves? Symlink every one of them into `~/.claude/skil
 
 ### 2. Run the setup skill
 
-In your agent, run it once per repo — `/skrrt:setup` on a plugin install, `/setup` on a
+In your agent, run it once per repo — `/ship:setup` on a plugin install, `/setup` on a
 skills.sh install (see the note on skill names below). It will:
 
 - Detect your agent instruction file (`CLAUDE.md`, `AGENTS.md`, `.claude/CLAUDE.md`, or
@@ -95,16 +104,16 @@ skills.sh install (see the note on skill names below). It will:
 ### 3. Bam — you're ready to go
 
 ```text
-/skrrt:commit prepare a clean conventional commit for the auth refresh-token changes
-/skrrt:pr open a review request for the auth refresh-token branch
-/skrrt:release draft release notes for v1.4.0
+/ship:commit prepare a clean conventional commit for the auth refresh-token changes
+/ship:pr open a review request for the auth refresh-token branch
+/ship:release draft release notes for v1.4.0
 ```
 
 **Skill names depend on how you installed.** Claude Code namespaces plugin skills by plugin
-name, so a plugin install gives you `/skrrt:commit`, `/skrrt:pr`,
-`/skrrt:release`, `/skrrt:setup`, and `/skrrt:md-writer`. A skills.sh or
-`~/.claude/skills` install uses the bare names — `/commit`, `/pr`, `/release`, `/setup`,
-`/md-writer`. The rest of this README uses the bare names for brevity.
+name, and each bucket is its own plugin — so a plugin install gives you `/ship:commit`, `/ship:pr`,
+`/ship:release`, `/ship:setup`, and `/docs:md-writer`. A skills.sh or `~/.claude/skills` install
+uses the bare names — `/commit`, `/pr`, `/release`, `/setup`, `/md-writer`. The rest of this README
+uses the bare names for brevity.
 
 ## Skills
 
@@ -163,13 +172,14 @@ skipped.
 ```text
 .
 ├── .claude-plugin/
-│   ├── marketplace.json           # Claude Code marketplace entry: { name, plugins: [...] }
-│   └── plugin.json                # Plugin manifest: { name, version, skills: [...] }
+│   ├── marketplace.json           # Marketplace entry: one plugin per bucket
+│   └── plugin.json                # skills.sh aggregate: every skill in one bundle
 ├── scripts/
 │   ├── link-skills.sh             # Symlink every skill into ~/.claude/skills
 │   └── list-skills.sh             # List all SKILL.md files
 ├── skills/
-│   ├── ship/                      # Git shipping workflow bucket
+│   ├── ship/                      # Git shipping workflow bucket — the `ship` plugin
+│   │   ├── .claude-plugin/plugin.json
 │   │   ├── README.md
 │   │   ├── commit/
 │   │   │   ├── SKILL.md
@@ -187,7 +197,8 @@ skipped.
 │   │   │   ├── reference/branching-strategies.md
 │   │   │   └── evals/trigger-evals.json
 │   │   └── evals/evals.json       # Bucket-spanning ship suite
-│   └── docs/                      # Documentation bucket
+│   └── docs/                      # Documentation bucket — the `docs` plugin
+│       ├── .claude-plugin/plugin.json
 │       ├── README.md
 │       └── md-writer/
 │           ├── SKILL.md
@@ -233,12 +244,17 @@ artifacts from running evals, not committed.
 ### Adding a Skill
 
 1. Create `skills/<bucket>/<name>/SKILL.md` (plus any `reference/`, `scripts/`, `evals/`).
-2. Add `"./skills/<bucket>/<name>"` to the `skills` array in `.claude-plugin/plugin.json`.
-3. Add a linked entry to the bucket's `README.md` and to the [Skills](#skills) section above.
+2. Add `"./<name>"` to the `skills` array in `skills/<bucket>/.claude-plugin/plugin.json` — the
+   bucket's own plugin manifest, and where Claude Code reads it from.
+3. Add `"./skills/<bucket>/<name>"` to the `skills` array in the root `.claude-plugin/plugin.json`,
+   the repo-wide aggregate (the skills.sh CLI discovers skills by scanning for `SKILL.md`, but the
+   aggregate is the declared inventory).
+4. Add a linked entry to the bucket's `README.md` and to the [Skills](#skills) section above.
 
-`.claude-plugin/marketplace.json` needs no edit — it points at the repo root, so the plugin
-ships whatever `plugin.json` declares. When cutting a release tag, bump `version` in
-`.claude-plugin/plugin.json`, which is where Claude Code reads the plugin version.
+`.claude-plugin/marketplace.json` needs no edit for a new skill — it lists buckets, not skills.
+A **new bucket** does need one: create `skills/<bucket>/.claude-plugin/plugin.json` and add a
+matching entry pointing `"source"` at `./skills/<bucket>`. Each bucket carries its own `version`
+and releases on its own cadence.
 
 ### Project Layout for Dev Files
 

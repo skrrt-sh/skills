@@ -4,20 +4,34 @@
     "name": "skrrt-sh",
     "url": "https://github.com/skrrt-sh"
   },
-  "description": "Skrrt agent skills as an installable Claude Code plugin.",
+  "description": "Skrrt agent skills as installable Claude Code plugins — one plugin per bucket.",
+  "renames": {
+    "skrrt": "ship"
+  },
   "plugins": [
     {
-      "name": "skrrt",
-      "source": "./",
-      "description": "Git shipping workflow — conventional commits with gitmojis, PRs and MRs with the matching forge CLI, curated releases — plus structured markdown authoring.",
+      "name": "ship",
+      "source": "./skills/ship",
+      "description": "Git shipping workflow — conventional commits with gitmojis, PRs and MRs with the matching forge CLI, curated releases.",
       "category": "workflow",
       "keywords": [
         "git",
         "conventional-commits",
         "gitmoji",
         "pull-requests",
-        "releases",
-        "markdown"
+        "releases"
+      ]
+    },
+    {
+      "name": "docs",
+      "source": "./skills/docs",
+      "description": "Documentation authoring — structured markdown with YAML frontmatter, Mermaid diagrams, and lint-clean output.",
+      "category": "workflow",
+      "keywords": [
+        "markdown",
+        "documentation",
+        "mermaid",
+        "knowledge-base"
       ]
     }
   ]
