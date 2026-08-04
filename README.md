@@ -29,18 +29,18 @@ skill twice.
 
 ```bash
 claude plugin marketplace add skrrt-sh/skills
-claude plugin install skrrt-skills@skrrt
+claude plugin install skrrt@skrrt
 ```
 
 Or, from inside a session:
 
 ```text
 /plugin marketplace add skrrt-sh/skills
-/plugin install skrrt-skills@skrrt
+/plugin install skrrt@skrrt
 ```
 
 These skills are not in Claude Code's official marketplace, so the `marketplace add` step is
-required once — after that, `claude plugin update skrrt-skills` pulls new versions.
+required once — after that, `claude plugin update skrrt` pulls new versions.
 
 </details>
 
@@ -81,7 +81,7 @@ Working on the skills themselves? Symlink every one of them into `~/.claude/skil
 
 ### 2. Run the setup skill
 
-In your agent, run it once per repo — `/skrrt-skills:setup` on a plugin install, `/setup` on a
+In your agent, run it once per repo — `/skrrt:setup` on a plugin install, `/setup` on a
 skills.sh install (see the note on skill names below). It will:
 
 - Detect your agent instruction file (`CLAUDE.md`, `AGENTS.md`, `.claude/CLAUDE.md`, or
@@ -95,14 +95,14 @@ skills.sh install (see the note on skill names below). It will:
 ### 3. Bam — you're ready to go
 
 ```text
-/skrrt-skills:commit prepare a clean conventional commit for the auth refresh-token changes
-/skrrt-skills:pr open a review request for the auth refresh-token branch
-/skrrt-skills:release draft release notes for v1.4.0
+/skrrt:commit prepare a clean conventional commit for the auth refresh-token changes
+/skrrt:pr open a review request for the auth refresh-token branch
+/skrrt:release draft release notes for v1.4.0
 ```
 
 **Skill names depend on how you installed.** Claude Code namespaces plugin skills by plugin
-name, so a plugin install gives you `/skrrt-skills:commit`, `/skrrt-skills:pr`,
-`/skrrt-skills:release`, `/skrrt-skills:setup`, and `/skrrt-skills:md-writer`. A skills.sh or
+name, so a plugin install gives you `/skrrt:commit`, `/skrrt:pr`,
+`/skrrt:release`, `/skrrt:setup`, and `/skrrt:md-writer`. A skills.sh or
 `~/.claude/skills` install uses the bare names — `/commit`, `/pr`, `/release`, `/setup`,
 `/md-writer`. The rest of this README uses the bare names for brevity.
 

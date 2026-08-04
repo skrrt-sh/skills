@@ -2,7 +2,7 @@
 ## Git workflow — skrrt skills
 
 Use `/commit` for commits, `/pr` for pull and merge requests, and `/release` for releases —
-prefixed `/skrrt-skills:` when installed as a Claude Code plugin. Do not hand-write
+prefixed `/skrrt:` when installed as a Claude Code plugin. Do not hand-write
 `git commit`, `gh pr create`, `gh release create`, `glab mr create`, or `glab release create`.
 
 Tags are annotated and immutable: `vX.Y.Z` production, `vX.Y.Z-rc.N` staging,
@@ -56,7 +56,7 @@ When adding or renaming a skill, keep three places in sync:
 `marketplace.json` points at the repo root and never needs editing for a new skill.
 
 Releases carry two tags at the same commit: `vX.Y.Z` is the release of record that GitHub
-Releases and CI globs key off, and `skrrt-skills--vX.Y.Z` is the Claude Code plugin marker,
+Releases and CI globs key off, and `skrrt--vX.Y.Z` is the Claude Code plugin marker,
 created with `claude plugin tag --push`. Bump `version` in `plugin.json` through a PR before
 tagging, since it must be on the tagged commit and `main` takes no direct commits. Always
 `git fetch origin --tags` before picking the version — a stale local tag list will produce a

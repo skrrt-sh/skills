@@ -37,7 +37,7 @@ Append these verbatim, markers included.
 ## Git workflow — skrrt skills
 
 Use `/commit` for commits, `/pr` for pull and merge requests, and `/release` for releases —
-prefixed `/skrrt-skills:` when installed as a Claude Code plugin. Do not hand-write
+prefixed `/skrrt:` when installed as a Claude Code plugin. Do not hand-write
 `git commit`, `gh pr create`, `gh release create`, `glab mr create`, or `glab release create`.
 
 Tags are annotated and immutable: `vX.Y.Z` production, `vX.Y.Z-rc.N` staging,
