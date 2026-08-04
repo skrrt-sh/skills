@@ -7,7 +7,7 @@
   "description": "Skrrt agent skills as an installable Claude Code plugin.",
   "plugins": [
     {
-      "name": "skrrt-skills",
+      "name": "skrrt",
       "source": "./",
       "description": "Git shipping workflow — conventional commits with gitmojis, PRs and MRs with the matching forge CLI, curated releases — plus structured markdown authoring.",
       "category": "workflow",
