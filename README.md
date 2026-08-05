@@ -177,8 +177,8 @@ lints documentation and knowledge-base content only — well-known repo files (`
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — any version with plugin
   marketplace support (`claude plugin marketplace`) for the plugin install; v1.0.33+ otherwise
 - `gh` for GitHub remotes, `glab` for GitLab remotes (used by `/pr` and `/release`)
-- Node.js 22+ (for the `md-writer` validator's `markdownlint-cli2`, which requires `>=22` as of
-  0.23; the `npx skills` installer itself needs only 18+)
+- Node.js 22.20+ — the `npx skills` installer declares `>=22.20.0`, and the `md-writer`
+  validator's `markdownlint-cli2` requires `>=22` as of 0.23
 
 ## Repository Structure
 
