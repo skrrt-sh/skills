@@ -7,7 +7,8 @@ set -euo pipefail
 # violations that need human judgment.
 # Walks up from the target file to find a project-level config.
 # Falls back to the skill's bundled config/markdownlint-default.json.
-# Exit codes: 0 = clean (or skipped), 1 = invalid invocation, 2 = markdownlint violations.
+# Exit codes: 0 = clean (or skipped), 1 = invalid invocation or the linter failed
+# to run, 2 = markdownlint violations.
 
 file_path="${1:-}"
 
@@ -142,6 +143,18 @@ sum_after="$(cksum < "${file_path}")"
 # editing further.
 if [[ "${sum_before}" != "${sum_after}" ]]; then
   printf 'auto-fixed formatting in place (re-read before further edits): %s\n' "${file_path}" >&2
+fi
+
+# Separate "the file has violations" from "the linter never ran". markdownlint-cli2
+# exits 0 clean, 1 violations, 2 could-not-run; the npx branch adds npm's own
+# failures -- a bad download, an EBADENGINE refusal on an unsupported Node -- and
+# those surface as 1 too, so exit status alone is not enough. Every run that
+# actually starts prints the version banner, so require it before believing a
+# non-zero status is a lint result.
+if [[ "${lint_exit}" -gt 1 ]] ||
+  { [[ "${lint_exit}" -eq 1 ]] && ! printf '%s' "${result}" | grep -q 'markdownlint-cli2 v'; }; then
+  printf 'markdownlint failed to run (exit %s):\n%s\n' "${lint_exit}" "${result}" >&2
+  exit 1
 fi
 
 if [[ "${lint_exit}" -ne 0 ]]; then
