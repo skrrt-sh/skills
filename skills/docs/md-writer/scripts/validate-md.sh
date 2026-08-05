@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Validate a markdown file with markdownlint.
+# Auto-fix and validate a markdown file with markdownlint.
 # Usage: validate-md.sh <file.md>
+# Rewrites the file in place to fix the mechanical rules, then reports only the
+# violations that need human judgment.
 # Walks up from the target file to find a project-level config.
 # Falls back to the skill's bundled config/markdownlint-default.json.
 # Exit codes: 0 = clean (or skipped), 1 = invalid invocation, 2 = markdownlint violations.
@@ -100,24 +102,50 @@ fi
 # missing package installs non-interactively instead of hanging on a prompt;
 # exit cleanly if neither is available. The npx version is pinned to match
 # package.json so both paths enforce the same rule set (keep them in sync).
-markdownlint_version="0.22.1"
+#
+# Run with --fix so the mechanical rules (trailing whitespace, blank-line runs,
+# heading and fence spacing, list markers, bare URLs, MD060 table pipe padding,
+# final newline, ...) are repaired in place rather than reported back for
+# hand-editing. markdownlint-cli2 reports only the violations it could NOT fix, so
+# one invocation yields both the repair and the residue -- no second lint pass
+# needed. What survives is the class that genuinely needs judgment, in practice
+# almost always MD013 line length; also MD040 fence language, MD033 inline HTML,
+# MD024/MD025 headings, MD041/MD042/MD045 and the link/anchor rules.
+#
+# The pinned version matters: MD060 gained a fixer in markdownlint 0.41, so
+# downgrading below cli2 0.23.2 silently pushes table padding back onto the agent.
+markdownlint_version="0.23.2"
 local_bin="${plugin_dir}/node_modules/.bin/markdownlint-cli2"
 result=""
 lint_exit=0
+
+# Checksum before and after so we can tell the caller the file moved under it.
+# Read from stdin so the filename is not part of the checksum output.
+sum_before="$(cksum < "${file_path}")"
+
 set +e
 if [[ -x "${local_bin}" ]]; then
-  result="$(cd "${plugin_dir}" && "${local_bin}" --config "${config}" "${file_path}" 2>&1)"
+  result="$(cd "${plugin_dir}" && "${local_bin}" --fix --config "${config}" "${file_path}" 2>&1)"
   lint_exit=$?
 elif command -v npx >/dev/null 2>&1; then
-  result="$(cd "${plugin_dir}" && npx --yes "markdownlint-cli2@${markdownlint_version}" --config "${config}" "${file_path}" 2>&1)"
+  result="$(cd "${plugin_dir}" && npx --yes "markdownlint-cli2@${markdownlint_version}" --fix --config "${config}" "${file_path}" 2>&1)"
   lint_exit=$?
 else
   exit 0
 fi
 set -e
 
+sum_after="$(cksum < "${file_path}")"
+
+# Warn on every rewrite, including the exit-0 case. A caller holding an in-memory
+# copy of the file has a stale one the moment this fires and must re-read before
+# editing further.
+if [[ "${sum_before}" != "${sum_after}" ]]; then
+  printf 'auto-fixed formatting in place (re-read before further edits): %s\n' "${file_path}" >&2
+fi
+
 if [[ "${lint_exit}" -ne 0 ]]; then
-  printf 'markdownlint violations found:\n%s\n' "${result}" >&2
+  printf 'remaining markdownlint violations (not auto-fixable):\n%s\n' "${result}" >&2
   exit 2
 fi
 
