@@ -3,12 +3,7 @@ set -euo pipefail
 
 # Auto-fix and validate a markdown file with markdownlint.
 # Usage: validate-md.sh <file.md>
-# Rewrites the file in place to fix the mechanical rules, then reports only the
-# violations that need human judgment.
-# Walks up from the target file to find a project-level config.
-# Falls back to the skill's bundled config/markdownlint-default.json.
-# Exit codes: 0 = clean (or skipped), 1 = invalid invocation or the linter failed
-# to run, 2 = markdownlint violations.
+# Exit: 0 = clean or skipped, 1 = bad invocation or linter failure, 2 = violations.
 
 file_path="${1:-}"
 
@@ -27,24 +22,14 @@ if [[ "${file_path}" != *.md ]]; then
   exit 1
 fi
 
-# Skip anything inside a .claude/ directory (plans, memory, etc.). The second
-# pattern catches a repo-relative path like `.claude/notes.md`, which has no
-# leading path segment for the first pattern to match.
+# Second pattern catches a repo-relative `.claude/notes.md`.
 if [[ "${file_path}" == */.claude/* || "${file_path}" == .claude/* ]]; then
   exit 0
 fi
 
-# Skip well-known repository meta files (READMEs, agent guides, the standard
-# GitHub community-health docs, license, changelog). These follow their own
-# hand-maintained conventions, not documentation/knowledge-base style — linting
-# them only makes them harder to maintain. The validator targets doc content,
-# not repo metadata.
-#
-# The list is intentionally limited to names that are unambiguously metadata
-# wherever they appear. Generic English words (CHANGES, HISTORY, SUPPORT,
-# AUTHORS, NOTICE, GOVERNANCE, …) are deliberately excluded: a knowledge base
-# may legitimately have a `docs/support.md` or `docs/history.md` page, and those
-# should be linted like any other doc rather than silently skipped.
+# Meta files follow their own conventions, not knowledge-base style. Generic names
+# (SUPPORT, HISTORY, GOVERNANCE, ...) are excluded on purpose — a docs site may
+# legitimately have those pages.
 stem="$(basename "${file_path}" .md | tr '[:lower:]' '[:upper:]')"
 case "${stem}" in
   README | CLAUDE | AGENTS | CONTRIBUTING | CHANGELOG | CODE_OF_CONDUCT \
@@ -55,8 +40,8 @@ case "${stem}" in
   *) ;;
 esac
 
-# Canonicalize file_path to an absolute path so config discovery works after cd.
-# Split out the steps so no command substitution masks another's exit status.
+# Absolute path so config discovery survives the cd below. Steps are split so no
+# command substitution masks another's exit status.
 file_dir="$(dirname "${file_path}")"
 file_base="$(basename "${file_path}")"
 abs_dir="$(cd "${file_dir}" 2>/dev/null && pwd || true)"
@@ -66,11 +51,8 @@ if [[ -z "${abs_dir}" ]]; then
 fi
 file_path="${abs_dir}/${file_base}"
 
-# Skill root (this script lives in <skill>/scripts/); config/ and node_modules/
-# are siblings of scripts/.
 plugin_dir="${CLAUDE_SKILL_DIR:-$(cd "$(dirname "${0}")/.." && pwd)}"
 
-# Walk up from the markdown file's directory looking for a project config.
 config=""
 search_dir="$(dirname "${file_path}")"
 while [[ "${search_dir}" != "/" ]] && [[ "${search_dir}" != "." ]]; do
@@ -83,11 +65,8 @@ while [[ "${search_dir}" != "/" ]] && [[ "${search_dir}" != "." ]]; do
   search_dir="$(dirname "${search_dir}")"
 done
 
-# Fall back to the plugin's bundled default.
-# markdownlint-cli2 --config requires a file matching supported naming
-# conventions (e.g. .markdownlint.json). The bundled file uses a visible
-# name to avoid dotfile packaging issues, so we symlink it to a valid name.
-# Use a unique temp dir to avoid race conditions with concurrent invocations.
+# --config needs a supported filename; the bundled default uses a visible name to
+# avoid dotfile packaging issues, so symlink it. Unique dir for concurrent runs.
 cleanup_dir=""
 # shellcheck disable=SC2329  # invoked indirectly via the EXIT trap below
 cleanup() { [[ -n "${cleanup_dir}" ]] && rm -rf "${cleanup_dir}"; }
@@ -99,29 +78,15 @@ if [[ -z "${config}" ]]; then
   config="${cleanup_dir}/.markdownlint.json"
 fi
 
-# Prefer the local installed binary (fast); fall back to npx with --yes so a
-# missing package installs non-interactively instead of hanging on a prompt;
-# exit cleanly if neither is available. The npx version is pinned to match
-# package.json so both paths enforce the same rule set (keep them in sync).
-#
-# Run with --fix so the mechanical rules (trailing whitespace, blank-line runs,
-# heading and fence spacing, list markers, bare URLs, MD060 table pipe padding,
-# final newline, ...) are repaired in place rather than reported back for
-# hand-editing. markdownlint-cli2 reports only the violations it could NOT fix, so
-# one invocation yields both the repair and the residue -- no second lint pass
-# needed. What survives is the class that genuinely needs judgment, in practice
-# almost always MD013 line length; also MD040 fence language, MD033 inline HTML,
-# MD024/MD025 headings, MD041/MD042/MD045 and the link/anchor rules.
-#
-# The pinned version matters: MD060 gained a fixer in markdownlint 0.41, so
-# downgrading below cli2 0.23.2 silently pushes table padding back onto the agent.
+# --fix repairs the mechanical rules in place and reports only what it could not
+# fix, so one pass yields both. MD060 table padding needs markdownlint >= 0.41,
+# so keep this pin at or above cli2 0.23.2 and in sync with package.json.
 markdownlint_version="0.23.2"
 local_bin="${plugin_dir}/node_modules/.bin/markdownlint-cli2"
 result=""
 lint_exit=0
 
-# Checksum before and after so we can tell the caller the file moved under it.
-# Read from stdin so the filename is not part of the checksum output.
+# From stdin so the filename is not part of the digest.
 sum_before="$(cksum < "${file_path}")"
 
 set +e
@@ -138,19 +103,13 @@ set -e
 
 sum_after="$(cksum < "${file_path}")"
 
-# Warn on every rewrite, including the exit-0 case. A caller holding an in-memory
-# copy of the file has a stale one the moment this fires and must re-read before
-# editing further.
+# Fires on exit 0 too — the caller's in-memory copy is stale either way.
 if [[ "${sum_before}" != "${sum_after}" ]]; then
   printf 'auto-fixed formatting in place (re-read before further edits): %s\n' "${file_path}" >&2
 fi
 
-# Separate "the file has violations" from "the linter never ran". markdownlint-cli2
-# exits 0 clean, 1 violations, 2 could-not-run; the npx branch adds npm's own
-# failures -- a bad download, an EBADENGINE refusal on an unsupported Node -- and
-# those surface as 1 too, so exit status alone is not enough. Every run that
-# actually starts prints the version banner, so require it before believing a
-# non-zero status is a lint result.
+# npx failures also exit 1, so status alone cannot separate "has violations" from
+# "never ran". Every real run prints the version banner.
 if [[ "${lint_exit}" -gt 1 ]] ||
   { [[ "${lint_exit}" -eq 1 ]] && ! printf '%s' "${result}" | grep -q 'markdownlint-cli2 v'; }; then
   printf 'markdownlint failed to run (exit %s):\n%s\n' "${lint_exit}" "${result}" >&2
