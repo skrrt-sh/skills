@@ -1,7 +1,7 @@
 {
   "name": "docs",
-  "version": "1.0.0",
-  "description": "Documentation authoring — structured markdown with YAML frontmatter, Mermaid diagrams, and lint-clean output.",
+  "version": "2.0.0",
+  "description": "Documentation authoring — structured markdown with YAML frontmatter, Mermaid diagrams, and auto-fixed lint-clean output.",
   "author": {
     "name": "skrrt-sh",
     "url": "https://github.com/skrrt-sh"

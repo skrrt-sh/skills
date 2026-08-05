@@ -25,13 +25,14 @@
     {
       "name": "docs",
       "source": "./skills/docs",
-      "description": "Documentation authoring — structured markdown with YAML frontmatter, Mermaid diagrams, and lint-clean output.",
+      "description": "Documentation authoring — structured markdown with YAML frontmatter, Mermaid diagrams, and auto-fixed lint-clean output.",
       "category": "workflow",
       "keywords": [
         "markdown",
         "documentation",
         "mermaid",
-        "knowledge-base"
+        "knowledge-base",
+        "markdownlint"
       ]
     }
   ]
