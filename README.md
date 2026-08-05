@@ -166,16 +166,19 @@ Or just ask for markdown — the skill activates on its own. As its final step i
 validator (`skills/docs/md-writer/scripts/validate-md.sh`), which walks up from the file for a
 project-level `.markdownlint.json` (`.jsonc`/`.yaml`/`.yml` also work) and falls back to the
 skill's bundled default. Run `npm install` once inside the skill directory for a local
-`markdownlint-cli2`, or it falls back to `npx`. It lints documentation and knowledge-base content
-only — well-known repo files (`README`, `CLAUDE`, `CONTRIBUTING`, …) and `.claude/` files are
-skipped.
+`markdownlint-cli2`, or it falls back to `npx`. The validator auto-fixes the mechanical rules in
+place (whitespace, spacing, list markers, final newline) and reports back only what needs judgment
+— line length, fence languages, headings, links — so the agent spends tokens on those alone. It
+lints documentation and knowledge-base content only — well-known repo files (`README`, `CLAUDE`,
+`CONTRIBUTING`, …) and `.claude/` files are skipped and never rewritten.
 
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — any version with plugin
   marketplace support (`claude plugin marketplace`) for the plugin install; v1.0.33+ otherwise
 - `gh` for GitHub remotes, `glab` for GitLab remotes (used by `/pr` and `/release`)
-- Node.js 18+ (for the `npx skills` installer and the `md-writer` validator's `markdownlint-cli2`)
+- Node.js 22.20+ — the `npx skills` installer declares `>=22.20.0`, and the `md-writer`
+  validator's `markdownlint-cli2` requires `>=22` as of 0.23
 
 ## Repository Structure
 

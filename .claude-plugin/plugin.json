@@ -1,7 +1,7 @@
 {
   "name": "skrrt",
-  "version": "4.0.0",
-  "description": "Every skrrt skill in one bundle for the skills.sh CLI — git shipping workflow plus structured markdown authoring. Claude Code installs per bucket instead; see marketplace.json.",
+  "version": "5.0.0",
+  "description": "Every skrrt skill in one bundle for the skills.sh CLI — git shipping workflow plus structured markdown authoring with auto-fixed lint-clean output. Claude Code installs per bucket instead; see marketplace.json.",
   "author": {
     "name": "skrrt-sh",
     "url": "https://github.com/skrrt-sh"

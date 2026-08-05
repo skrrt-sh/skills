@@ -71,13 +71,24 @@ Validate as the final step after writing or editing any file:
 bash "${CLAUDE_SKILL_DIR}/scripts/validate-md.sh" <path/to/file.md>
 ```
 
-Exit `2` prints violations — fix and re-run until it passes. Exit `0` means clean **or skipped**,
-so treat it as "nothing to fix" rather than proof the file was linted: the script skips anything
-under `.claude/` and the unambiguous meta files (`README`, `CLAUDE`, `AGENTS`, `CONTRIBUTING`,
-`CHANGELOG`, `CODE_OF_CONDUCT`, `SECURITY`, license files), and also exits `0` when neither a
-local `markdownlint-cli2` nor `npx` is available. Its skip list is deliberately narrower than
-the frontmatter scope above — `GOVERNANCE`, `SUPPORT`, `SKILL.md`, and issue/PR templates skip
-frontmatter but still get linted.
+The script **rewrites the file in place** to fix the mechanical rules — trailing whitespace,
+blank-line runs, heading and fence spacing, list markers, bare URLs, table pipe padding, missing
+final newline. Never hand-edit those; run the script and let it do them. When it prints
+`auto-fixed formatting in place`, your in-memory copy of the file is stale — re-read before
+making any further edit.
+
+Exit `2` prints what it could not fix, which in practice is almost always `MD013` line length.
+The rest of that class: `MD040` fence language, `MD033` inline HTML, `MD024`/`MD025` headings,
+and the link/anchor/alt-text rules. Fix those by hand and re-run until it passes; reported line
+numbers already reflect the auto-fixed file.
+
+Exit `0` means clean **or skipped**, so treat it as "nothing to fix" rather than proof the file
+was linted: the script skips anything under `.claude/` and the unambiguous meta files (`README`,
+`CLAUDE`, `AGENTS`, `CONTRIBUTING`, `CHANGELOG`, `CODE_OF_CONDUCT`, `SECURITY`, license files),
+and also exits `0` when neither a local `markdownlint-cli2` nor `npx` is available. The skip check
+runs before the fix pass, so a skipped file is never rewritten. Its skip list is deliberately
+narrower than the frontmatter scope above — `GOVERNANCE`, `SUPPORT`, `SKILL.md`, and issue/PR
+templates skip frontmatter but still get linted.
 
 The script finds a project `.markdownlint.json` (or `.jsonc`/`.yaml`/`.yml`) by walking up from
 the file and otherwise uses `config/markdownlint-default.json`. Run `npm install` once in this
