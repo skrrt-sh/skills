@@ -1,3 +1,4 @@
+<!-- skrrt:policy -->
 <!-- skrrt:strategy:trunk-based -->
 # Ship workflow — Trunk-Based Development
 
@@ -12,3 +13,19 @@
 - Releases: tag `main` with immutable annotated `vX.Y.Z` or `vX.Y.Z-rc.N` tags. High-cadence
   projects may release every merge without tagging lower environments.
 - Build once and promote the same artifact by content identity.
+<!-- /skrrt:policy -->
+
+## This repository
+
+The generic release rule above does not apply here. This repo ships two independently versioned
+plugins, so there is no single number a repo-wide `vX.Y.Z` tag could carry.
+
+- Release tags are bucket-scoped: exactly one `<bucket>--vX.Y.Z` tag per release —
+  `ship--v5.0.0`, `docs--v3.0.0`. Never create a repo-wide `vX.Y.Z` tag.
+- Create it with `claude plugin tag --push` pointed at the bucket directory. That tag is both the
+  plugin marker and the release of record.
+- Bump `version` in the bucket's `plugin.json` through a PR before tagging — it must be on the
+  tagged commit, and `main` takes no direct commits.
+- Run `git fetch origin --tags` before picking a version; a stale local tag list produces a number
+  that is already taken.
+- The root `plugin.json` version tracks the skills.sh bundle and is not tagged.

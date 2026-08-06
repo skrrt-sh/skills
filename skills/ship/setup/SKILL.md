@@ -20,7 +20,8 @@ repository.
    repository signals it names, then present GitHub Flow, Trunk-Based Development, and Gitflow with
    one evidence-based recommendation. The user makes the final choice. If they already named a
    strategy, treat that as their choice after reporting any material mismatch.
-4. If `.agents/ship.md` already exists, report its configured strategy before replacing it.
+4. If `.agents/ship.md` already exists, report its configured strategy before replacing it. Only
+   the `skrrt:policy` block is replaced; anything the repository added outside it is kept.
 5. From the target repository, run:
 
    ```text

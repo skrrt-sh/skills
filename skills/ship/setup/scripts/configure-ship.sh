@@ -63,8 +63,9 @@ mkdir -p "$(dirname "${instruction_file}")" .agents
 instruction_tmp="$(mktemp "${instruction_file}.tmp.XXXXXX")"
 normalized_tmp="$(mktemp "${instruction_file}.normalized.XXXXXX")"
 policy_tmp="$(mktemp '.agents/ship.md.tmp.XXXXXX')"
+policy_block_tmp="$(mktemp '.agents/ship.md.block.XXXXXX')"
 cleanup() {
-  rm -f "${instruction_tmp}" "${normalized_tmp}" "${policy_tmp}"
+  rm -f "${instruction_tmp}" "${normalized_tmp}" "${policy_tmp}" "${policy_block_tmp}"
 }
 trap cleanup EXIT
 
@@ -118,7 +119,42 @@ else
   awk '1' "${instruction_tmp}" > "${normalized_tmp}"
 fi
 
-awk '1' "${strategy_asset}" > "${policy_tmp}"
+policy_start='<!-- skrrt:policy -->'
+policy_end='<!-- /skrrt:policy -->'
+
+{
+  printf '%s\n' "${policy_start}"
+  awk '1' "${strategy_asset}"
+  printf '%s\n' "${policy_end}"
+} > "${policy_block_tmp}"
+
+policy_start_count=0
+policy_end_count=0
+
+if [[ -f .agents/ship.md ]]; then
+  policy_start_count="$(grep -cF "${policy_start}" .agents/ship.md || true)"
+  policy_end_count="$(grep -cF "${policy_end}" .agents/ship.md || true)"
+fi
+
+if [[ "${policy_start_count}" -gt 1 || "${policy_end_count}" -gt 1 ||
+  "${policy_start_count}" -ne "${policy_end_count}" ]]; then
+  printf 'STATUS=invalid-policy-markers FILE=.agents/ship.md\n' >&2
+  exit 1
+fi
+
+# Replace only the managed block, so repository-specific rules written outside it survive a
+# re-run. A policy file with no markers predates them and was generated whole, so it is
+# replaced whole.
+if [[ "${policy_start_count}" -eq 1 ]]; then
+  awk -v start="${policy_start}" -v finish="${policy_end}" '
+    FNR == NR { block = block $0 ORS; next }
+    $0 == start { printf "%s", block; replacing = 1; next }
+    replacing && $0 == finish { replacing = 0; next }
+    !replacing { print }
+  ' "${policy_block_tmp}" .agents/ship.md > "${policy_tmp}"
+else
+  awk '1' "${policy_block_tmp}" > "${policy_tmp}"
+fi
 
 instruction_status='unchanged'
 policy_status='unchanged'
