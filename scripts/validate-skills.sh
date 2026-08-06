@@ -9,11 +9,38 @@ fail() {
   exit 1
 }
 
+# Emit a manifest's declared skill paths, normalized and sorted, so they can be compared as a
+# set against what discovery found. Rejects paths that are absolute, escape the manifest
+# directory, or repeat — a duplicate entry would otherwise let the count check pass while a
+# real skill goes undeclared.
+manifest_skill_paths() {
+  local manifest="${1}" label="${2}" declared normalized
+
+  [[ "$(jq '.skills | length' "${manifest}")" -gt 0 ]] || fail "${label}: manifest declares no skills"
+  declared="$(jq -r '.skills[]' "${manifest}")"
+
+  while IFS= read -r entry; do
+    [[ -n "${entry}" ]] || fail "${label}: empty skill path"
+    [[ "${entry}" != /* ]] || fail "${label}: absolute skill path ${entry}"
+    case "/${entry}/" in
+      */../*) fail "${label}: skill path escapes the manifest directory: ${entry}" ;;
+    esac
+  done <<< "${declared}"
+
+  normalized="$(printf '%s\n' "${declared}" | sed 's|^\./||')"
+  [[ "$(printf '%s\n' "${normalized}" | wc -l)" -eq "$(printf '%s\n' "${normalized}" | sort -u | wc -l)" ]] ||
+    fail "${label}: duplicate skill paths"
+
+  printf '%s\n' "${normalized}" | sort
+}
+
 skill_count=0
+discovered_skills=()
 
 while IFS= read -r skill_md; do
   skill_count=$((skill_count + 1))
   skill_dir="$(dirname "${skill_md}")"
+  discovered_skills+=("${skill_dir}")
   folder_name="$(basename "${skill_dir}")"
 
   [[ "$(sed -n '1p' "${skill_md}")" == '---' ]] || fail "${skill_md}: missing frontmatter"
@@ -101,23 +128,21 @@ done < <(find skills -name SKILL.md -not -path '*/node_modules/*' | sort)
 
 [[ "${skill_count}" -gt 0 ]] || fail 'no skills found'
 
-root_manifest_count="$(jq '.skills | length' .claude-plugin/plugin.json)"
-[[ "${root_manifest_count}" -eq "${skill_count}" ]] ||
-  fail 'root plugin manifest skill count does not match discovered skills'
-while IFS= read -r declared_skill; do
-  [[ -f "${declared_skill#./}/SKILL.md" ]] || fail "root manifest points to missing skill ${declared_skill}"
-done < <(jq -r '.skills[]' .claude-plugin/plugin.json)
+discovered_root="$(printf '%s\n' "${discovered_skills[@]}" | sort)"
+declared_root="$(manifest_skill_paths .claude-plugin/plugin.json 'root plugin manifest')"
+[[ "${declared_root}" == "${discovered_root}" ]] || {
+  diff <(printf '%s\n' "${discovered_root}") <(printf '%s\n' "${declared_root}") >&2 || true
+  fail 'root plugin manifest does not declare exactly the discovered skills'
+}
 
 for bucket in skills/*; do
   [[ -d "${bucket}" && -f "${bucket}/.claude-plugin/plugin.json" ]] || continue
-  declared_count="$(jq '.skills | length' "${bucket}/.claude-plugin/plugin.json")"
-  discovered_count="$(find "${bucket}" -mindepth 2 -maxdepth 2 -name SKILL.md | wc -l | tr -d ' ')"
-  [[ "${declared_count}" -eq "${discovered_count}" ]] ||
-    fail "${bucket}: plugin manifest skill count does not match discovered skills"
-  while IFS= read -r declared_skill; do
-    [[ -f "${bucket}/${declared_skill#./}/SKILL.md" ]] ||
-      fail "${bucket}: manifest points to missing skill ${declared_skill}"
-  done < <(jq -r '.skills[]' "${bucket}/.claude-plugin/plugin.json")
+  discovered_bucket="$(printf '%s\n' "${discovered_skills[@]}" | sed -n "s|^${bucket}/||p" | sort)"
+  declared_bucket="$(manifest_skill_paths "${bucket}/.claude-plugin/plugin.json" "${bucket}")"
+  [[ "${declared_bucket}" == "${discovered_bucket}" ]] || {
+    diff <(printf '%s\n' "${discovered_bucket}") <(printf '%s\n' "${declared_bucket}") >&2 || true
+    fail "${bucket}: plugin manifest does not declare exactly the skills in this bucket"
+  }
 done
 
 if rg -n '<skill-root>|from this skill directory|^user-invocable:|^argument-hint:' skills -g 'SKILL.md'; then
