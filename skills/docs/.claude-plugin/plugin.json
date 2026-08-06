@@ -1,6 +1,6 @@
 {
   "name": "docs",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Documentation authoring — structured markdown with YAML frontmatter, Mermaid diagrams, and auto-fixed lint-clean output.",
   "author": {
     "name": "skrrt-sh",

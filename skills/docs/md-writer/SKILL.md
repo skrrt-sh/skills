@@ -1,113 +1,66 @@
 ---
 name: md-writer
-description: Write well-structured markdown documents with YAML frontmatter, Mermaid diagrams, and markdownlint compliance. Use when creating or editing .md files, writing documentation, guides, specs, or any markdown content.
-argument-hint: "[topic-or-filename]"
-user-invocable: true
+description: Write or edit knowledge-base Markdown with frontmatter, Mermaid diagrams, related-document links, and markdownlint validation. Use for guides, specs, ADRs, runbooks, and API documentation; not repository meta files such as README, CHANGELOG, CLAUDE.md, AGENTS.md, or SKILL.md.
+allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/validate-md.sh:*)
 ---
 
-# MD Writer Skill
+# Markdown Authoring
 
-Write knowledge-base markdown — guides, specs, ADRs, runbooks, API docs — with consistent
-metadata and lint-clean formatting.
+Write readable, lint-clean knowledge-base documents. Match an established local convention before
+applying this skill's defaults.
 
-## Scope
+## Document shape
 
-Frontmatter, cross-referencing, and linting apply to knowledge-base documents only. Skip all
-three for files with established conventions: `README`, `CHANGELOG`, `CONTRIBUTING`,
-`CODE_OF_CONDUCT`, `SECURITY`, `LICENSE`, `GOVERNANCE`, `SUPPORT`, `CLAUDE.md`, `AGENTS.md`,
-`SKILL.md`, and issue/PR templates — including their `.github/` copies. Adding frontmatter to
-those breaks the conventions readers and tools expect.
-
-## Frontmatter
+Use this frontmatter for new documents, omitting fields whose values are unknown:
 
 ```yaml
 ---
-title: "Document Title"
-description: "Brief description of the document purpose"
-author: "Author name or team"
+title: "Document title"
+description: "One-sentence purpose"
 created: "YYYY-MM-DD"
 updated: "YYYY-MM-DD"
-version: "1.0.0"
-status: "draft | review | published"
+status: "draft"
 ---
 ```
 
-New documents start at `version: "1.0.0"`, `status: "draft"`, with today's date in both date
-fields. Add these when relevant: `tags`, `category` (architecture, guide, api, runbook, adr,
-spec), `aliases` for names people might search for, `related` (relative paths), `refs`
-(external URLs that informed the doc), `audience`.
+Add `author`, `version`, `tags`, `category`, `aliases`, `related`, `refs`, or `audience` only when
+the user, repository, or document supplies a real value. Never invent metadata. For new documents,
+use today's date and `version: "1.0.0"` only when the repository versions individual documents.
 
-The H1 must match the frontmatter `title`, and a one-line `>` summary follows it. Add a table
-of contents once the document has 3+ sections.
+Make the H1 match `title`. Follow it with a one-line blockquote summary. Add a table of contents
+when it materially improves navigation, typically at five or more H2 sections.
 
 ## Diagrams
 
-Every diagram is Mermaid in a ```mermaid fence — never ASCII art. Any valid diagram type is
-fair game (`flowchart`, `sequenceDiagram`, `stateDiagram-v2`, `erDiagram`, `gantt`, `mindmap`,
-`architecture-beta`, …). For line breaks use `<br/>` — it works in flowchart labels, sequence
-messages, notes, and actor aliases. A real newline breaks a line only inside a Mermaid Markdown
-String (a backtick-quoted label in a flowchart or mindmap). Never write a literal `\n` and
-expect it to render.
-
-Both working forms:
+Use Mermaid instead of ASCII art. Choose the diagram type that fits the relationship. Use `<br/>`
+for line breaks in labels; a literal `\n` does not render as a break.
 
 ```mermaid
 flowchart TD
-    A["HTML break<br/>second line"]
-    B["`Markdown String
-second line`"]
+    A["First line<br/>second line"] --> B["Result"]
 ```
 
 ## Formatting
 
-- **120 character lines max**, prose only — code blocks and tables are exempt.
-- **No inline HTML.**
-- Tables use single-space padding and minimal dashes — never pad columns to equal width.
-- Filenames are lowercase with hyphens: `integration-guide.md`.
+- Wrap prose at 120 characters; exempt code blocks and tables.
+- Avoid inline HTML outside Mermaid content.
+- Use compact tables with single-space cell padding.
+- Name files with lowercase hyphenated words.
+- Give every fenced code block a language.
 
-Validate as the final step after writing or editing any file:
+## Related documents
 
-```bash
-bash "${CLAUDE_SKILL_DIR}/scripts/validate-md.sh" <path/to/file.md>
-```
+For a document in an existing knowledge base, search nearby Markdown files and titles for genuine
+topic, dependency, or parent/child overlap. Add deduplicated relative paths to this document's
+`related` field. Edit existing documents to add backlinks only when the user asked for
+bidirectional links; update only their `related` and `updated` fields.
 
-The script **rewrites the file in place** to fix the mechanical rules — trailing whitespace,
-blank-line runs, heading and fence spacing, list markers, bare URLs, table pipe padding, missing
-final newline. Never hand-edit those; run the script and let it do them. When it prints
-`auto-fixed formatting in place`, your in-memory copy of the file is stale — re-read before
-making any further edit.
+## Validate
 
-Exit `2` prints what it could not fix, which in practice is almost always `MD013` line length.
-The rest of that class: `MD040` fence language, `MD033` inline HTML, `MD024`/`MD025` headings,
-and the link/anchor/alt-text rules. Fix those by hand and re-run until it passes; reported line
-numbers already reflect the auto-fixed file.
+From the target repository, run
+`${CLAUDE_SKILL_DIR}/scripts/validate-md.sh <file.md>` on every changed in-scope Markdown
+file. It may rewrite mechanical formatting; re-read a changed file before editing it again. Fix
+reported judgment-based violations and repeat until clean.
 
-Exit `0` means clean **or skipped**, so treat it as "nothing to fix" rather than proof the file
-was linted: the script skips anything under `.claude/` and the unambiguous meta files (`README`,
-`CLAUDE`, `AGENTS`, `CONTRIBUTING`, `CHANGELOG`, `CODE_OF_CONDUCT`, `SECURITY`, license files),
-and also exits `0` when neither a local `markdownlint-cli2` nor `npx` is available. The skip check
-runs before the fix pass, so a skipped file is never rewritten. Its skip list is deliberately
-narrower than the frontmatter scope above — `GOVERNANCE`, `SUPPORT`, `SKILL.md`, and issue/PR
-templates skip frontmatter but still get linted.
-
-The script finds a project `.markdownlint.json` (or `.jsonc`/`.yaml`/`.yml`) by walking up from
-the file and otherwise uses `config/markdownlint-default.json`. Run `npm install` once in this
-skill directory for the local binary; otherwise it falls back to `npx`.
-
-## Cross-Referencing
-
-Only for documents with frontmatter, and only before writing the body — once the title, tags,
-and category are settled:
-
-1. **Search** — one Grep over `**/*.md` for 2-3 key terms, plus the file's own directory.
-2. **Read only the matches' frontmatter** and confirm real overlap — shared topic, dependency,
-   or parent/child. Most files will not qualify.
-3. **Link both ways** — append relative paths to `related` in this file and each match, and
-   bump their `updated`. Touch nothing else in those files.
-
-Never duplicate or remove existing `related` entries. Add the field if missing. Out-of-scope
-files are never cross-reference targets.
-
-## Task
-
-Write the markdown document for: $ARGUMENTS
+Read [references/validation.md](references/validation.md) only when validation is skipped, cannot
+start, or reports a violation.

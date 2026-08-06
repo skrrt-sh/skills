@@ -3,7 +3,8 @@ set -euo pipefail
 
 # Auto-fix and validate a markdown file with markdownlint.
 # Usage: validate-md.sh <file.md>
-# Exit: 0 = clean or skipped, 1 = bad invocation or linter failure, 2 = violations.
+# Exit: 0 = clean or skipped, 1 = bad invocation or linter failure,
+# 2 = violations, 3 = linter unavailable.
 
 file_path="${1:-}"
 
@@ -97,7 +98,8 @@ elif command -v npx >/dev/null 2>&1; then
   result="$(cd "${plugin_dir}" && npx --yes "markdownlint-cli2@${markdownlint_version}" --fix --config "${config}" "${file_path}" 2>&1)"
   lint_exit=$?
 else
-  exit 0
+  printf 'markdownlint unavailable: install dependencies in %s or provide npx\n' "${plugin_dir}" >&2
+  exit 3
 fi
 set -e
 
