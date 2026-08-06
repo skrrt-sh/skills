@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The job runs repository scripts and npm install hooks; do not leave the
+          # workflow token readable in local Git config.
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
