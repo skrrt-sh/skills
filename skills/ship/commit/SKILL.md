@@ -1,15 +1,13 @@
 ---
 name: commit
-description: Creates focused conventional commits with mandatory gitmojis. Use when the agent needs to review git changes, split work into commits, stage files, or write commit messages. Always use this skill when the user asks to commit, make a commit, write a commit message, split changes into commits, stage and commit files, or anything involving git commit workflows. Trigger for phrases like "commit this", "write a commit", "split into commits", "conventional commit", "gitmoji commit", "stage and commit", "commit the changes", or "help me commit".
-argument-hint: "[what-to-commit]"
-user-invocable: true
+description: Create focused conventional commits with a mandatory gitmoji. Use when the user asks to commit, write a commit message, or split changes into commits.
 ---
 
-# Git Commit Skill
+# Commit Changes
 
-Split changes into focused conventional commits with a mandatory gitmoji.
+Create the smallest coherent commits that explain what changed and why.
 
-## Commit Format
+## Format
 
 ```text
 type(scope): :gitmoji: imperative subject
@@ -19,63 +17,37 @@ body explaining what changed and why
 footer
 ```
 
-- Gitmoji is mandatory, in code form (`:sparkles:`), placed immediately after `type(scope):`.
-  Never before the type, never at the end of the subject. Use the standard
-  [gitmoji](https://gitmoji.dev) catalog and conventional-commit types.
-- Scope is optional; drop it rather than inventing one.
-- The body is required for every commit this skill writes.
-- Footer: `BREAKING CHANGE:` for breaking changes. Add `Closes #N` / `Refs #N` only when the
-  user names an issue — never invent one.
-- Always end with `Co-Authored-By: Skrrt Bot <bot@skrrt.sh>` unless the user says otherwise.
+- Use a standard conventional-commit type and [gitmoji](https://gitmoji.dev) code.
+- Put the gitmoji immediately after `type(scope):`; omit an uncertain scope.
+- Include a body for every commit.
+- Add `BREAKING CHANGE:` only for a real breaking change.
+- Add issue footers only for issues the user or repository identifies.
+- End with `Co-Authored-By: Skrrt Bot <bot@skrrt.sh>` unless the user opts out.
 
-## Workflow
+## Process
 
-1. Run the branch guard below.
-2. Inspect the worktree (`git status --short`, `git diff`).
-3. Group the diff into the smallest coherent change sets — never mix unrelated intents.
-4. Stage only the intended files or hunks, then commit with `git commit --file <file>`.
-
-If type and gitmoji pull in different directions, the split is wrong — fix the split, not the
-message.
-
-## Branch Guard
-
-Before staging anything, run `git branch --show-current` and read the `<!-- skrrt:branching -->`
-block from `CLAUDE.md`, `AGENTS.md`, `.claude/CLAUDE.md`, or `.github/AGENTS.md` (first match).
-No block found → tell the user to run `/setup` and stop.
-
-Never commit to a protected branch (`main`, `master`, and `develop` under Gitflow, where only
-release preparation is allowed). If the branch is wrong, fix it before staging — branching from
-the base the strategy dictates, which is `main` under GitHub Flow and Trunk-Based but `develop`
-for Gitflow feature work (Gitflow hotfixes branch from `main`):
-
-```bash
-git fetch origin
-git switch <base> && git pull --ff-only origin <base>
-git switch -c <type>/<description>
-```
-
-Never stage on the wrong branch planning to move the work later.
-
-## PR Follow-Up
-
-If the change fixes recent work, check the precedent PR's state *before* staging —
-`gh pr view <n> --json state,headRefName,baseRefName` (or `glab mr view <n>`). If the user did
-not name it, match `gh pr list --state all --limit 10` candidates by keyword, changed files,
-then recency; ask when two are plausible.
-
-- **Open** — switch to its source branch, `git pull --ff-only`, commit there.
-- **Merged** — the branch is gone. Switch to its base branch, `git fetch origin --prune`,
-  `git pull --ff-only`, then branch fresh. Never reuse a merged branch.
-- **Closed unmerged** — ask the user before choosing.
+1. Read `.agents/ship.md` at the repository root. If missing, stop and ask the user to run
+   `/setup`.
+2. Inspect `git status --short`, staged and unstaged diffs, and the current branch. Do not include
+   unrelated files without approval.
+3. Protect work on a forbidden branch before staging: create a correctly named work branch from
+   the current `HEAD` with `git switch -c <type>/<description>`. Do not pull, switch bases, or stash
+   first; the new branch must retain the current worktree exactly.
+4. If this is a fix to a recent PR or MR, read
+   [references/follow-up.md](references/follow-up.md) before staging.
+5. Group the diff by intent. If a type and gitmoji disagree, split the change instead of forcing a
+   message.
+6. Stage only the intended files or hunks. Review `git diff --cached` before each commit.
+7. Write the message to a `mktemp` file outside the repository, commit with
+   `git commit --file <file>`, then remove it. A fixed path is unsafe: a second agent, or your own
+   next commit, can overwrite the message between writing it and committing, which silently ships a
+   message describing the wrong diff.
+8. Verify the resulting commit and report its hash, subject, included files, and known test status.
 
 ## Guardrails
 
-- Never commit unrelated files; ask before including anything that looks out of scope.
-- Never invent testing results.
-- Never amend, rewrite history, or force-push unless explicitly asked.
-- Rebase commands are allowed only under GitHub Flow and Trunk-Based, never under Gitflow.
-
-## Task
-
-Handle this request: $ARGUMENTS
+- Commit only when the user asked for a commit; loading this skill is not that request.
+- Follow the protected branches and work base in `.agents/ship.md`.
+- Preserve unrelated and untracked work.
+- Never invent test results, amend, rewrite history, or force-push unless explicitly requested.
+- Never commit secrets or likely credential files; stop and warn the user.
