@@ -42,13 +42,16 @@ fi
 
 # Repository-specific rules live outside the managed block and must outlive a strategy change,
 # so a repo whose release contract differs from the template can state it once.
-printf '\n## This repository\n\nRelease with bucket tags only.\n' >> .agents/ship.md
+# The rule names the outgoing strategy on purpose: a preserved repository rule may legitimately
+# mention any strategy, so the stale-strategy check below has to read the managed block alone.
+printf '\n## This repository\n\nRelease with bucket tags only, including under trunk-based.\n' >> .agents/ship.md
 "${setup_script}" --instruction-file CLAUDE.md --strategy github-flow >/dev/null
-grep -Fq 'Release with bucket tags only.' .agents/ship.md ||
+grep -Fq 'Release with bucket tags only, including under trunk-based.' .agents/ship.md ||
   { printf 'repository-specific policy was clobbered\n' >&2; exit 1; }
 grep -Fq '<!-- skrrt:strategy:github-flow -->' .agents/ship.md
 [[ "$(grep -cF '<!-- skrrt:policy -->' .agents/ship.md)" -eq 1 ]]
-if grep -Fq 'trunk-based' .agents/ship.md; then
+managed_policy="$(sed -n '/<!-- skrrt:policy -->/,/<!-- \/skrrt:policy -->/p' .agents/ship.md)"
+if grep -Fq 'trunk-based' <<<"${managed_policy}"; then
   printf 'stale strategy remained inside the managed block\n' >&2
   exit 1
 fi
