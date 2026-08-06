@@ -40,6 +40,7 @@
       "assertions": [
         "The existing open request is found and updated",
         "Its source and target branches are preserved",
+        "No rebase and no push is performed for the metadata-only change",
         "No duplicate request is created"
       ]
     },
