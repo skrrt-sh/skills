@@ -103,13 +103,11 @@ Working on the skills themselves? Symlink every one of them into `~/.claude/skil
 In your agent, run it once per repo — `/ship:setup` on a plugin install, `/setup` on a
 skills.sh install (see the note on skill names below). It will:
 
-- Detect your agent instruction file (`CLAUDE.md`, `AGENTS.md`, `.claude/CLAUDE.md`, or
-  `.github/AGENTS.md`) and add the ship workflow block
+- Add a short, marker-delimited pointer to your existing `CLAUDE.md` or `AGENTS.md`
 - Analyze the repo — CI, feature flags, contributor count, deploy cadence, existing branches —
   and recommend a **branching strategy** (GitHub Flow, Trunk-Based Development, or Gitflow),
   with all three presented so you make the final call
-- Write the chosen strategy's rules so the commit, pr, and release skills respect the right
-  target branches, merge rules, and tagging conventions
+- Write only the chosen strategy to `.agents/ship.md`, loaded by the ship skills when needed
 
 ### 3. Bam — you're ready to go
 
@@ -127,16 +125,20 @@ uses the bare names for brevity.
 
 ## Skills
 
-Skills are grouped into buckets under [`skills/`](skills/). Every one is user-invocable by name;
-the model also reaches for them on its own when the task fits.
+Skills are grouped into buckets under [`skills/`](skills/). Every one is user-invocable by name, and
+all but `setup` also activate on their own when the task fits — that is the point: a hidden skill
+just means the agent runs raw `git commit` instead. Side effects are gated where they happen, by the
+permission rules in [`templates/claude-settings.json`](templates/claude-settings.json), which put
+`git commit`, `git push`, and the forge create commands behind an approval prompt. `setup` is a
+run-once configurator, so it stays explicit-only.
 
 ### ship
 
 Git shipping workflow — conventional commits, pull/merge requests, and releases with the matching
 forge CLI. Bucket index: [`skills/ship/`](skills/ship/README.md).
 
-- **[setup](skills/ship/setup/SKILL.md)** — Wire the ship skills into `CLAUDE.md`/`AGENTS.md` and
-  pick a branching strategy. Run once per repo, before the rest.
+- **[setup](skills/ship/setup/SKILL.md)** — Add the ship policy pointer and pick a branching
+  strategy. Run once per repo, before the rest.
 - **[commit](skills/ship/commit/SKILL.md)** — Split the worktree into focused conventional commits
   with a mandatory gitmoji, guarding against commits on a protected branch.
 - **[pr](skills/ship/pr/SKILL.md)** — Push the branch and open a GitHub PR or GitLab MR with the
@@ -156,21 +158,24 @@ and destructive commands such as `git reset --hard` denied.
 Documentation authoring tools. Bucket index: [`skills/docs/`](skills/docs/README.md).
 
 - **[md-writer](skills/docs/md-writer/SKILL.md)** — Knowledge-base markdown with YAML frontmatter,
-  Mermaid diagrams, bidirectional cross-links, and a lint-clean finish.
+  Mermaid diagrams, related-document links, and a lint-clean finish.
 
 ```text
 /md-writer API integration guide for the payments service
 ```
 
-Or just ask for markdown — the skill activates on its own. As its final step it runs the bundled
-validator (`skills/docs/md-writer/scripts/validate-md.sh`), which walks up from the file for a
+Or ask for a guide, spec, ADR, runbook, or API document — the skill activates on its own. Repository
+meta files such as README, CHANGELOG, CLAUDE.md, AGENTS.md, and SKILL.md are deliberately excluded.
+As its final step it runs the bundled validator (`skills/docs/md-writer/scripts/validate-md.sh`),
+which walks up from the file for a
 project-level `.markdownlint.json` (`.jsonc`/`.yaml`/`.yml` also work) and falls back to the
-skill's bundled default. Run `npm install` once inside the skill directory for a local
-`markdownlint-cli2`, or it falls back to `npx`. The validator auto-fixes the mechanical rules in
-place (whitespace, spacing, list markers, final newline) and reports back only what needs judgment
+skill's bundled default. It prefers a pinned local `markdownlint-cli2`, then the exact pinned
+version through `npx`. The validator auto-fixes mechanical rules in place and reports only what
+needs judgment
 — line length, fence languages, headings, links — so the agent spends tokens on those alone. It
 lints documentation and knowledge-base content only — well-known repo files (`README`, `CLAUDE`,
-`CONTRIBUTING`, …) and `.claude/` files are skipped and never rewritten.
+`CONTRIBUTING`, …) and `.claude/` files are skipped and never rewritten. Missing tooling is an
+explicit failure, never a false validation pass.
 
 ## Requirements
 
@@ -184,50 +189,28 @@ lints documentation and knowledge-base content only — well-known repo files (`
 
 ```text
 .
-├── .claude-plugin/
-│   ├── marketplace.json           # Marketplace entry: one plugin per bucket
-│   └── plugin.json                # skills.sh aggregate: every skill in one bundle
+├── .claude-plugin/                # Marketplace and aggregate manifests
+├── .github/workflows/validate.yml # Public CI validation
+├── .agents/ship.md                # This repo's selected ship policy
 ├── scripts/
-│   ├── link-skills.sh             # Symlink every skill into ~/.claude/skills
-│   └── list-skills.sh             # List all SKILL.md files
+│   ├── list-skills.sh             # List every discovered skill
+│   ├── link-skills.sh             # Local development links
+│   ├── validate-skills.sh         # Structure, links, budgets, and eval schemas
+│   ├── test-*.sh                  # Setup, forge detector, validator, installed paths
+│   └── test-skills.sh             # Complete deterministic test suite
 ├── skills/
-│   ├── ship/                      # Git shipping workflow bucket — the `ship` plugin
-│   │   ├── .claude-plugin/plugin.json
-│   │   ├── README.md
-│   │   ├── commit/
-│   │   │   ├── SKILL.md
-│   │   │   └── evals/{trigger-evals.json, commit-basic.json}
-│   │   ├── pr/
-│   │   │   ├── SKILL.md
-│   │   │   ├── scripts/detect-forge-cli.sh
-│   │   │   └── evals/{trigger-evals.json, pr-github.json}
-│   │   ├── release/
-│   │   │   ├── SKILL.md
-│   │   │   ├── scripts/detect-forge-cli.sh
-│   │   │   └── evals/{trigger-evals.json, release-changelog.json}
-│   │   ├── setup/
-│   │   │   ├── SKILL.md
-│   │   │   ├── reference/branching-strategies.md
-│   │   │   └── evals/trigger-evals.json
-│   │   └── evals/evals.json       # Bucket-spanning ship suite
-│   └── docs/                      # Documentation bucket — the `docs` plugin
-│       ├── .claude-plugin/plugin.json
-│       ├── README.md
-│       └── md-writer/
-│           ├── SKILL.md
-│           ├── scripts/validate-md.sh
-│           ├── config/markdownlint-default.json
-│           ├── package.json
-│           ├── package-lock.json
-│           └── evals/evals.json
-├── templates/
-│   └── claude-settings.json       # Recommended Claude Code permissions
-├── README.md
-├── CLAUDE.md
-├── LICENSE
-├── skills-lock.json
-└── .gitignore
+│   ├── ship/                      # setup, commit, pr, release
+│   └── docs/md-writer/
+└── templates/claude-settings.json # Recommended Claude permissions
 ```
+
+Within a skill: `SKILL.md`, `references/`, `scripts/`, `assets/`, `config/`, `agents/openai.yaml`,
+`evals/`.
+
+Each skill keeps only its core workflow in `SKILL.md`. Conditional knowledge lives one level deep
+under `references/`; deterministic operations live under `scripts/`; output templates live under
+`assets/`; behavior eval manifests live under `evals/`; Codex UI policy lives in
+`agents/openai.yaml`.
 
 ## Contributing
 
@@ -244,8 +227,36 @@ This restores `.agents/` with the skill-creator used for eval workflows.
 
 ### Running Evals
 
-Each skill keeps its eval fixtures co-located under its own `evals/` directory; the bucket-spanning
-ship suite lives at `skills/ship/evals/evals.json`. Use the skill-creator to test changes:
+Each skill keeps at least three Agent Skills-compatible behavior cases under `evals/evals.json`.
+These manifests define prompts, expected outputs, and gradeable assertions; they are not test
+results. Every model-invocable skill also carries at least 20 balanced trigger queries in
+`evals/trigger-evals.json`, half of which must be requests it should decline — usually a
+neighbouring skill's territory. `setup` is exempt because it is explicit-only. The ship bucket
+additionally has a repository-specific integration scenario suite.
+
+Run deterministic schema, script, path-resolution, and lint checks locally exactly as CI does:
+
+```bash
+npm ci --prefix skills/docs/md-writer
+./scripts/test-skills.sh
+```
+
+The behavior prompts describe repository states rather than shipping files, so build the fixtures
+first and grade against real repository state afterwards:
+
+```bash
+./scripts/build-eval-fixtures.sh /tmp/skrrt-eval-fixtures   # one git repo per scenario
+python3 scripts/grade-eval-runs.py <workspace>/iteration-N  # writes grading.json per run
+```
+
+`grade-eval-runs.py` decides the objective assertions and leaves process assertions (\"the staged
+diff was reviewed\") as `passed: null` for a human or grading agent. Snapshot a baseline skill with
+`rsync -a`, never `cp -r` — plain `cp -r` breaks the `node_modules/.bin` symlinks and the baseline
+then fails on tooling rather than on behavior.
+
+Use the skill-creator to run each behavior case in a fresh context both with the skill and against a
+baseline, then save outputs, grading evidence, timing, and the aggregate benchmark in the gitignored
+workspace:
 
 ```text
 /skill-creator audit our skills, run evals
@@ -256,7 +267,8 @@ artifacts from running evals, not committed.
 
 ### Adding a Skill
 
-1. Create `skills/<bucket>/<name>/SKILL.md` (plus any `reference/`, `scripts/`, `evals/`).
+1. Create `skills/<bucket>/<name>/SKILL.md` and only the needed `references/`, `scripts/`,
+   `assets/`, and `evals/` resources. Generate `agents/openai.yaml`.
 2. Add `"./<name>"` to the `skills` array in `skills/<bucket>/.claude-plugin/plugin.json` — the
    bucket's own plugin manifest, and where Claude Code reads it from.
 3. Add `"./skills/<bucket>/<name>"` to the `skills` array in the root `.claude-plugin/plugin.json`,
@@ -272,7 +284,8 @@ and releases on its own cadence.
 ### Project Layout for Dev Files
 
 ```text
-.agents/                  # Installed dev skills (gitignored, restored from lockfile)
+.agents/skills/           # Installed dev skills (gitignored, restored from lockfile)
+.agents/ship.md           # This repo's ship policy (committed)
 skills-lock.json          # Lockfile for dev skills (committed)
 md-writer-workspace/      # md-writer eval artifacts (gitignored)
 ship-workspace/           # ship eval artifacts (gitignored)
