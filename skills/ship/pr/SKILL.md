@@ -1,45 +1,42 @@
 ---
 name: pr
-description: Creates or updates GitHub pull requests and GitLab merge requests with the matching CLI. Use when the agent needs to push a branch, open a review request, or write PR or MR text. Always use this skill when the user asks to open a PR, create a pull request, push and open a PR, create a merge request, update PR text, write a PR description, or anything involving pull requests or merge requests. Trigger for phrases like "open a PR", "create a pull request", "push and open a PR", "merge request", "MR on gitlab", "update the PR", or "write PR description".
-argument-hint: "[pr-or-mr-goal]"
-user-invocable: true
+description: Push a branch and open or update its GitHub pull request or GitLab merge request. Use when the user asks to open a PR, or to create or update a merge request.
+allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/detect-forge-cli.sh:*)
 ---
 
-# Git PR Skill
+# Open a Review Request
 
-Push a branch and open or update a review request with the forge's own CLI — `gh` for GitHub,
-`glab` for GitLab. Never cross them.
+Use the forge that owns the remote: `gh` for GitHub, `glab` for GitLab.
 
-## Workflow
+## Process
 
-1. **Branch guard** — run `git branch --show-current` and read the `<!-- skrrt:branching -->`
-   block from `CLAUDE.md`, `AGENTS.md`, `.claude/CLAUDE.md`, or `.github/AGENTS.md` (first
-   match). No block found → tell the user to run `/setup` and stop. Never push a PR from a
-   protected branch; if the branch is wrong, branch off the base the strategy dictates —
-   `main` under GitHub Flow and Trunk-Based, `develop` for Gitflow feature work — after
-   `git fetch origin` and a fast-forward pull of that base.
-2. **Detect the forge:**
-
-   ```bash
-   bash "${CLAUDE_SKILL_DIR}/scripts/detect-forge-cli.sh"
-   ```
-
-   It prints `REMOTE_HOST`, `FORGE`, `MATCHED_CLI`, and `STATUS`. Continue only on `STATUS=ok`;
-   otherwise stop and report exactly what is missing.
-3. **Check for a precedent PR** if this is a follow-up (see below).
-4. Push with `git push -u origin HEAD`, summarize the diff, then create or update the review
-   request non-interactively with `--base` / `--target-branch` set to the strategy's target.
-
-Target branch by strategy: **GitHub Flow / Trunk-Based** — always `main`, rebasing onto it
-first (`git pull --rebase origin main`) and squash merging. **Gitflow** — feature branches
-target `develop`, never `main` (warn
-if the user asks otherwise); `release/*` and `hotfix/*` target `main`, and after they merge
-remind the user to open the sync-back PR to `develop` (or the active `release/*`). Never
-rebase under Gitflow.
+1. Read `.agents/ship.md` at the repository root. If missing, stop and ask the user to run
+   `/setup`. Derive the protected branches and target branch from this file.
+2. Confirm the current branch is not protected.
+3. From the target repository, run
+   `${CLAUDE_SKILL_DIR}/scripts/detect-forge-cli.sh`. Continue only when it prints
+   `STATUS=ok`; otherwise report its status and stop.
+4. Look up any open request for the current branch. If one exists and the user asked only to
+   revise its title or body, go straight to step 8 — a metadata-only edit must not fetch, rebase,
+   or push, and it keeps the request's existing source and target branches.
+5. Confirm the worktree has no uncommitted changes that should be part of the review, then fetch
+   the target branch. Under GitHub Flow or Trunk-Based Development:
+   - If `origin/<current-branch>` does not exist, rebase onto `origin/main` when needed.
+   - If the published branch needs a history rewrite, stop and ask before rebasing and pushing with
+     `--force-with-lease`.
+   Under Gitflow, never rebase. Feature branches target `develop`; `release/*` and `hotfix/*`
+   target `main`.
+6. If this work follows a recent PR or MR, read
+   [references/follow-up.md](references/follow-up.md). If it spans repositories or independently
+   deployed applications, also read [references/correlated-prs.md](references/correlated-prs.md).
+7. Confirm the outgoing commit range contains only intended commits. Push with
+   `git push -u origin HEAD` unless step 5 received explicit rewrite approval.
+8. Create or update the review request non-interactively with an explicit target branch.
+9. Read the request back from the forge and report its URL, source, target, and test status.
 
 ## Body
 
-Use a review-friendly title naming the dominant change, not a copied commit subject.
+Use a review-focused title and this compact structure:
 
 ```markdown
 ## Summary
@@ -48,55 +45,19 @@ Use a review-friendly title naming the dominant change, not a copied commit subj
 ## Test plan
 - [ ] ...
 
-## Related PRs
-- **depends on** owner/repo#N — short description
-
 ## Notes
 - ...
 ```
 
-Omit `## Related PRs` when the PR is standalone. Report tests honestly — say none were run
-rather than inventing results. End the body with
-`Co-Authored-By: Skrrt Bot <bot@skrrt.sh>` unless the user says otherwise. Pass long bodies
-via `--body-file <file>` (GitHub) or `--description` (GitLab).
-
-## Correlated PRs
-
-When one change spans several repos or independently deployable apps, every PR in the set lists
-its siblings under `## Related PRs`, using `owner/repo#N` for GitHub and `group/project!N` for
-GitLab:
-
-- `depends on` — the linked PR must merge first.
-- `required by` — the linked PR needs this one first.
-- `related to` — no strict order. This is the default; never invent an order.
-
-Keep references bidirectional: when a sibling is opened, update the open ones with
-`gh pr edit <n> --repo <owner/repo> --body-file <file>` or
-`glab mr update <n> --repo <group/project> --description "$(cat <file>)"` — `glab` has no
-`--body-file`. Strike through entries as they merge.
-
-## PR Follow-Up
-
-If the user reports a problem inside a recent PR's scope, check that PR's state *before*
-pushing — `gh pr view <n> --json state,headRefName,baseRefName` (or `glab mr view <n>`). If
-they did not name it, match `gh pr list --state all --limit 10` candidates by keyword, changed
-files, then recency; ask when two are plausible.
-
-- **Open** — push to its source branch; the PR updates itself. Do not open a new one.
-- **Merged** — the branch is gone. Switch to its base branch, `git fetch origin --prune`,
-  `git pull --ff-only`, branch fresh, then open a new PR.
-- **Closed unmerged** — ask the user before choosing.
-
-Before pushing, confirm `git log origin/<branch>..HEAD` holds only the intended commits.
+Omit empty optional sections. Report unrun tests honestly. End with
+`Co-Authored-By: Skrrt Bot <bot@skrrt.sh>` unless the user opts out. Use a temporary body file for
+multi-line content.
 
 ## Guardrails
 
-- Never invent testing results.
-- Never assume `origin` matches the installed CLI — trust the detector.
-- Never use an interactive flow when a non-interactive command exists.
-- Never force-push.
-- Stop on `unknown-remote`, `no-remote`, or `no-compatible-cli`.
-
-## Task
-
-Handle this request: $ARGUMENTS
+- Push and open a request only when the user asked for one; loading this skill is not that request.
+- Trust the detector, not an assumed `origin` host.
+- Never use plain `--force`; only `--force-with-lease` after explicit approval.
+- Never open a duplicate request when the current branch already has one.
+- Never move a branch to change only a request's text; update the request in place.
+- Never merge the request unless the user separately asks.

@@ -1,0 +1,26 @@
+name: Validate skills
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The job runs repository scripts and npm install hooks; do not leave the
+          # workflow token readable in local Git config.
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: skills/docs/md-writer/package-lock.json
+      - run: npm ci --prefix skills/docs/md-writer
+      - run: ./scripts/test-skills.sh

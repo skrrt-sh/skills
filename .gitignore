@@ -1,5 +1,7 @@
 node_modules/
+.DS_Store
 .claude/
-.agents/
+.agents/*
+!.agents/ship.md
 md-writer-workspace/
 ship-workspace/

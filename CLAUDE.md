@@ -1,36 +1,13 @@
 <!-- skrrt:ship -->
-## Git workflow — skrrt skills
+## Git workflow
 
-Use `/commit` for commits, `/pr` for pull and merge requests, and `/release` for releases —
-prefixed `/ship:` when installed as a Claude Code plugin. Do not hand-write
-`git commit`, `gh pr create`, `gh release create`, `glab mr create`, or `glab release create`.
+Use the Skrrt ship skills for git work: `commit` for commits, `pr` for pull and merge requests,
+`release` for releases. Never hand-write `git commit`, `gh pr create`, `gh release create`,
+`glab mr create`, or `glab release create` instead. Reconfiguring the workflow is `/setup`, which
+only the user can run.
 
-Tags are annotated and immutable: `vX.Y.Z` production, `vX.Y.Z-rc.N` staging,
-`vX.Y.Z-<env>.N` other tiers. A bad release means a new patch version, never a moved tag.
-Build once and promote the same artifact — never rebuild from a tag. Dev needs no tag.
+Read `.agents/ship.md` before changing any git workflow state.
 <!-- /skrrt:ship -->
-
-<!-- skrrt:branching -->
-## Branching strategy — Trunk-Based Development
-
-- `main` is the only long-lived branch. Agents always work on short-lived
-  `<type>/<description>` branches with PRs — never commit to `main` directly.
-- Branches last under 2 days, ideally under 1, with one owner each. If a branch needs syncing
-  it has lived too long.
-- CI runs on every commit to `main`; a broken build is the top priority. Feature flags hide
-  incomplete work — deploy is not release. No code freezes, no integration phases.
-- Just-in-time `release/*` branches may be cut from `main`; fixes land on `main` first, then
-  cherry-pick. No `develop` or `hotfix/*` branches.
-- **Skrrt convention:** rebase onto `main` before opening a PR (`git pull --rebase origin main`);
-  abort and ask for help if it will not resolve cleanly. Squash merge, so one PR is one commit.
-  Trunk-Based itself leaves merge strategy to preference — these are house rules, kept identical
-  to GitHub Flow's. They earn their keep here because `main` moves fastest under TBD, so a branch
-  goes stale quickest, and continuous deployment makes a one-commit revert the fastest way out of
-  a bad deploy.
-- **Skrrt convention:** at most 3 active branches at a time.
-- **Skrrt convention:** tag on `main` only. At high cadence tags are optional and every merge
-  can ship; at weekly/monthly cadence use `vX.Y.Z-rc.N` for staging and `vX.Y.Z` for production.
-<!-- /skrrt:branching -->
 
 ## Repository structure
 
@@ -44,9 +21,24 @@ it ignores manifest skill arrays) and installs bare names — `/commit`, `/md-wr
 - `skills/docs/` — documentation tools: `md-writer`.
 
 Each skill lives at `skills/<bucket>/<name>/SKILL.md` with its supporting files co-located
-(`reference/`, `scripts/`, `config/`, `evals/`). There are no per-skill manifests and no
-plugin-level hooks — a skill that needs a script bundles it under its own `scripts/` and
-invokes it from `SKILL.md`.
+(`references/`, `scripts/`, `assets/`, `agents/`, `config/`, `evals/`). There are no per-skill
+manifests and no plugin-level hooks — a skill that needs a script bundles it under its own
+`scripts/` and invokes it from `SKILL.md`.
+
+Every skill must also carry `agents/openai.yaml` (Codex interface and invocation policy) and
+`evals/evals.json` (at least three behavior cases); every model-invocable skill additionally
+needs `evals/trigger-evals.json` (20+ queries, 8+ each way). `scripts/validate-skills.sh` fails
+without them, and it also fails on any frontmatter key outside `name`, `description`, `allowed-tools`,
+and `disable-model-invocation` — the Agent Skills spec subset plus one exception, so the skills
+still package for claude.ai and the Skills API. `setup` is that exception: a run-once
+configurator the user enters deliberately, so it sets `disable-model-invocation: true` and
+`allow_implicit_invocation: false`. Every other skill stays model-invocable, because hiding one
+drops its description from the agent's context and the agent then runs the raw `git`/`gh`/`glab`
+command instead of the governed workflow. Side effects are gated by the permission rules in
+`templates/claude-settings.json`, not by hiding skills. A skill that bundles scripts
+pre-approves them with
+`allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/<name>.sh:*)` and invokes them directly — no
+`bash` prefix and no quotes, or the permission rule stops matching.
 
 When adding or renaming a skill, keep four places in sync:
 
@@ -71,5 +63,5 @@ tagged commit and `main` takes no direct commits. The root `plugin.json` version
 skills.sh bundle and is not tagged. Always `git fetch origin --tags` before picking a version —
 a stale local tag list will produce a number that is already taken.
 
-Helper scripts: `scripts/list-skills.sh` lists every `SKILL.md`; `scripts/link-skills.sh` symlinks
-each skill into `~/.claude/skills` for local use.
+Helper scripts: `scripts/list-skills.sh` lists every skill, `scripts/link-skills.sh` links them into
+`~/.claude/skills`, and `scripts/test-skills.sh` runs the public CI checks.

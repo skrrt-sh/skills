@@ -1,0 +1,6 @@
+interface:
+  display_name: "Ship Setup"
+  short_description: "Configure repository ship workflows"
+  default_prompt: "Use $setup to configure this repository's branching and ship workflow."
+policy:
+  allow_implicit_invocation: false

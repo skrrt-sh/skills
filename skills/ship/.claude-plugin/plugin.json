@@ -1,6 +1,6 @@
 {
   "name": "ship",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "Git shipping workflow — conventional commits with gitmojis, PRs and MRs with the matching forge CLI, curated releases.",
   "author": {
     "name": "skrrt-sh",

@@ -1,0 +1,82 @@
+[
+  {
+    "query": "write a runbook for rotating signing keys under docs/operations",
+    "should_trigger": true
+  },
+  {
+    "query": "update our API authentication spec and its Mermaid sequence diagram",
+    "should_trigger": true
+  },
+  {
+    "query": "record the Redis cache choice as an architecture decision",
+    "should_trigger": true
+  },
+  {
+    "query": "make a local setup guide in docs/getting-started with proper frontmatter",
+    "should_trigger": true
+  },
+  {
+    "query": "document the database migration procedure for the engineering knowledge base",
+    "should_trigger": true
+  },
+  {
+    "query": "turn these incident notes into a troubleshooting page with a flowchart",
+    "should_trigger": true
+  },
+  {
+    "query": "add a deployment specification beside the existing platform docs",
+    "should_trigger": true
+  },
+  {
+    "query": "clean up docs/security/threat-model.md and validate all its Markdown",
+    "should_trigger": true
+  },
+  {
+    "query": "create an operator guide for restoring backups and link the related recovery doc",
+    "should_trigger": true
+  },
+  {
+    "query": "write the service ownership page for our internal docs site",
+    "should_trigger": true
+  },
+  {
+    "query": "fix the installation wording in README.md",
+    "should_trigger": false
+  },
+  {
+    "query": "tighten the instructions in SKILL.md",
+    "should_trigger": false
+  },
+  {
+    "query": "update CHANGELOG.md for version 2.1.0",
+    "should_trigger": false
+  },
+  {
+    "query": "add a repository rule to CLAUDE.md",
+    "should_trigger": false
+  },
+  {
+    "query": "write the body for GitHub issue 42",
+    "should_trigger": false
+  },
+  {
+    "query": "improve the docstring on this Python function",
+    "should_trigger": false
+  },
+  {
+    "query": "add explanatory comments to the Terraform module",
+    "should_trigger": false
+  },
+  {
+    "query": "draft a pull request description for these changes",
+    "should_trigger": false
+  },
+  {
+    "query": "write a conventional commit message for the staged files",
+    "should_trigger": false
+  },
+  {
+    "query": "update the package description in package.json",
+    "should_trigger": false
+  }
+]

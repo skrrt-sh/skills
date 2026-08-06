@@ -1,0 +1,70 @@
+{
+  "skill_name": "release",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use $release to draft notes for v1.4.0 from v1.3.0; do not publish or edit the existing changelog.",
+      "expected_output": "Curated notes from v1.3.0..HEAD with a compare link and no repository or forge mutation.",
+      "assertions": [
+        "The v1.3.0..HEAD commit and diff range is inspected",
+        "The notes are reader-focused and include a valid compare link",
+        "CHANGELOG.md is not edited",
+        "No tag is created or pushed and no forge release is created"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use $release to draft the initial v1.0.0 release notes from this repository's root commit and later feature commits.",
+      "expected_output": "Initial-release notes based on the complete history, including the root commit and no compare link.",
+      "assertions": [
+        "The complete history including the root commit is inspected",
+        "The response reports that no previous release tag exists",
+        "No compare link is included"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use $release to prepare v2.0.0 and update the existing changelog for its breaking changes, but do not publish.",
+      "expected_output": "A changelog update in the established style with explicit breaking changes and no tag or release publication.",
+      "assertions": [
+        "The existing changelog is updated in its established style",
+        "Breaking changes are clearly identified",
+        "No second changelog is created",
+        "No tag is created or pushed and no forge release is created"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Use $release to publish v1.5.0 from this clean GitHub Flow repository. HEAD matches the remote release commit and the tag does not exist.",
+      "expected_output": "A verified annotated tag and GitHub release created from the exact remote commit and read back successfully.",
+      "assertions": [
+        "The tag's local and remote absence and the release commit are verified before mutation",
+        "An annotated tag is created and pushed",
+        "gh release create is run with --verify-tag and the release is read back",
+        "The response reports the verified release URL and tag",
+        "No existing tag is moved"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Use $release to publish v1.6.0, but the worktree currently has uncommitted plugin-version and changelog preparation changes.",
+      "expected_output": "Publication stops and directs the preparation changes through the configured commit and PR workflow.",
+      "assertions": [
+        "Publication stops before creating a tag",
+        "The response directs preparation changes through commit and PR before retrying",
+        "No direct commit on main or tag of uncommitted content occurs"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Use $release to publish ship plugin version 5.0.0 from a repository containing multiple independently versioned plugins.",
+      "expected_output": "A ship-scoped release using tag ship--v5.0.0, ship-only history, and a successful Claude plugin tag dry-run before publication.",
+      "assertions": [
+        "The tag is ship--v5.0.0 rather than repo-wide v5.0.0",
+        "Release history is limited to the ship plugin directory",
+        "The Claude plugin tag dry-run succeeds before the tag is pushed",
+        "Unrelated plugin changes are excluded from the release"
+      ]
+    }
+  ]
+}
