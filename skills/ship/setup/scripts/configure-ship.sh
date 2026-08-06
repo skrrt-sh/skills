@@ -123,14 +123,16 @@ awk '1' "${strategy_asset}" > "${policy_tmp}"
 instruction_status='unchanged'
 policy_status='unchanged'
 
-if [[ ! -f "${instruction_file}" ]] || ! cmp -s "${normalized_tmp}" "${instruction_file}"; then
-  mv "${normalized_tmp}" "${instruction_file}"
-  instruction_status='changed'
-fi
-
+# Install the policy first. If this fails, the instruction file is left untouched and still
+# points at the previous policy; the reverse order would publish a pointer to a stale one.
 if [[ ! -f .agents/ship.md ]] || ! cmp -s "${policy_tmp}" .agents/ship.md; then
   mv "${policy_tmp}" .agents/ship.md
   policy_status='changed'
+fi
+
+if [[ ! -f "${instruction_file}" ]] || ! cmp -s "${normalized_tmp}" "${instruction_file}"; then
+  mv "${normalized_tmp}" "${instruction_file}"
+  instruction_status='changed'
 fi
 
 printf 'STATUS=ok\n'
