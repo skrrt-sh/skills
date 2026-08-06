@@ -103,7 +103,8 @@ Working on the skills themselves? Symlink every one of them into `~/.claude/skil
 In your agent, run it once per repo — `/ship:setup` on a plugin install, `/setup` on a
 skills.sh install (see the note on skill names below). It will:
 
-- Add a short, marker-delimited pointer to your existing `CLAUDE.md` or `AGENTS.md`
+- Add a short, marker-delimited pointer to your existing instruction file — the first of
+  `CLAUDE.md`, `AGENTS.md`, `.claude/CLAUDE.md`, or `.github/AGENTS.md` that exists
 - Analyze the repo — CI, feature flags, contributor count, deploy cadence, existing branches —
   and recommend a **branching strategy** (GitHub Flow, Trunk-Based Development, or Gitflow),
   with all three presented so you make the final call

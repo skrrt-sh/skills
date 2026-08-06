@@ -6,7 +6,8 @@ matching forge CLI.
 This bucket is its own Claude Code plugin — `claude plugin install ship@skrrt` — so its skills
 are namespaced `/ship:commit`, `/ship:pr`, `/ship:release`, `/ship:setup`.
 
-Run `/setup` once per repository — it is explicit-only, and it stores the selected policy in
+Run it once per repository — `/ship:setup` on a plugin install, `/setup` on a skills.sh or
+`~/.claude/skills` install. It is explicit-only, and it stores the selected policy in
 `.agents/ship.md`, which the other three read before touching git state. Those three change
 repository and forge state, so pair them with the permission rules in
 `templates/claude-settings.json`.
