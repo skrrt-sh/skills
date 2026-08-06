@@ -1,0 +1,57 @@
+{
+  "skill_name": "pr",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use $pr to open a review request for this unpublished GitHub Flow branch. The authenticated GitHub CLI is available and origin/main has advanced.",
+      "expected_output": "The branch is safely updated, pushed, and opened as a GitHub pull request targeting main, then read back for verification.",
+      "assertions": [
+        "The detector selects authenticated gh for the GitHub remote",
+        "The unpublished branch is rebased onto origin/main when needed",
+        "The branch is pushed and a non-interactive PR targeting main is created",
+        "The PR is read back and its URL, source, target, and actual test status are reported"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use $pr for this already-pushed trunk-based branch. The target branch advanced and rebasing would rewrite the published branch.",
+      "expected_output": "The workflow pauses before rewriting history and asks for explicit force-with-lease approval.",
+      "assertions": [
+        "The agent stops before rebasing the published branch",
+        "The user is asked to approve the specific rebase and force-with-lease push",
+        "No plain force push or unapproved history rewrite occurs"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use $pr for feat/audit-log in this Gitflow repository hosted on GitLab. glab is installed and authenticated.",
+      "expected_output": "A GitLab merge request from the feature branch to develop without rebasing.",
+      "assertions": [
+        "The detector selects authenticated glab",
+        "The merge request targets develop",
+        "The feature branch is not rebased",
+        "gh is not used"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Use $pr to update the review text for the current branch, which already has an open request.",
+      "expected_output": "The existing request body is updated without changing its branches or creating a duplicate.",
+      "assertions": [
+        "The existing open request is found and updated",
+        "Its source and target branches are preserved",
+        "No duplicate request is created"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Use $pr to open the request for this GitHub branch. gh is installed but not authenticated for the remote host.",
+      "expected_output": "The workflow stops before pushing and reports the exact authentication requirement.",
+      "assertions": [
+        "The detector result is STATUS=not-authenticated",
+        "The response identifies the required gh authentication action",
+        "The branch is not pushed and no interactive forge flow is started"
+      ]
+    }
+  ]
+}

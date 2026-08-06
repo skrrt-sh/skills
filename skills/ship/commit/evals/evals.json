@@ -1,0 +1,48 @@
+{
+  "skill_name": "commit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use $commit for the markdown validator fix. The branch is fix/markdown-validator; the worktree also contains an unrelated README draft that must stay uncommitted.",
+      "expected_output": "One focused fix commit that excludes the README draft and uses the required conventional-commit format.",
+      "assertions": [
+        "Staged and unstaged changes are inspected before staging",
+        "The unrelated README draft remains uncommitted",
+        "The commit uses a fix type, matching gitmoji, explanatory body, and configured co-author trailer",
+        "The staged diff is reviewed before committing",
+        "The response does not invent test results"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use $commit for the uncommitted authentication changes currently on main in this GitHub Flow repository.",
+      "expected_output": "A correctly named work branch created from the current HEAD before the existing dirty worktree is staged and committed.",
+      "assertions": [
+        "A work branch is created from the current HEAD before staging",
+        "The dirty worktree is preserved exactly across the branch creation",
+        "No pull or implicit stash occurs while the worktree is dirty",
+        "No commit is created on main"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use $commit and split the search feature work from the unrelated CI cache cleanup on feat/search.",
+      "expected_output": "Two coherent commits with distinct conventional types and matching gitmojis.",
+      "assertions": [
+        "The search feature and CI cleanup are committed separately",
+        "Each commit uses a type and gitmoji matching its intent",
+        "Each staged diff is reviewed before its commit"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Use $commit for a regression caused by already-merged PR #42. The old source branch is merged and the current branch is main.",
+      "expected_output": "A fresh fix branch and focused regression commit without reusing the merged PR branch.",
+      "assertions": [
+        "A fresh branch is created from the configured work base",
+        "The merged source branch is not reused or pushed",
+        "The resulting commit identifies the regression without inventing issue metadata"
+      ]
+    }
+  ]
+}

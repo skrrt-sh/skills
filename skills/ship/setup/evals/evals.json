@@ -1,0 +1,46 @@
+{
+  "skill_name": "setup",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use $setup to configure this small GitHub repository. It has CLAUDE.md, CI on pull requests, and three contributors.",
+      "expected_output": "An evidence-based strategy recommendation, user-confirmed selection, one short CLAUDE.md pointer, and one matching ship policy.",
+      "assertions": [
+        "All three supported strategies are presented and GitHub Flow is recommended from repository evidence",
+        "No configuration is written before the user chooses a strategy",
+        "CLAUDE.md contains exactly one short Skrrt marker block and preserves all other content",
+        ".agents/ship.md contains only the selected strategy policy"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use $setup and configure trunk-based development for this repository. It has AGENTS.md, CI on every commit, feature flags, and daily deployments.",
+      "expected_output": "A trunk-based policy written through AGENTS.md without asking the user to repeat an explicit choice.",
+      "assertions": [
+        "The response reports that repository evidence supports trunk-based development",
+        ".agents/ship.md contains the trunk-based policy",
+        "AGENTS.md is updated and CLAUDE.md is not created",
+        "The user is not asked to choose the strategy again"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use $setup to switch this repository from its existing Gitflow configuration to GitHub Flow.",
+      "expected_output": "The existing strategy is reported and atomically replaced without duplicate markers or stale Gitflow rules.",
+      "assertions": [
+        "The existing Gitflow configuration is reported before replacement",
+        ".agents/ship.md contains GitHub Flow and no stale Gitflow rules",
+        "The selected instruction file contains exactly one Skrrt marker block"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Use $setup in this new Git repository. It has no CLAUDE.md or AGENTS.md file.",
+      "expected_output": "A question asking which supported instruction file to create, with no files written before the answer.",
+      "assertions": [
+        "The agent asks whether to create CLAUDE.md or AGENTS.md",
+        "The agent does not choose an instruction-file format or write configuration without the user's answer"
+      ]
+    }
+  ]
+}

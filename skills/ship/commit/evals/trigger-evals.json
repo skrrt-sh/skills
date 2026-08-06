@@ -1,34 +1,23 @@
 [
-  {
-    "query": "please make a clean conventional commit for the markdown hook fixes i just staged, keep the message focused on the lint config fallback behavior",
-    "should_trigger": true
-  },
-  {
-    "query": "i changed a couple files in the auth package and need help splitting them into two git commits with proper messages",
-    "should_trigger": true
-  },
-  {
-    "query": "write me a gitmoji conventional commit for the release script cleanup and include a useful body",
-    "should_trigger": true
-  },
-  {
-    "query": "can you review my worktree and figure out the smallest coherent commit for the pr title fix",
-    "should_trigger": true
-  },
-  {
-    "query": "open a pull request for my current branch and write the summary/testing sections",
-    "should_trigger": false
-  },
-  {
-    "query": "draft release notes for v1.4.0 from the commits since the last tag",
-    "should_trigger": false
-  },
-  {
-    "query": "explain what conventional commits are and when to use feat vs fix",
-    "should_trigger": false
-  },
-  {
-    "query": "show me the current git status and tell me which files changed",
-    "should_trigger": false
-  }
+  { "query": "commit this", "should_trigger": true },
+  { "query": "commit the changes on this branch", "should_trigger": true },
+  { "query": "write a conventional commit message for the staged files", "should_trigger": true },
+  { "query": "stage and commit the markdown validator fix", "should_trigger": true },
+  { "query": "split these changes into separate commits", "should_trigger": true },
+  { "query": "make a commit with the right gitmoji", "should_trigger": true },
+  { "query": "commit only the parser changes and leave the rest alone", "should_trigger": true },
+  { "query": "I'm done with this feature, get it into git", "should_trigger": true },
+  { "query": "my commit message is wrong, rewrite it", "should_trigger": true },
+  { "query": "break this diff into focused commits by intent", "should_trigger": true },
+
+  { "query": "open a pull request for this branch", "should_trigger": false },
+  { "query": "draft the release notes for v2.1.0", "should_trigger": false },
+  { "query": "configure the ship skills in this repository", "should_trigger": false },
+  { "query": "what changed since the last tag", "should_trigger": false },
+  { "query": "write a runbook for the deployment process", "should_trigger": false },
+  { "query": "show me the git log for last week", "should_trigger": false },
+  { "query": "resolve these merge conflicts", "should_trigger": false },
+  { "query": "rename this branch to feat/search", "should_trigger": false },
+  { "query": "explain what this function does", "should_trigger": false },
+  { "query": "show me what changed in the last commit", "should_trigger": false }
 ]

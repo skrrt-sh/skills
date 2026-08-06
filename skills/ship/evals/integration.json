@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "suite": "ship-integration",
+  "evals": [
+    {
+      "id": "github-flow-happy-path",
+      "steps": [
+        "Use $setup to select GitHub Flow",
+        "Use $commit on a focused feature branch",
+        "Use $pr to open a request targeting main",
+        "Use $release first for notes-only, then separately for publication"
+      ],
+      "expected_behavior": [
+        "Every skill reads the same .agents/ship.md policy",
+        "No skill duplicates or contradicts the configured target",
+        "External mutations occur only in explicitly invoked steps"
+      ]
+    },
+    {
+      "id": "gitflow-release-path",
+      "steps": [
+        "Configure Gitflow",
+        "Commit feature work outside protected branches",
+        "Open feature MR to develop",
+        "Open release MR to main",
+        "Publish only after the main merge and verify sync-back"
+      ],
+      "expected_behavior": [
+        "No Gitflow branch is rebased",
+        "Feature and release requests target different configured branches",
+        "Production tags point to main"
+      ]
+    },
+    {
+      "id": "missing-setup",
+      "steps": [
+        "Invoke each ship workflow without .agents/ship.md"
+      ],
+      "expected_behavior": [
+        "Each workflow stops before mutation and requests the setup skill"
+      ]
+    }
+  ]
+}

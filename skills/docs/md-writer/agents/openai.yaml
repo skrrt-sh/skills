@@ -1,0 +1,6 @@
+interface:
+  display_name: "MD Writer"
+  short_description: "Write lint-clean knowledge-base Markdown"
+  default_prompt: "Use $md-writer to create a concise architecture guide with validated Markdown."
+policy:
+  allow_implicit_invocation: true

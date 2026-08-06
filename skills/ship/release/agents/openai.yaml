@@ -1,0 +1,6 @@
+interface:
+  display_name: "Prepare Release"
+  short_description: "Draft or publish a verified release"
+  default_prompt: "Use $release to draft or publish a release from repository history."
+policy:
+  allow_implicit_invocation: true
