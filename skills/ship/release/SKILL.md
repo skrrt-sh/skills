@@ -18,8 +18,8 @@ Derive release facts from tags, commits, diffs, and repository configuration.
    `/setup`. Validate the release branch and tag rules it defines.
 3. For Claude Code plugin repositories, read
    [references/claude-plugin-releases.md](references/claude-plugin-releases.md).
-4. Fetch tags. Validate the requested tag format and confirm it does not exist locally or on the
-   remote.
+4. Run `git fetch origin --tags` so local tag data is current, then validate the requested tag
+   format and confirm it does not exist locally or on the remote.
 5. Find the previous release tag in the same namespace. Use `<previous>..HEAD` for an existing
    series. For an initial release, inspect the full history with `git log --reverse HEAD`; include
    the root commit and omit the compare link.
