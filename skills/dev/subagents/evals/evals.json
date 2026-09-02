@@ -1,0 +1,81 @@
+{
+  "skill_name": "subagents",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Here is the outlined scope: D1 add a rate-limit middleware, D2 add a Redis-backed store for it, D3 wire it into the HTTP router. Start implementing it. Use the main thread as orchestrator and reviewer and subagents to do the work.",
+      "expected_output": "A file-ownership plan, contract-first staging, subagents dispatched on Opus with strictly scoped briefs, and a main-thread review of the real diff.",
+      "assertions": [
+        "The main thread writes no implementation code itself",
+        "Every subagent is dispatched with the Opus model rather than the default or a fork",
+        "The store contract is settled before or alongside the middleware that consumes it, not after",
+        "No two subagents are given the same file to create or edit",
+        "The router wiring is owned by exactly one scope, in a stage after the pieces it joins exist",
+        "Each brief names the files it owns, the files off limits, and the command that proves acceptance",
+        "The main thread reads the resulting diff and runs the project's tests rather than trusting the subagents' summaries"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The plan has nine independent scopes, S1 through S9. Implement all of them with subagents.",
+      "expected_output": "The nine scopes split into sequential stages of at most five concurrent subagents, each stage reviewed before the next is dispatched.",
+      "assertions": [
+        "At most five subagents run simultaneously",
+        "The work is decomposed into stages rather than dispatched all at once",
+        "Each stage's agents are dispatched in a single message so they run concurrently",
+        "A stage is reviewed and its build left passing before the next stage is dispatched",
+        "Later stages' briefs carry forward what earlier stages actually produced"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Implement the four scopes in the plan, but use at most two subagents at a time and run them on Sonnet to keep this cheap.",
+      "expected_output": "The user's concurrency and model choices are honoured over the skill defaults, with the work restaged to fit two at a time.",
+      "assertions": [
+        "No more than two subagents run at once",
+        "Subagents are dispatched on Sonnet rather than the Opus default",
+        "The four scopes are restaged into two stages instead of dropping scopes",
+        "The main thread still reviews each stage's diff before continuing"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Split this 400-line parser function into subagent work — I want three agents on it at once so it goes faster.",
+      "expected_output": "An explanation that a single function cannot be partitioned into non-overlapping scopes, and a proposal that does not produce conflicting edits.",
+      "assertions": [
+        "The response does not dispatch multiple subagents over the same file",
+        "The response explains that the scopes would overlap and why that damages the work",
+        "The response offers a workable alternative, such as one agent on the change or a staged split after the seams exist",
+        "The user is asked to decide rather than the request being silently narrowed"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "The two subagents both reported success on the auth refactor. Wrap up the stage.",
+      "expected_output": "An independent verification of the stage rather than a summary of the subagents' claims.",
+      "assertions": [
+        "The actual diff is read before the stage is accepted",
+        "The project's build, test, and lint commands are run over the whole tree",
+        "Files edited outside their owning scope are reported as a defect",
+        "Any failing command is reported with its real output rather than described as passing",
+        "No commit, push, or release is made as part of wrapping up"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Plan: D1 add a REST endpoint for invoice export, D2 add its request validation, D3 add the client SDK call. Implement it with subagents.",
+      "expected_output": "An assessment of the codebase before any dispatch that surfaces the plan's mismatch with the code, and a corrected path agreed with the user before briefs are written.",
+      "assertions": [
+        "The codebase is assessed before any subagent is dispatched to implement",
+        "The plan's assumption is checked against the actual code and the mismatch is surfaced",
+        "The path is corrected with the user before briefs are written, rather than implementing the outlined plan as given",
+        "Broad codebase reading is delegated to a read-only Explore subagent rather than done in the main thread"
+      ],
+      "files": [
+        "src/graphql/schema.ts",
+        "src/graphql/resolvers/invoices.ts",
+        "README.md"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "dev",
+  "version": "1.0.0",
+  "description": "Implementation workflow — orchestrate strictly scoped subagents from a reviewing main thread.",
+  "author": {
+    "name": "skrrt-sh",
+    "url": "https://github.com/skrrt-sh"
+  },
+  "homepage": "https://github.com/skrrt-sh/skills",
+  "repository": "https://github.com/skrrt-sh/skills",
+  "license": "MIT",
+  "keywords": [
+    "subagents",
+    "orchestration",
+    "parallel",
+    "delegation",
+    "code-review"
+  ],
+  "skills": [
+    "./subagents"
+  ]
+}
