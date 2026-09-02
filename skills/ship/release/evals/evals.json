@@ -57,12 +57,13 @@
     },
     {
       "id": 6,
-      "prompt": "Use $release to publish ship plugin version 5.0.0 from a repository containing multiple independently versioned plugins.",
-      "expected_output": "A ship-scoped release using tag ship--v5.0.0, ship-only history, and a successful Claude plugin tag dry-run before publication.",
+      "prompt": "Use $release to publish ship plugin version 5.1.0 from a repository whose .agents/ship.md requires bucket-scoped <plugin>/vX.Y.Z release tags.",
+      "expected_output": "A ship-scoped release using tag ship/v5.1.0, ship-only history, and a manifest and marketplace version check before publication.",
       "assertions": [
-        "The tag is ship--v5.0.0 rather than repo-wide v5.0.0",
+        "The tag is ship/v5.1.0 rather than repo-wide v5.1.0",
+        "The repository tag format in .agents/ship.md overrides the claude plugin tag default",
+        "The ship plugin.json version and its marketplace entry are confirmed to match the tag",
         "Release history is limited to the ship plugin directory",
-        "The Claude plugin tag dry-run succeeds before the tag is pushed",
         "Unrelated plugin changes are excluded from the release"
       ]
     }

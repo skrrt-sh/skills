@@ -54,10 +54,16 @@ does: add `skills/<bucket>/.claude-plugin/plugin.json` and a marketplace entry w
 `./skills/<bucket>`.
 
 Each bucket versions and releases independently. A release carries one tag,
-`<bucket>--vX.Y.Z` — `ship--v4.0.0`, `docs--v1.0.0` — created with `claude plugin tag --push`
-pointed at the bucket directory; it is both the plugin marker and the release of record. There
-is no repo-wide `vX.Y.Z` tag any more: with two independently versioned plugins there is no
-single number it could carry. Bump
+`<bucket>/vX.Y.Z` — `ship/v5.1.0`, `docs/v3.0.0`, `dev/v1.0.0` — created with `git tag -a` and
+pushed; it is both the plugin marker and the release of record. Do not use `claude plugin tag`: it
+only emits `<bucket>--vX.Y.Z`, which reads as a prerelease suffix rather than a scope. Since that
+command also checked manifest and marketplace agreement, confirm by hand that the bucket's
+`plugin.json` version matches the tag and that `marketplace.json` carries an entry whose `source`
+points at that bucket; marketplace entries hold no version of their own. Every tag is stable — this
+repo ships no alphas, betas, or release candidates. There
+is no repo-wide `vX.Y.Z` tag any more: with three independently versioned plugins there is no
+single number it could carry. Tags predating this convention keep the older `<bucket>--vX.Y.Z`
+form. Bump
 `version` in that bucket's `plugin.json` through a PR before tagging, since it must be on the
 tagged commit and `main` takes no direct commits. The root `plugin.json` version tracks the
 skills.sh bundle and is not tagged. Always `git fetch origin --tags` before picking a version —
