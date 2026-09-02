@@ -17,15 +17,24 @@
 
 ## This repository
 
-The generic release rule above does not apply here. This repo ships two independently versioned
+The generic release rule above does not apply here. This repo ships three independently versioned
 plugins, so there is no single number a repo-wide `vX.Y.Z` tag could carry.
 
-- Release tags are bucket-scoped: exactly one `<bucket>--vX.Y.Z` tag per release —
-  `ship--v5.0.0`, `docs--v3.0.0`. Never create a repo-wide `vX.Y.Z` tag.
-- Create it with `claude plugin tag --push` pointed at the bucket directory. That tag is both the
-  plugin marker and the release of record.
+- Release tags are bucket-scoped: exactly one `<bucket>/vX.Y.Z` tag per release —
+  `ship/v5.1.0`, `docs/v3.0.0`, `dev/v1.0.0`. Never create a repo-wide `vX.Y.Z` tag.
+- Create it with `git tag -a <bucket>/vX.Y.Z` and push that tag. Do not use `claude plugin tag`:
+  it only emits `<bucket>--vX.Y.Z`, which reads as a prerelease suffix rather than a scope.
+- That command also checked manifest and marketplace agreement, so verify by hand before tagging:
+  the bucket's `plugin.json` version must match the tag, and `marketplace.json` must carry an entry
+  whose `source` points at that bucket. Marketplace entries hold no version of their own.
+- Every tag is stable. This repo publishes no alphas, betas, or release candidates, so a version
+  never carries a prerelease suffix.
+- A bare bucket tag (`ship`) can never exist alongside `ship/v*` — Git stores refs as paths, and
+  the two collide.
 - Bump `version` in the bucket's `plugin.json` through a PR before tagging — it must be on the
   tagged commit, and `main` takes no direct commits.
 - Run `git fetch origin --tags` before picking a version; a stale local tag list produces a number
   that is already taken.
 - The root `plugin.json` version tracks the skills.sh bundle and is not tagged.
+- Tags created before this convention use the older `<bucket>--vX.Y.Z` form. They stay published
+  as they are; the slash form applies going forward.
