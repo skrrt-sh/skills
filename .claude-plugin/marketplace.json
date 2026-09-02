@@ -34,6 +34,19 @@
         "knowledge-base",
         "markdownlint"
       ]
+    },
+    {
+      "name": "dev",
+      "source": "./skills/dev",
+      "description": "Implementation workflow — orchestrate strictly scoped subagents from a reviewing main thread.",
+      "category": "workflow",
+      "keywords": [
+        "subagents",
+        "orchestration",
+        "parallel",
+        "delegation",
+        "code-review"
+      ]
     }
   ]
 }

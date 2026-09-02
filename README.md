@@ -41,6 +41,7 @@ skill twice.
 claude plugin marketplace add skrrt-sh/skills
 claude plugin install ship@skrrt
 claude plugin install docs@skrrt
+claude plugin install dev@skrrt
 ```
 
 Or, from inside a session:
@@ -49,6 +50,7 @@ Or, from inside a session:
 /plugin marketplace add skrrt-sh/skills
 /plugin install ship@skrrt
 /plugin install docs@skrrt
+/plugin install dev@skrrt
 ```
 
 Each bucket is its own plugin, versioned and released independently — install only the ones you
@@ -120,9 +122,9 @@ skills.sh install (see the note on skill names below). It will:
 
 **Skill names depend on how you installed.** Claude Code namespaces plugin skills by plugin
 name, and each bucket is its own plugin — so a plugin install gives you `/ship:commit`, `/ship:pr`,
-`/ship:release`, `/ship:setup`, and `/docs:md-writer`. A skills.sh or `~/.claude/skills` install
-uses the bare names — `/commit`, `/pr`, `/release`, `/setup`, `/md-writer`. The rest of this README
-uses the bare names for brevity.
+`/ship:release`, `/ship:setup`, `/docs:md-writer`, and `/dev:subagents`. A skills.sh or
+`~/.claude/skills` install uses the bare names — `/commit`, `/pr`, `/release`, `/setup`,
+`/md-writer`, `/subagents`. The rest of this README uses the bare names for brevity.
 
 ## Skills
 
@@ -178,6 +180,25 @@ lints documentation and knowledge-base content only — well-known repo files (`
 `CONTRIBUTING`, …) and `.claude/` files are skipped and never rewritten. Missing tooling is an
 explicit failure, never a false validation pass.
 
+### dev
+
+Implementation workflow tools. Bucket index: [`skills/dev/`](skills/dev/README.md).
+
+- **[subagents](skills/dev/subagents/SKILL.md)** — Orchestrate strictly scoped subagents from a
+  main thread that only plans and reviews.
+
+```text
+/subagents implement the outlined scope — orchestrate and review, delegate the code
+```
+
+The main thread stays on Fable or Opus and holds the judgement — it assesses the system, decides the
+path, briefs, dispatches, reviews, and pivots when the evidence says to. Subagents
+run on Opus unless you say otherwise, get briefs naming the files they own and the files off limits,
+and leave git alone. Every file belongs to exactly one scope; contracts land in a stage before the
+code that consumes them. At most five subagents run at once — a scope with more parts becomes
+sequential stages, and each stage is reviewed against the real diff, not the subagents' own
+summaries, before the next one starts.
+
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — any version with plugin
@@ -201,7 +222,8 @@ explicit failure, never a false validation pass.
 │   └── test-skills.sh             # Complete deterministic test suite
 ├── skills/
 │   ├── ship/                      # setup, commit, pr, release
-│   └── docs/md-writer/
+│   ├── docs/md-writer/
+│   └── dev/subagents/
 └── templates/claude-settings.json # Recommended Claude permissions
 ```
 

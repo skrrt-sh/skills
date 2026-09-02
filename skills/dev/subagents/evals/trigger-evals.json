@@ -1,0 +1,98 @@
+[
+  {
+    "query": "ok here's the plan from PLAN.md - D1 rate limiter middleware, D2 redis store, D3 wire it into the router. start implementing. you orchestrate and review, subagents do the work, they must not overlap",
+    "should_trigger": true
+  },
+  {
+    "query": "I've got 6 independent packages under packages/* that all need the same logging migration. fan it out across agents in parallel and check their diffs before you call it done",
+    "should_trigger": true
+  },
+  {
+    "query": "implement stages 2 through 4 of docs/auth-rewrite.md with subagents on opus, max 3 at a time",
+    "should_trigger": true
+  },
+  {
+    "query": "don't write the code yourself this time - break the feature into scopes, brief an agent per scope, and review what comes back",
+    "should_trigger": true
+  },
+  {
+    "query": "we have 9 tickets left in the sprint plan, all independent. get agents on them but batch it so nothing collides",
+    "should_trigger": true
+  },
+  {
+    "query": "parallelize the remaining work in the migration plan across subagents, you stay in review mode",
+    "should_trigger": true
+  },
+  {
+    "query": "spin up worker agents for the api, worker and cli packages and make sure each one only touches its own package",
+    "should_trigger": true
+  },
+  {
+    "query": "the spec is approved, now delegate the implementation to scoped agents and verify each stage builds before the next",
+    "should_trigger": true
+  },
+  {
+    "query": "use subagents for this. one per endpoint in src/routes/. sonnet is fine, its mostly boilerplate",
+    "should_trigger": true
+  },
+  {
+    "query": "coordinate a team of agents to implement the outlined scope, staged so no more than 5 run at once",
+    "should_trigger": true
+  },
+  {
+    "query": "big refactor across src/billing - plan the cut, hand out non-overlapping pieces to agents, then integrate and review",
+    "should_trigger": true
+  },
+  {
+    "query": "this plan has like 12 parts, orchestrate it. strict scoping per agent and you review every diff",
+    "should_trigger": true
+  },
+  {
+    "query": "commit the changes the subagents made with a conventional message",
+    "should_trigger": false
+  },
+  {
+    "query": "open a PR for the feature branch the agents just finished",
+    "should_trigger": false
+  },
+  {
+    "query": "spawn an Explore agent to find where the retry logic lives in this repo",
+    "should_trigger": false
+  },
+  {
+    "query": "review the diff in src/ratelimit for bugs before I merge it",
+    "should_trigger": false
+  },
+  {
+    "query": "how do I set the default subagent model in Claude Code settings",
+    "should_trigger": false
+  },
+  {
+    "query": "implement D3 yourself, it's a single file change in router.ts, no agents needed",
+    "should_trigger": false
+  },
+  {
+    "query": "write a runbook under docs/ops for the redis failover procedure",
+    "should_trigger": false
+  },
+  {
+    "query": "add a rule to CLAUDE.md that subagents must always use opus",
+    "should_trigger": false
+  },
+  {
+    "query": "draft release notes covering everything the agents shipped this week",
+    "should_trigger": false
+  },
+  {
+    "query": "split this big diff into a few focused commits",
+    "should_trigger": false
+  },
+  {
+    "query": "explain how the Agent tool's fork mode differs from general-purpose",
+    "should_trigger": false
+  },
+  {
+    "query": "fix the failing test in store.test.ts, probably the mock redis client",
+    "should_trigger": false
+  }
+]

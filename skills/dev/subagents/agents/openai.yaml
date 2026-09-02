@@ -1,0 +1,6 @@
+interface:
+  display_name: "Subagents"
+  short_description: "Orchestrate scoped subagents and review their work"
+  default_prompt: "Use $subagents to implement the outlined scope: orchestrate and review from the main thread, and delegate non-overlapping scopes to subagents."
+policy:
+  allow_implicit_invocation: true
