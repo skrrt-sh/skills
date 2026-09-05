@@ -76,7 +76,7 @@
         "Comments that explain a reason, constraint, or workaround are kept",
         "Any kept comment longer than three lines is shortened or its content moved to a design doc",
         "Comments that contradict the current code are fixed or removed rather than left in place",
-        "Tool directives such as lint suppressions and license headers are left in place",
+        "Tool directives such as lint suppressions, license headers, and TODO or FIXME markers are left in place",
         "Comments that point at other files, functions, or line numbers are removed or rewritten to state the reason in place"
       ],
       "files": [

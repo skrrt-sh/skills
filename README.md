@@ -193,7 +193,7 @@ Implementation workflow tools. Bucket index: [`skills/dev/`](skills/dev/README.m
 
 ```text
 /subagents implement the outlined scope — orchestrate and review, delegate the code
-/self-documenting clean up the comments in src/auth
+/self-documenting clean up the comments in the auth module
 ```
 
 The main thread stays on Fable or Opus and holds the judgement — it assesses the system, decides the

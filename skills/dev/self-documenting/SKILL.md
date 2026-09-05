@@ -46,9 +46,9 @@ const cents = roundHalfEven(amount * 100);
 
 Docstrings and JSDoc are comments too: the signature states the parameters, so a docstring earns
 its place only by saying what the signature cannot, such as units or failure behaviour. Tool
-directives and license headers are not prose; leave them to the tooling. A change that makes an
-existing comment false fixes or deletes it in the same change; untouched comments stay unless
-asked to clean up.
+directives, license headers, and work markers such as TODO or FIXME serve their own purpose and are
+not prose; leave them be. A change that makes an existing comment false fixes or deletes it in the
+same change; untouched comments stay unless asked to clean up.
 
 ## Docs
 
