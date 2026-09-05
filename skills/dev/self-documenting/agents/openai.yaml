@@ -1,0 +1,6 @@
+interface:
+  display_name: "Self-Documenting"
+  short_description: "Keep code the single source of truth; prose only where inevitable"
+  default_prompt: "Use $self-documenting while writing or reviewing code, comments, docs, CLAUDE.md or AGENTS.md: keep the code the source of truth, comments to why in three lines at most, docs to decisions, instruction files to how."
+policy:
+  allow_implicit_invocation: true

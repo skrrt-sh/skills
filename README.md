@@ -122,9 +122,10 @@ skills.sh install (see the note on skill names below). It will:
 
 **Skill names depend on how you installed.** Claude Code namespaces plugin skills by plugin
 name, and each bucket is its own plugin — so a plugin install gives you `/ship:commit`, `/ship:pr`,
-`/ship:release`, `/ship:setup`, `/docs:md-writer`, and `/dev:subagents`. A skills.sh or
-`~/.claude/skills` install uses the bare names — `/commit`, `/pr`, `/release`, `/setup`,
-`/md-writer`, `/subagents`. The rest of this README uses the bare names for brevity.
+`/ship:release`, `/ship:setup`, `/docs:md-writer`, `/dev:subagents`, and `/dev:self-documenting`.
+A skills.sh or `~/.claude/skills` install uses the bare names — `/commit`, `/pr`, `/release`,
+`/setup`, `/md-writer`, `/subagents`, `/self-documenting`. The rest of this README uses the bare
+names for brevity.
 
 ## Skills
 
@@ -186,9 +187,13 @@ Implementation workflow tools. Bucket index: [`skills/dev/`](skills/dev/README.m
 
 - **[subagents](skills/dev/subagents/SKILL.md)** — Orchestrate strictly scoped subagents from a
   main thread that only plans and reviews.
+- **[self-documenting](skills/dev/self-documenting/SKILL.md)** — Keep the code the single source
+  of truth: comments answer why in three lines at most, docs record decisions, CLAUDE.md and
+  AGENTS.md carry only how to work.
 
 ```text
 /subagents implement the outlined scope — orchestrate and review, delegate the code
+/self-documenting clean up the comments in the auth module
 ```
 
 The main thread stays on Fable or Opus and holds the judgement — it assesses the system, decides the
@@ -198,6 +203,17 @@ and leave git alone. Every file belongs to exactly one scope; contracts land in 
 code that consumes them. At most five subagents run at once — a scope with more parts becomes
 sequential stages, and each stage is reviewed against the real diff, not the subagents' own
 summaries, before the next one starts.
+
+`self-documenting` activates on its own whenever code, comments, docs, or agent instruction files
+are written or edited, even when the request never mentions documentation. Every line of prose is a
+second copy of something the code already holds, and copies drift. So comments stay rare, answer why
+rather than what, and never exceed three lines; docs carry architecture and design decisions rather
+than a description of how the system works; and CLAUDE.md, AGENTS.md, rules and skills carry only
+the conventions that shape how work is done, a few hundred lines at most, because they load into
+every message. Prose never points into the code, since a path, symbol, or line number dangles the
+moment its target moves, and location is described only as architecture, never as paths. Asked for
+narration anyway, the skill delivers the version that survives the next
+change, says in a sentence what it did instead, and leaves the final call with you.
 
 ## Requirements
 
@@ -223,7 +239,7 @@ summaries, before the next one starts.
 ├── skills/
 │   ├── ship/                      # setup, commit, pr, release
 │   ├── docs/md-writer/
-│   └── dev/subagents/
+│   └── dev/                       # subagents, self-documenting
 └── templates/claude-settings.json # Recommended Claude permissions
 ```
 

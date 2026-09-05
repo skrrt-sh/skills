@@ -1,0 +1,154 @@
+{
+  "skill_name": "self-documenting",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Implement a retry wrapper with exponential backoff and jitter for the fetch calls in lib/http.ts. Max 5 attempts, retry on 429 and 5xx, honor Retry-After when present. Make sure it's well documented so the team can follow it.",
+      "expected_output": "A retry wrapper whose names and structure carry the explanation, with at most a few why-only comments of three lines or fewer and no narration of what the code does.",
+      "assertions": [
+        "No comment restates what the adjacent code does",
+        "Every comment is three lines or fewer",
+        "Each comment present explains a reason, constraint, or trade-off rather than a mechanism",
+        "Behaviour that a comment might have narrated is carried by names and extracted functions instead",
+        "No separate documentation file is created",
+        "Any JSDoc added states something the signature cannot, such as which statuses retry or how Retry-After is honoured, rather than repeating parameter names",
+        "No comment points at another file, symbol, or line number",
+        "Each comment states its reason alone, with no description of the code beneath it and no elaboration"
+      ],
+      "files": [
+        "lib/http.ts"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Add comments throughout src/payments/reconcile.ts so a new hire can follow it. It's about 300 lines of dense logic.",
+      "expected_output": "Readability delivered through renames and extracted functions, why-only comments where a reason cannot live in the code, a one-sentence note on what was done instead of narration, and the final call left with the user.",
+      "assertions": [
+        "No comment is added that narrates what the block beneath it does",
+        "Readability is improved through renaming and extracting functions rather than through explanatory comments",
+        "Each comment added states a why: a constraint, a workaround, or a deliberate trade-off",
+        "Every comment added is three lines or fewer",
+        "The response says in a sentence what it did instead of narration and leaves the choice with the user",
+        "Each comment states its reason alone, with no description of the code beneath it and no elaboration"
+      ],
+      "files": [
+        "src/payments/reconcile.ts"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Write docs/queue.md describing how the packages/queue module works: the job lifecycle, the retry policy, how workers pick up jobs, and the database tables involved.",
+      "expected_output": "A short document that captures the decisions behind the queue and their reasons rather than a walkthrough of its mechanics, well under a few hundred lines.",
+      "assertions": [
+        "The document records design decisions, rejected alternatives, and constraints rather than describing the current mechanics step by step",
+        "No paragraph would become false through a routine code change such as renaming a table or changing a retry count",
+        "The document is under a few hundred lines",
+        "The response explains that mechanics were left to the code and why",
+        "The document contains no file paths, symbol names, or line numbers used as pointers into the code"
+      ],
+      "files": [
+        "packages/queue/src/worker.ts",
+        "packages/queue/src/retry.ts",
+        "packages/queue/migrations/001_jobs.sql"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Update CLAUDE.md with what we learned this sprint: the flaky test in checkout.spec.ts that we skipped, the Postgres 16 migration we finished on Tuesday, the new ESLint rule banning default exports, and that Alex owns the billing module now.",
+      "expected_output": "CLAUDE.md gains only the durable convention, the ESLint rule, while the situational facts are turned away with a pointer to where each belongs.",
+      "assertions": [
+        "The ESLint rule against default exports is added as a convention",
+        "The skipped flaky test, the finished migration, and the module ownership are not added to CLAUDE.md",
+        "The response names where each excluded fact belongs, such as the tracker, git history, or a CODEOWNERS file",
+        "The resulting CLAUDE.md stays within a few hundred lines"
+      ],
+      "files": [
+        "CLAUDE.md"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "The reviewer says src/auth has way too many comments. Go through it and clean up.",
+      "expected_output": "What-comments removed, commented-out code deleted, why-comments kept or tightened to three lines, comments that contradict the code fixed or removed, and tool directives left alone.",
+      "assertions": [
+        "Comments that restate the adjacent code are removed",
+        "Commented-out code is deleted rather than kept",
+        "Comments that explain a reason, constraint, or workaround are kept",
+        "Any kept comment longer than three lines is shortened or its content moved to a design doc",
+        "Comments that contradict the current code are fixed or removed rather than left in place",
+        "Tool directives such as lint suppressions, license headers, and TODO or FIXME markers are left in place",
+        "Comments that point at other files, functions, or line numbers are removed or rewritten to state the reason in place"
+      ],
+      "files": [
+        "src/auth/session.ts",
+        "src/auth/tokens.ts",
+        "src/auth/middleware.ts"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Add Google-style docstrings to every function in utils/dates.py so the API is documented.",
+      "expected_output": "Docstrings only where they state something the name and type hints cannot, such as time zone assumptions or raised exceptions, each three lines or fewer, with the rest left to the signatures.",
+      "assertions": [
+        "Functions whose name and type hints already state the contract receive no docstring",
+        "Each docstring added states a contract the signature cannot, such as time zone handling, units, or raised exceptions",
+        "Every docstring is three lines or fewer",
+        "No docstring repeats the parameter names and types already present in the signature",
+        "The response says in a sentence why some functions were left without a docstring"
+      ],
+      "files": [
+        "utils/dates.py"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "In src/orders/pricing.ts, add a note above applyDiscounts pointing readers to where the discount rules live (src/rules/discounts.ts) and to the pricing design doc at docs/pricing.md, so people stop asking.",
+      "expected_output": "No pointer comment. The question is answered in the code, by an import or a name that makes the source of the rules evident, and the response explains that a path or doc reference dangles as soon as its target moves.",
+      "assertions": [
+        "No comment is added that names a file path, a document, or a line number as a pointer",
+        "The relationship is made evident in the code itself, such as through the import or the name of the rules module",
+        "The response explains that a reference dangles when its target moves and offers the in-code alternative",
+        "Any reason worth stating is stated in place in three lines or fewer"
+      ],
+      "files": [
+        "src/orders/pricing.ts",
+        "src/rules/discounts.ts",
+        "docs/pricing.md"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Add a project layout section to CLAUDE.md so agents stop guessing: routes are in src/routes/, handlers in src/handlers/, database code in src/db/, and tests sit next to the file they cover.",
+      "expected_output": "A few lines naming the layered structure and where a new piece of each kind goes, with no paths, and an explanation that the tree is a lookup while the structure is the rule.",
+      "assertions": [
+        "The section names the structure, layers such as routes, handlers and data access, and the rule for placing new code within it",
+        "No directory path or file name is written into CLAUDE.md",
+        "The response explains that the tree is a lookup the agent can make and only the structure is a rule",
+        "The addition is a few lines rather than a listing"
+      ],
+      "files": [
+        "CLAUDE.md",
+        "src/routes/users.ts",
+        "src/handlers/users.ts",
+        "src/db/users.ts"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Put a 'where to find things' section in the README: the auth code is in lib/auth-stuff.js, config parsing is at the bottom of index.js, and the cron jobs are under scripts/misc/.",
+      "expected_output": "No location listing. The response explains that this codebase has no grouping structure to describe, so locations would be file pointers that go stale, and offers introducing a structure as the durable alternative.",
+      "assertions": [
+        "No location listing is added to the README",
+        "The response explains that without a grouping structure, locations are file pointers that go stale",
+        "The response offers to introduce a structure as the durable alternative and leaves the choice with the user",
+        "The response says an agent should search the code for these rather than read locations from the README"
+      ],
+      "files": [
+        "README.md",
+        "lib/auth-stuff.js",
+        "index.js",
+        "scripts/misc/nightly.js"
+      ]
+    }
+  ]
+}

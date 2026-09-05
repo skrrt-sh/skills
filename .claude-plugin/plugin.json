@@ -1,7 +1,7 @@
 {
   "name": "skrrt",
-  "version": "6.1.0",
-  "description": "Every skrrt skill in one bundle for the skills.sh CLI — git shipping workflow, structured markdown authoring with auto-fixed lint-clean output, and subagent orchestration. Claude Code installs per bucket instead; see marketplace.json.",
+  "version": "6.2.0",
+  "description": "Every skrrt skill in one bundle for the skills.sh CLI — git shipping workflow, structured markdown authoring with auto-fixed lint-clean output, subagent orchestration, and self-documenting code discipline. Claude Code installs per bucket instead; see marketplace.json.",
   "author": {
     "name": "skrrt-sh",
     "url": "https://github.com/skrrt-sh"
@@ -18,7 +18,9 @@
     "releases",
     "changelog",
     "markdown",
-    "subagents"
+    "subagents",
+    "comments",
+    "documentation"
   ],
   "skills": [
     "./skills/ship/commit",
@@ -26,6 +28,7 @@
     "./skills/ship/release",
     "./skills/ship/setup",
     "./skills/docs/md-writer",
-    "./skills/dev/subagents"
+    "./skills/dev/subagents",
+    "./skills/dev/self-documenting"
   ]
 }

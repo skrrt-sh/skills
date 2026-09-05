@@ -1,0 +1,114 @@
+[
+  {
+    "query": "add comments throughout src/payments/reconcile.ts so the new hire can follow it, its like 300 lines of dense logic",
+    "should_trigger": true
+  },
+  {
+    "query": "write a README for packages/queue explaining how the job lifecycle works, the retry policy and which tables it touches",
+    "should_trigger": true
+  },
+  {
+    "query": "can you doc this class? google style docstrings on every method in services/billing.py pls",
+    "should_trigger": true
+  },
+  {
+    "query": "update CLAUDE.md with what we learned this sprint - the flaky checkout test we skipped, the pg16 migration we finished tuesday, and the new eslint rule banning default exports",
+    "should_trigger": true
+  },
+  {
+    "query": "create an AGENTS.md for this repo so codex knows how we work here",
+    "should_trigger": true
+  },
+  {
+    "query": "reviewer says src/auth has way too many comments, go through it and clean up",
+    "should_trigger": true
+  },
+  {
+    "query": "write docs/design.md for the event sourcing approach we're switching to, we went back and forth between that and plain CRUD for weeks",
+    "should_trigger": true
+  },
+  {
+    "query": "implement retry with exponential backoff and jitter for the fetch wrapper in lib/http.ts, 5 attempts, honor Retry-After, and make sure its well documented",
+    "should_trigger": true
+  },
+  {
+    "query": "add a docs/ folder covering our architecture: the services, how a request flows through them, the queues, all of it",
+    "should_trigger": true
+  },
+  {
+    "query": "theres a 40 line comment block at the top of scheduler.py explaining the algorithm, is that ok or should we do something with it",
+    "should_trigger": true
+  },
+  {
+    "query": "add jsdoc to all exported functions in src/utils so the IDE shows hints",
+    "should_trigger": true
+  },
+  {
+    "query": "our CLAUDE.md is 900 lines now, trim it down to what actually matters",
+    "should_trigger": true
+  },
+  {
+    "query": "write an ADR for why we picked postgres over dynamo for the ledger",
+    "should_trigger": true
+  },
+  {
+    "query": "refactor the order service in src/orders, half the comments are out of date and contradict what the code does now",
+    "should_trigger": true
+  },
+  {
+    "query": "port scripts/backfill.py to typescript under scripts/backfill.ts, keep the same behaviour",
+    "should_trigger": true
+  },
+  {
+    "query": "add a comment at the top of src/orders/pricing.ts pointing to docs/pricing.md and src/rules/discounts.ts so people stop asking where the rules live",
+    "should_trigger": true
+  },
+  {
+    "query": "add a project layout section to CLAUDE.md listing where the routes, handlers and db code live so agents stop guessing",
+    "should_trigger": true
+  },
+  {
+    "query": "commit the changes in src/auth with a conventional message, split it if it's more than one concern",
+    "should_trigger": false
+  },
+  {
+    "query": "open a PR for feat/retry-backoff targeting main and fill in the description from the commits",
+    "should_trigger": false
+  },
+  {
+    "query": "draft release notes for everything since ship@5.2.0",
+    "should_trigger": false
+  },
+  {
+    "query": "explain how the reconcile function in src/payments works, no file changes, just walk me through it here",
+    "should_trigger": false
+  },
+  {
+    "query": "run the test suite and tell me which specs are failing and why",
+    "should_trigger": false
+  },
+  {
+    "query": "whats the difference between useMemo and useCallback, when would I pick one over the other",
+    "should_trigger": false
+  },
+  {
+    "query": "find where the retry logic lives in this repo, I think there are two copies",
+    "should_trigger": false
+  },
+  {
+    "query": "why is the CI validate job timing out on the npm ci step, look at the last three runs",
+    "should_trigger": false
+  },
+  {
+    "query": "summarize PR #142 for standup, two sentences max",
+    "should_trigger": false
+  },
+  {
+    "query": "generate the API reference site with typedoc and publish it to gh-pages",
+    "should_trigger": false
+  },
+  {
+    "query": "write a post for our engineering blog about how we migrated the ledger to event sourcing",
+    "should_trigger": false
+  }
+]
