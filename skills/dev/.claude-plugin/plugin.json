@@ -1,7 +1,7 @@
 {
   "name": "dev",
-  "version": "1.0.0",
-  "description": "Implementation workflow — orchestrate strictly scoped subagents from a reviewing main thread.",
+  "version": "1.1.0",
+  "description": "Implementation workflow — orchestrate strictly scoped subagents from a reviewing main thread, and keep the code the single source of truth with why-only comments and decision-only docs.",
   "author": {
     "name": "skrrt-sh",
     "url": "https://github.com/skrrt-sh"
@@ -14,9 +14,13 @@
     "orchestration",
     "parallel",
     "delegation",
-    "code-review"
+    "code-review",
+    "comments",
+    "documentation",
+    "claude-md"
   ],
   "skills": [
-    "./subagents"
+    "./subagents",
+    "./self-documenting"
   ]
 }

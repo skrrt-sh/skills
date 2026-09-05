@@ -38,14 +38,17 @@
     {
       "name": "dev",
       "source": "./skills/dev",
-      "description": "Implementation workflow — orchestrate strictly scoped subagents from a reviewing main thread.",
+      "description": "Implementation workflow — orchestrate strictly scoped subagents from a reviewing main thread, and keep the code the single source of truth with why-only comments and decision-only docs.",
       "category": "workflow",
       "keywords": [
         "subagents",
         "orchestration",
         "parallel",
         "delegation",
-        "code-review"
+        "code-review",
+        "comments",
+        "documentation",
+        "claude-md"
       ]
     }
   ]
