@@ -76,21 +76,53 @@ def branch(cwd):
         return None
 
 
+def diffstat(cwd):
+    """Uncommitted lines vs HEAD, untracked files included."""
+    try:
+        root = subprocess.run(
+            ["git", "-C", cwd, "rev-parse", "--show-toplevel"], capture_output=True, text=True, timeout=1,
+        ).stdout.strip()
+        git = ["git", "-C", root, "--no-optional-locks"]
+        r = subprocess.run([*git, "diff", "HEAD", "--numstat"], capture_output=True, text=True, timeout=1)
+        added = removed = 0
+        for line in r.stdout.splitlines():
+            a, rm, _ = line.split("\t", 2)
+            # binary files report "-"
+            added += int(a) if a.isdigit() else 0
+            removed += int(rm) if rm.isdigit() else 0
+        r = subprocess.run(
+            [*git, "ls-files", "--others", "--exclude-standard", "-z"],
+            capture_output=True, text=True, timeout=1,
+        )
+        for f in filter(None, r.stdout.split("\0")):
+            try:
+                with open(os.path.join(root, f), "rb") as fh:
+                    added += fh.read().count(b"\n")
+            except OSError:
+                pass
+        return added, removed
+    except Exception:
+        return 0, 0
+
+
 cwd = d.get("workspace", {}).get("current_dir") or d.get("cwd") or os.getcwd()
 pills = [pill(MAUVE, f"\U000f06a9 {d.get('model', {}).get('display_name', '?')}")]
 
-cost = d.get("cost") or {}
-added, removed = cost.get("total_lines_added") or 0, cost.get("total_lines_removed") or 0
-loc = f" {fg(GREEN)}+{added} {fg(RED)}-{removed}" if added or removed else None
+
+def loc(added, removed):
+    return f" {fg(GREEN)}+{added} {fg(RED)}-{removed}" if added or removed else None
+
 
 home = os.path.expanduser("~")
 name = "~" if cwd == home else os.path.basename(cwd.rstrip("/")) or "/"
-# lines changed ride on the git pill, or on the folder pill outside a repo
+# in a repo: uncommitted diff on the git pill; outside: session edits on the folder pill
 if b := branch(cwd):
     pills.append(pill(BLUE, f" {name}"))
-    pills.append(pill(FLAMINGO, f"\uf418 {b}", tail=loc, tail_color=DEEP_FLAMINGO))
+    pills.append(pill(FLAMINGO, f"\uf418 {b}", tail=loc(*diffstat(cwd)), tail_color=DEEP_FLAMINGO))
 else:
-    pills.append(pill(BLUE, f" {name}", tail=loc, tail_color=DEEP_BLUE))
+    cost = d.get("cost") or {}
+    session = loc(cost.get("total_lines_added") or 0, cost.get("total_lines_removed") or 0)
+    pills.append(pill(BLUE, f" {name}", tail=session, tail_color=DEEP_BLUE))
 
 cw = d.get("context_window") or {}
 if (ctx := cw.get("used_percentage")) is not None:
