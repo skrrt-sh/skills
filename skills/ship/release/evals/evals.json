@@ -66,6 +66,29 @@
         "Release history is limited to the ship plugin directory",
         "Unrelated plugin changes are excluded from the release"
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "Make the SDK publish-ready for its first 0.1.0 release, but don't do npm releases for now. (The repository has no release tags; packages are versioned 0.0.0 and an npm publish workflow runs on tag push.)",
+      "expected_output": "The agent treats this as a prepare request: it updates the package versions and drafts initial release notes from the full history, but creates no tag, pushes nothing that triggers publication, runs no npm publish, and creates no forge release. It notes the preparation changes must go through commit and PR before any publication.",
+      "assertions": [
+        "No git tag is created or pushed",
+        "npm publish is not run and no forge release is created",
+        "Release notes are drafted from the full history including the root commit, with no compare link",
+        "The response states that the preparation changes need the commit and PR workflow before publication"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Do release. (GitHub Flow repository; the last tag is v0.3.0, main has several feat and fix commits since, and package.json still says 0.3.0.)",
+      "expected_output": "The agent fetches tags, picks the next version from the commits since v0.3.0, and because package.json must change it routes the version bump through a commit and PR instead of tagging main directly. It tags and publishes only after the bump is merged and HEAD matches the remote release commit.",
+      "assertions": [
+        "git fetch origin --tags runs before the version is chosen",
+        "The proposed version follows from the commit types since v0.3.0",
+        "No tag is created on a commit whose package.json version differs from the tag",
+        "The version bump goes through a branch and PR, not a direct commit to main",
+        "After merge, an annotated tag is pushed and gh release create --verify-tag is used"
+      ]
     }
   ]
 }

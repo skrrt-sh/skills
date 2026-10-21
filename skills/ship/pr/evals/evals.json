@@ -15,11 +15,11 @@
     {
       "id": 2,
       "prompt": "Use $pr for this already-pushed trunk-based branch. The target branch advanced and rebasing would rewrite the published branch.",
-      "expected_output": "The workflow pauses before rewriting history and asks for explicit force-with-lease approval.",
+      "expected_output": "The agent brings the published branch up to date by merging the target branch into it, with no rebase and no force push, then pushes and updates the request.",
       "assertions": [
-        "The agent stops before rebasing the published branch",
-        "The user is asked to approve the specific rebase and force-with-lease push",
-        "No plain force push or unapproved history rewrite occurs"
+        "Merges the advanced target branch into the published branch instead of rebasing it",
+        "No rebase, force push, or force-with-lease push occurs",
+        "Pushes the merge and updates the existing request rather than opening a new one"
       ]
     },
     {
@@ -52,6 +52,55 @@
         "The detector result is STATUS=not-authenticated",
         "The response identifies the required gh authentication action",
         "The branch is not pushed and no interactive forge flow is started"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Checks look fine, merge the PR for this branch and get me back on main.",
+      "expected_output": "Required checks are confirmed green, the PR is merged with the policy's strategy, the local checkout is on an up-to-date main, the merged branch and its worktree are removed, and the PR number and URL are reported.",
+      "assertions": [
+        "Verifies required checks pass before merging rather than trusting the user's summary",
+        "Merges with the strategy named in .agents/ship.md",
+        "Merges through the forge CLI itself instead of asking the user to merge",
+        "Switches to the target branch and fetches and pulls it after the merge",
+        "Deletes the merged local branch and removes its worktree if one exists",
+        "Reports the merged PR number and URL"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "CI on PR #65 failed again after you merged origin/main into the branch. Find out why and fix it. (The branch is published; GitHub Actions has a failed Test job.)",
+      "expected_output": "The agent reads the failed job's log with gh pr checks and gh run view --log-failed, identifies whether the failure is from its change or a known flake with evidence, fixes it, runs the full local CI before pushing, pushes without any force, waits for the PR checks to finish, and reports each check's final state.",
+      "assertions": [
+        "The failed job's log is read from the forge before any fix is attempted",
+        "The cause is stated with evidence (own change versus pre-existing flake)",
+        "The full local CI suite runs green before the push",
+        "The push uses neither --force nor --force-with-lease and no rebase of the published branch occurs",
+        "The agent waits for the PR checks to complete and reports each check's final state"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Then commit and open PRs in both repos. (The change spans two GitHub repositories, acme/web and acme/api; the web change calls a new API endpoint, so the API must deploy first. Neither has an open PR yet.)",
+      "expected_output": "One PR per repository, each with a Related PRs section using owner/repo#N links: the API PR marked 'required by' the web PR and the web PR 'depends on' the API PR. The first PR is updated after the second is created so links are bidirectional.",
+      "assertions": [
+        "A PR is opened in each of the two repositories, each against its own target branch",
+        "Each PR body has a Related PRs section linking the other with owner/repo#N",
+        "The web PR is marked depends on the API PR and the API PR is marked required by the web PR",
+        "The first-created PR is edited in place after the second exists, without opening a duplicate",
+        "Both PR URLs are reported"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Merge the PR into main and make sure it's deployed to staging. (The PR for this branch is open with green required checks; a GitHub Actions workflow on main deploys to staging at https://staging.example.com.)",
+      "expected_output": "The agent verifies required checks, merges itself with the ship.md strategy, switches to main and pulls, deletes the local branch, waits for the main deploy workflow run to finish, confirms the change is live on staging, and reports the PR number, URL, and staging URL.",
+      "assertions": [
+        "The merge is performed by the agent through gh, not handed back to the user",
+        "The agent waits for the deploy workflow run triggered on main to complete",
+        "The change is verified live on staging (for example a health or version endpoint check), not assumed",
+        "The report includes the merged PR number and URL and the staging URL",
+        "A failed deploy is reported with its output rather than claimed as live"
       ]
     }
   ]

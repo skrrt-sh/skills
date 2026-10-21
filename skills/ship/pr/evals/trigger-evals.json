@@ -13,7 +13,7 @@
   { "query": "commit these changes", "should_trigger": false },
   { "query": "publish the v2.0.0 release", "should_trigger": false },
   { "query": "pick a branching strategy for this repository", "should_trigger": false },
-  { "query": "merge the pull request", "should_trigger": false },
+  { "query": "merge the pull request", "should_trigger": true },
   { "query": "review the code in this pull request", "should_trigger": false },
   { "query": "write a changelog entry for this change", "should_trigger": false },
   { "query": "show me the diff against main", "should_trigger": false },

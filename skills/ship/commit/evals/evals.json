@@ -43,6 +43,52 @@
         "The merged source branch is not reused or pushed",
         "The resulting commit identifies the regression without inventing issue metadata"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "Commit my fix. (This is a clone of an upstream open-source project with a CONTRIBUTING.md; there is no .agents/ship.md.)",
+      "expected_output": "The agent does not run or ask for /setup. It reads CONTRIBUTING.md, follows its commit conventions, avoids committing on the default branch, and commits the fix.",
+      "assertions": [
+        "Does not run /setup or ask the user to run it",
+        "Reads the repository's contributing rules",
+        "Follows the repository's commit message conventions",
+        "Does not commit directly on the default branch"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Skip setup, just commit and push. (The repository has no .agents/ship.md; you already asked once about running setup and the user declined. The current branch is main, it is the user's own GitHub repository, and the worktree holds an uncommitted ledger reservation feature.)",
+      "expected_output": "The agent does not run setup or ask about it again. It creates a <type>/<description> work branch from the current HEAD without stashing, commits the feature with a conventional type, gitmoji, and body, pushes the work branch, and reports the hash, subject, files, and that no ship policy is configured.",
+      "assertions": [
+        "Does not run setup and does not ask the user about setup again",
+        "No commit is created on main",
+        "A work branch is created from the current HEAD with the worktree preserved and no stash",
+        "The commit uses a conventional type, a matching gitmoji immediately after type(scope):, and a body",
+        "The pushed ref is the work branch, not main"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Commit this, don't divide too deep into the number of commits. (On feat/router-branches: one feature touches 14 files across src/, its tests, and its docs, plus one unrelated lockfile bump.)",
+      "expected_output": "The agent groups by intent, not by file: one commit for the feature with its tests and docs, and at most one separate commit for the unrelated lockfile bump. Each commit has a matching type, gitmoji, and body.",
+      "assertions": [
+        "The feature, its tests, and its docs land in a single commit",
+        "No commit contains only one file of the feature split out by file or directory",
+        "At most two commits are created in total",
+        "The unrelated lockfile bump is either committed separately or left out, not mixed into the feature commit",
+        "Each staged diff is reviewed before its commit"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Commit the finished lane work. (Commit signing goes through a password-manager SSH agent and every git commit currently fails with a signing error; the work is on fix/rate-limits.)",
+      "expected_output": "The agent retries the signed commit about every 30 seconds, up to 5 times. If it still fails, it stops and reports the signing failure in one line, leaving all changes staged or in the worktree. It never disables signing or bypasses hooks.",
+      "assertions": [
+        "The commit is retried with signing, at most 5 times, spaced about 30 seconds apart",
+        "No -c commit.gpgsign=false, --no-gpg-sign, git config change to signing, or --no-verify is used",
+        "After the final failure the agent stops and reports the signing failure in one line",
+        "All work remains in the worktree or index; nothing is stashed, reset, or discarded"
+      ]
     }
   ]
 }

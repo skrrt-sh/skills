@@ -41,6 +41,39 @@
         "The agent asks whether to create CLAUDE.md or AGENTS.md",
         "The agent does not choose an instruction-file format or write configuration without the user's answer"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "Run setup and make it work with our Cloudflare deploy, don't overengineer. (A new solo-maintained repository just pushed to GitHub; it has CLAUDE.md, deploys to Cloudflare Workers with wrangler on push to main, no develop branch, no feature flags.)",
+      "expected_output": "The agent presents the three strategies and recommends GitHub Flow from the evidence (solo maintainer, deploy on main, no stabilization branch), waits for the choice, then runs the configure script. Only CLAUDE.md and .agents/ship.md change; no CI, deploy, or wrangler files are added or edited.",
+      "assertions": [
+        "GitHub Flow is recommended with evidence from the repository, and Gitflow is not recommended",
+        "No configuration is written before the user confirms a strategy",
+        "Only the instruction file and .agents/ship.md are modified",
+        "No CI workflow, wrangler config, or deploy script is created or changed"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Do setup, but commit not in main. (The current branch is main; the repository has AGENTS.md and no .agents/ship.md; the user already chose GitHub Flow.)",
+      "expected_output": "Setup runs with GitHub Flow and AGENTS.md as the instruction file. The resulting AGENTS.md and .agents/ship.md changes are committed on a new work branch created from the current HEAD, never on main.",
+      "assertions": [
+        "The user is not asked to choose a strategy again",
+        "AGENTS.md is used as the instruction file and CLAUDE.md is not created",
+        "No commit is created on main",
+        "The setup changes are committed on a <type>/<description> work branch"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Do setup and commit and pr. (No .agents/ship.md exists yet; the repository has CLAUDE.md, CI on pull requests, and uncommitted feature work on main. No strategy has been named.)",
+      "expected_output": "The agent does setup first: it presents the strategies with one recommendation and waits for the user's choice before writing configuration. Only after setup completes does it commit, on a work branch, and open the PR against the configured target.",
+      "assertions": [
+        "No configuration is written before the user chooses a strategy",
+        "No commit or push happens before .agents/ship.md exists",
+        "Setup changes and feature work are not committed on main",
+        "The PR targets the branch defined by the newly written .agents/ship.md"
+      ]
     }
   ]
 }

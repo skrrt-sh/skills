@@ -28,6 +28,9 @@ footer
 
 1. Read `.agents/ship.md` at the repository root. If missing, stop and ask the user to run
    `/setup`.
+   In a repository that is not the user's own, such as open source or an org-wide repo, never
+   run setup: follow its contributing rules and treat its default branch as protected. If the user
+   declines setup, do the same without asking again and report that no policy is configured.
 2. Inspect `git status --short`, staged and unstaged diffs, and the current branch. Do not include
    unrelated files without approval.
 3. Protect work on a forbidden branch before staging: create a correctly named work branch from
@@ -39,9 +42,7 @@ footer
    message.
 6. Stage only the intended files or hunks. Review `git diff --cached` before each commit.
 7. Write the message to a `mktemp` file outside the repository, commit with
-   `git commit --file <file>`, then remove it. A fixed path is unsafe: a second agent, or your own
-   next commit, can overwrite the message between writing it and committing, which silently ships a
-   message describing the wrong diff.
+   `git commit --file <file>`, then remove it. A fixed path lets another commit overwrite it.
 8. Verify the resulting commit and report its hash, subject, included files, and known test status.
 
 ## Guardrails
@@ -51,3 +52,6 @@ footer
 - Preserve unrelated and untracked work.
 - Never invent test results, amend, rewrite history, or force-push unless explicitly requested.
 - Never commit secrets or likely credential files; stop and warn the user.
+- Never commit absolute local paths or machine-specific config.
+- If commit signing fails, keep working and retry every 30 seconds, up to 5 times. Then stop and
+  report it in one line. Never disable signing or skip hooks.
