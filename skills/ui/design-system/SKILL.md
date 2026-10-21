@@ -12,7 +12,8 @@ One system. Every fix lands in the system, not on a screen.
 - Find the existing system first: theme, tokens, component library. Extend it in its own style.
   Never start a second one.
 - Search for an existing component before building one. Reuse it or add a variant.
-- When a design file disagrees with the system, the system wins. Report the difference.
+- When a design file disagrees with the system, report the difference. Apply an approved change
+  in the system itself, never on one screen.
 
 ## Tokens
 
