@@ -26,11 +26,11 @@ footer
 
 ## Process
 
-1. Read `.agents/ship.md` at the repository root. If missing, stop and ask the user to run
-   `/setup`.
-   In a repository that is not the user's own, such as open source or an org-wide repo, never
-   run setup: follow its contributing rules and treat its default branch as protected. If the user
-   declines setup, do the same without asking again and report that no policy is configured.
+1. Read `.agents/ship.md` at the repository root. If it is missing in a repository that is not
+   the user's own, such as open source or an org-wide repo, never run setup: follow its
+   contributing rules and treat its default branch as protected. If the user declined setup, do
+   the same without asking again and report that no policy is configured. Otherwise stop and ask
+   the user to run `/setup`.
 2. Inspect `git status --short`, staged and unstaged diffs, and the current branch. Do not include
    unrelated files without approval.
 3. Protect work on a forbidden branch before staging: create a correctly named work branch from
@@ -53,5 +53,5 @@ footer
 - Never invent test results, amend, rewrite history, or force-push unless explicitly requested.
 - Never commit secrets or likely credential files; stop and warn the user.
 - Never commit absolute local paths or machine-specific config.
-- If commit signing fails, keep working and retry every 30 seconds, up to 5 times. Then stop and
+- If commit signing fails, keep working and retry every 30 seconds, at most five attempts in total. Then stop and
   report it in one line. Never disable signing or skip hooks.

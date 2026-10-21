@@ -47,7 +47,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "printf '%s\\n' 'For any code change: implement through dev:subagents and apply dev:design-principles, dev:testing, dev:self-documenting, and dev:research. For UI work also apply ui:design-system and ui:screens and load the installed design and motion skills. Reply per dev:reporting. Ship through ship:commit and ship:pr.'"
+            "command": "printf '%s\\n' 'For any code change: implement through dev:subagents and apply dev:design-principles, dev:testing, dev:self-documenting, and dev:research. For UI work also apply ui:design-system and ui:screens and load the installed design and motion skills. Reply per dev:reporting. When asked to commit or open a PR, use ship:commit and ship:pr.'"
           }
         ]
       }

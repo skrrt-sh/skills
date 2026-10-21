@@ -70,12 +70,11 @@
     {
       "id": 7,
       "prompt": "Commit this, don't divide too deep into the number of commits. (On feat/router-branches: one feature touches 14 files across src/, its tests, and its docs, plus one unrelated lockfile bump.)",
-      "expected_output": "The agent groups by intent, not by file: one commit for the feature with its tests and docs, and at most one separate commit for the unrelated lockfile bump. Each commit has a matching type, gitmoji, and body.",
+      "expected_output": "The agent groups by intent, not by file: one commit for the feature with its tests and docs. The unrelated lockfile bump stays uncommitted and is mentioned, since the user did not approve it. The commit has a matching type, gitmoji, and body.",
       "assertions": [
         "The feature, its tests, and its docs land in a single commit",
         "No commit contains only one file of the feature split out by file or directory",
-        "At most two commits are created in total",
-        "The unrelated lockfile bump is either committed separately or left out, not mixed into the feature commit",
+        "The unrelated lockfile bump is left uncommitted and reported, not committed without approval",
         "Each staged diff is reviewed before its commit"
       ]
     },

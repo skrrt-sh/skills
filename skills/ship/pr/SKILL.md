@@ -10,10 +10,11 @@ Use the forge that owns the remote: `gh` for GitHub, `glab` for GitLab.
 
 ## Process
 
-1. Read `.agents/ship.md` at the repository root. If missing, stop and ask the user to run
-   `/setup`. Derive the protected branches and target branch from this file.
-   In a repository that is not the user's own, such as open source or an org-wide repo, never
-   run setup: follow its contributing rules and treat its default branch as protected.
+1. Read `.agents/ship.md` at the repository root and derive the protected branches and target
+   branch from it. If it is missing in a repository that is not the user's own, such as open
+   source or an org-wide repo, never run setup: follow its contributing rules, target and protect
+   its default branch, and ask before merging if those rules do not say how. Otherwise stop and
+   ask the user to run `/setup`.
 2. Confirm the current branch is not protected.
 3. From the target repository, run
    `${CLAUDE_SKILL_DIR}/scripts/detect-forge-cli.sh`. Continue only when it prints
@@ -47,8 +48,9 @@ Only when the user asks to merge. Do every step yourself; never hand the merge b
 1. Wait for the required checks. Without CI, run the full build, tests, and lint locally. Never
    merge on a failure; report it with its output.
 2. Merge with the strategy in `.agents/ship.md`: `gh pr merge` or `glab mr merge`.
-3. Switch to the target branch, then fetch and pull.
-4. Delete the merged local branch and remove its worktree, if one exists.
+3. Switch to the target branch, then fetch and pull. If the target is checked out in another
+   worktree, move there instead.
+4. Remove the merged branch's worktree, if one exists, then delete the merged local branch.
 5. If the target branch deploys, wait for the deploy and confirm the change is live.
 6. Report the merged request's number and URL, and the live URL if one exists.
 
