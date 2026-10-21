@@ -227,6 +227,12 @@ At most five run at once; more scopes become stages.
 UI craft that complements the motion skills (`emil-design-eng`, `apple-design`, `animate`).
 Bucket index: [`skills/ui/`](skills/ui/README.md).
 
+- **[ux-patterns](skills/ui/ux-patterns/SKILL.md)**: Design from user stories, then established UX
+  patterns for the platform, then a few chosen principles. No design for its own sake.
+- **[taste](skills/ui/taste/SKILL.md)**: How a page looks and reads: keep what works, one grid,
+  restraint with decoration, plain copy said once.
+- **[motion](skills/ui/motion/SKILL.md)**: Project motion settings on top of Emil Kowalski's and
+  Apple's motion skills: few small accents, one motion language, smooth and interruptible.
 - **[design-system](skills/ui/design-system/SKILL.md)**: One visual system: tokens, one component
   per pattern, full component states, stable sizes, and fixes made in the system.
 - **[screens](skills/ui/screens/SKILL.md)**: Complete, predictable, fast screens: every state,
@@ -271,7 +277,7 @@ Terminal look and feel for Claude Code. Bucket index: [`skills/term/`](skills/te
 │   ├── ship/                      # setup, commit, pr, release
 │   ├── docs/md-writer/
 │   ├── dev/                       # subagents, herdr-agents, design-principles, testing, research, reporting, self-documenting
-│   ├── ui/                        # design-system, screens
+│   ├── ui/                        # ux-patterns, taste, motion, design-system, screens
 │   └── term/                      # statusline
 └── templates/claude-settings.json # Recommended Claude permissions
 ```

@@ -1,7 +1,7 @@
 {
   "name": "ui",
-  "version": "1.0.0",
-  "description": "UI craft that complements the motion skills: one design system with tokens and shared components, and complete, predictable, fast screens matched to the design.",
+  "version": "1.1.0",
+  "description": "UI craft that complements the motion skills: design from user stories and established UX patterns, one design system, tasteful layout and copy, motion settings on top of Emil Kowalski's skills, and complete, fast screens.",
   "author": {
     "name": "skrrt-sh",
     "url": "https://github.com/skrrt-sh"
@@ -15,10 +15,19 @@
     "design-system",
     "tokens",
     "components",
-    "performance"
+    "performance",
+    "ux-patterns",
+    "user-stories",
+    "motion",
+    "taste",
+    "copywriting",
+    "typography"
   ],
   "skills": [
     "./design-system",
-    "./screens"
+    "./motion",
+    "./screens",
+    "./taste",
+    "./ux-patterns"
   ]
 }

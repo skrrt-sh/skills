@@ -18,5 +18,7 @@
   {"query": "compare NATS and Kafka for our event bus", "should_trigger": false},
   {"query": "bump the node version in .nvmrc to 22", "should_trigger": false},
   {"query": "what's the weather in Berlin", "should_trigger": false},
-  {"query": "show me the git log for the last week", "should_trigger": false}
+  {"query": "show me the git log for the last week", "should_trigger": false},
+  {"query": "rewrite the error messages on the signup form to be clearer", "should_trigger": false},
+  {"query": "pick a type scale and line heights for the app", "should_trigger": false}
 ]

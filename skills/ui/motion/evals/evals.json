@@ -1,0 +1,52 @@
+{
+  "skill_name": "motion",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Add a hover animation to the nav links on the studio site.",
+      "expected_output": "The agent adds one subtle hover in the system's shared link or nav component, from the existing duration and curve tokens, so every nav link matches. Nothing under the cursor moves and no new effect is introduced.",
+      "assertions": [
+        "Adds the hover in the shared link or nav component, not on individual links",
+        "Uses the existing duration and curve tokens",
+        "Keeps the site's existing link style instead of introducing a new effect",
+        "Nothing under the cursor shifts on hover"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The notifications toggle animates smoothly when turned on but snaps back when turned off. Fix it.",
+      "expected_output": "Turning off reverses from the current state with the same token curve and duration, repeated toggles land smoothly on the nearest position, and the agent checks interrupt and reverse in a real browser or simulator.",
+      "assertions": [
+        "Turning off plays the animation back from its current state instead of snapping",
+        "Uses an interruptible transition or spring, not a restarting keyframe",
+        "Rapid repeated toggles land smoothly on the nearest valid position",
+        "Uses the same motion token as the on transition",
+        "Verifies interrupt and reverse in a real browser or simulator"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Audit all the animations in our Expo app and make sure they are consistent.",
+      "expected_output": "One inventory table of element, trigger, curve, duration, and token, with mismatches, raw values, and missing tokens flagged and fixed in tokens or shared components. Tab switches do not slide and plain buttons have no haptic.",
+      "assertions": [
+        "Produces one inventory with element, trigger, curve, duration, and token columns",
+        "Flags transitions of the same kind that use different curves or durations",
+        "Flags raw values that bypass tokens",
+        "Fixes mismatches in tokens or shared components rather than per screen",
+        "Flags sliding tab switches and haptics on plain buttons",
+        "Loads animate-expo and improve-animations if installed"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Add a glassy blurred header that fades in on scroll, like Apple does. Our design system has no blur or translucency.",
+      "expected_output": "The agent does not add blur or translucency because the system lacks them, even though apple-design recommends them, and proposes a header transition built from existing tokens instead or none at all.",
+      "assertions": [
+        "Does not add backdrop blur, glass, or translucency",
+        "States that the design system beats the apple-design recommendation",
+        "Any header motion uses existing tokens and stays a small accent",
+        "Raises the material as a design-system question instead of adding it"
+      ]
+    }
+  ]
+}

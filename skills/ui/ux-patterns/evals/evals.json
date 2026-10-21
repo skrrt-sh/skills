@@ -1,0 +1,55 @@
+{
+  "skill_name": "ux-patterns",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design the send-money flow for our mobile crypto wallet.",
+      "expected_output": "Before any screen, a design brief in chat: complete stories for a first-time user with no crypto knowledge and a power user, including failure paths; 3 to 5 established payment and wallet apps plus Apple HIG and Material 3 studied with links and dates; the dominant pattern per step; 3 to 5 trade-off principles. The flow is split into stages and ends with a receipt.",
+      "assertions": [
+        "Writes user stories with actor, need, and goal, naming the least-expert user and the power user",
+        "Stories cover failure paths such as wrong address, insufficient funds, or no connection",
+        "Studies 3 to 5 named established products and the platform guidelines, with links and dates",
+        "States the dominant pattern chosen per flow step and justifies any break from it",
+        "Lists 3 to 5 principles phrased as trade-offs",
+        "Posts the brief in chat before designing screens or writing code, not to a repo file",
+        "Splits the send into stages that show status and end with a receipt"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Make a landing page for our design studio.",
+      "expected_output": "Stories for visitors deciding whether to hire the studio, a study of established studios' sites and NN/g homepage guidance, content written before layout, the value stated in the hero with concrete work shown, one primary call to action per section, and creative touches limited to one or two places that serve a story.",
+      "assertions": [
+        "Writes visitor stories before proposing any layout",
+        "Studies several established studio sites and cites homepage guidance with dates",
+        "Drafts the real content before choosing the layout",
+        "Puts a tagline that says what the studio does and the unique value in the hero",
+        "Uses one primary call to action per section",
+        "Limits decorative or creative elements to places tied to a story"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Our SaaS settings page is cluttered, redesign it.",
+      "expected_output": "Stories ranked by how often each setting is used, a comparison with how 3 to 5 established SaaS products structure settings, frequent settings shown first, rare and power settings tucked away, every element traced to a story and the rest cut, and a brief listing what moved or was removed.",
+      "assertions": [
+        "Ranks settings by usage frequency from the stories",
+        "Compares how several established SaaS products structure settings, with sources",
+        "Shows frequent settings first and tucks rare or power settings away",
+        "Cuts elements that trace to no story and lists them",
+        "Hands off looks and text to taste instead of doing everything inline"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Just add a 'Duplicate' button to the project card.",
+      "expected_output": "A quick pattern check instead of the full process: the story behind duplicating, how the platform and two peers place duplicate actions, and whether frequency puts it on the card or in its overflow menu. No long brief.",
+      "assertions": [
+        "Scales the process down to a quick pattern check rather than running every gate",
+        "States the user story behind the action",
+        "Checks how the platform and at least two peers place a duplicate action",
+        "Decides placement by frequency, such as the overflow menu for a rare action"
+      ]
+    }
+  ]
+}

@@ -59,13 +59,26 @@
     },
     {
       "id": 6,
-      "prompt": "On the landing page the clients block separates items with dots ('Fintech · Mobile · 2025'). Our design rule is slashes for this. Fix it.",
-      "expected_output": "The agent finds the system's separator (a component or token), uses it here, and replaces every other dot-separated inline list in the app with it, so there is one separator style. Hand-typed '·' or '/' strings are not scattered through screens.",
+      "prompt": "On the landing page the clients block separates items with dots ('Fintech · Mobile · 2025'). Fix it.",
+      "expected_output": "The agent drops the dots for a separation the system already uses (a gap, color, or background suited to this block), applies it through a shared component or style, and moves every other dot-separated list to it.",
       "assertions": [
-        "Uses or creates one shared separator component or style rather than typing slashes into this block",
-        "Searches for other inline lists that use dots or other separators and moves them to the shared one",
-        "Ends with one separator style across the app",
-        "Adds no new spacing or color values for the separator outside the tokens"
+        "Removes the dot separators",
+        "Separates items with a gap, color, or background rather than slashes or another glyph",
+        "Uses or creates one shared separator style rather than editing this block alone",
+        "Searches for other dot-separated lists and moves them to the shared style",
+        "Adds no spacing or color values outside the tokens"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "On the iPad and on touch laptops our cards stay highlighted after a tap. Hover styles are enabled with an isDesktop check. Fix it.",
+      "expected_output": "The agent removes the device-type check and gates hover styles by capability with (hover: hover) and (pointer: fine), in the shared card or a shared hover utility, so taps never leave a sticky hover anywhere, and lists the components it changed.",
+      "assertions": [
+        "Removes the device-type or user-agent check that enables hover",
+        "Gates hover styles with (hover: hover) and (pointer: fine) or the platform equivalent",
+        "The fix lives in a shared component, utility, or token layer rather than one screen",
+        "Mouse hover on a fine-pointer device still works",
+        "Lists every component or screen that used the old check"
       ]
     }
   ]

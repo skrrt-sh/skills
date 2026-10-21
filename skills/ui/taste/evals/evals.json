@@ -1,0 +1,66 @@
+{
+  "skill_name": "taste",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our landing page looks sloppy. Review it and fix what's wrong.",
+      "expected_output": "The agent screenshots the page at the smallest and largest widths in both themes, lists each finding as a concrete before and after, cuts decoration without a purpose, aligns every section to one content width, reuses the site's existing blocks, and checks contrast including selection and focus.",
+      "assertions": [
+        "Takes screenshots at the smallest and largest widths and in both themes before changing anything",
+        "Reports each finding as a concrete before and after with the exact change",
+        "Removes decoration that carries no information, such as eyebrow captions, decorative dots, or stray blurred blobs",
+        "Brings every section, hero included, to one shared content width",
+        "Fixes by rearranging and reusing existing blocks and styles, not by adding new ornaments",
+        "Checks text contrast against WCAG 2.2 AA, plus the selection color and focus ring"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Add a hover state to the mascot illustration in our header. I love the drawing, it's just static.",
+      "expected_output": "The agent adds a hover state to the existing SVG without redrawing or replacing it, keeps the hover subtle, and changes nothing else in the header.",
+      "assertions": [
+        "Keeps the existing SVG artwork and its paths instead of redrawing or swapping it",
+        "Adds the hover state on top of the existing artwork",
+        "Changes nothing else in the header that the user did not flag",
+        "Reports exactly what was added"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Text selection is invisible on the pink section and the blue button there looks awful. Fix it.",
+      "expected_output": "The agent styles selection from the palette so it is visible on every surface, replaces the clashing button color with an accent from the pink surface's palette, checks the contrast ratios, and leaves the rest of the section alone.",
+      "assertions": [
+        "Sets a ::selection style from palette tokens that is visible on the pink surface and elsewhere",
+        "Leaves no default blue selection or highlight anywhere",
+        "Replaces the button accent with a color that belongs to the pink surface's palette",
+        "Reports contrast ratios that meet 4.5:1 for text and 3:1 for the button against its background",
+        "Does not restyle other parts of the section"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Rewrite our studio hero: 'Revolutionary digital experiences that elevate your brand — seamless, cutting-edge, unforgettable. Unlock your potential with the world's best team.'",
+      "expected_output": "A hero that says what the studio does, who it's for, and the value in plain words, with no hype, and placeholders instead of invented claims.",
+      "assertions": [
+        "Removes hype words such as revolutionary, elevate, seamless, cutting-edge, unlock",
+        "Drops the 'world's best' superlative",
+        "States what the studio does and for whom in plain words",
+        "States the tone of voice it writes to and keeps to it",
+        "Has one primary CTA labeled verb plus object",
+        "Invents no client names or metrics and lists any placeholder in the report"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Write the error messages for our signup form: email, password (min 12 chars), and terms checkbox.",
+      "expected_output": "One inline message per field that says what went wrong and how to fix it, shown beside the field, with no blame and no bare codes.",
+      "assertions": [
+        "Each message says how to fix the problem, not only that it failed",
+        "Messages sit beside the field that caused them, not in a top banner list",
+        "The password message states the 12 character minimum",
+        "No message blames the user or shows only an error code",
+        "No exclamation marks or blame"
+      ]
+    }
+  ]
+}
