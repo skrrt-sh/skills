@@ -27,7 +27,8 @@ A test exists only to guard business logic that could break unnoticed.
 - Tests for third-party libraries, the framework, or the language.
 - Tests for internals: private helpers, wiring, implementation steps.
 - Tests for obvious code: getters, setters, constructors, code without branches, and mappers or
-  DTO conversions, including field selection, renaming, and standard formatting.
+  DTO conversions, including field selection, renaming, and standard formatting. Field selection
+  that keeps secrets or private data out is a security rule: test it.
 - Assertions about a library call's result: that it is set, differs from the input, or has a
   format. Assert only your code's decision around the call. Stub the library when it is slow or
   nondeterministic.

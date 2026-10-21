@@ -88,9 +88,9 @@ git -C "$path" add -A && git -C "$path" diff --cached --binary | git apply --ind
 ## Cleanup
 
 - Remove a worktree as soon as its diff lands or its scope is abandoned.
-- Confirm the diff landed, then run `herdr worktree remove --workspace "$ws_id" --force` and
-  `git branch -D "scope/$name"`. If `git log "$base..scope/$name"` shows commits, find out why
-  first.
+- Confirm the diff landed. If `git log "$base..scope/$name"` shows commits, find out why first.
+  Then run `herdr worktree remove --workspace "$ws_id" --force` and
+  `git branch -D "scope/$name"`.
 - Never use `workspace close`. It leaves the checkout on disk.
 - End of run: no containers, simulators, or dev servers started by this run remain.
 - End of run: `git worktree prune`. `git worktree list` and `git branch --list 'scope/*'` must

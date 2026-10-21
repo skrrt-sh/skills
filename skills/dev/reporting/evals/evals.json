@@ -73,13 +73,13 @@
     {
       "id": 7,
       "prompt": "Draft my reply to a new supplier's onboarding contact, ready to paste. Their email asks three things: which documents we already sent and when, why our order volume dropped in August, and whether we ship to the EU. Keep my tone: short and direct. Include the list of documents we sent: signed NDA, tax form, insurance certificate.",
-      "expected_output": "A complete, paste-ready email in the user's short direct tone that answers all three questions, lists the documents as a list rather than a table, and carries no pleasantries, apologies, or padding.",
+      "expected_output": "A paste-ready email in the user's short direct tone that lists the documents as a list rather than a table, invents no send dates, volume reasons, or EU shipping answer, and states in one line which of those facts it needs from the user.",
       "assertions": [
-        "Answers all three of the contact's questions explicitly",
-        "Presents the documents as a list, not a table",
-        "Gives the whole email ready to paste, not an outline or partial draft",
-        "Contains no apologies, filler pleasantries, or em dashes",
-        "Uses no placeholder brackets such as [date] that the agent could have filled or omitted"
+        "Lists the sent documents as a list, not a table",
+        "Invents no send dates, reason for the volume drop, or EU shipping answer",
+        "Names the missing facts in one plain line instead of guessing them",
+        "Gives the rest of the email ready to paste, not an outline",
+        "Contains no apologies, filler pleasantries, or em dashes"
       ]
     }
   ]

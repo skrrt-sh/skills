@@ -63,7 +63,7 @@
     {
       "id": 6,
       "prompt": "Both herdr scopes passed review. Wrap up.",
-      "expected_output": "Each diff is integrated and confirmed, then each worktree is removed with worktree remove --force, its scope branch deleted with git branch -d, and git worktree prune run at the end.",
+      "expected_output": "Each diff is integrated and confirmed, then each worktree is removed with worktree remove --force, its scope branch checked for stray commits and deleted with git branch -D, and git worktree prune run at the end.",
       "assertions": [
         "Confirms each scope's diff is present in the main checkout before removing its worktree",
         "Removes worktrees with herdr worktree remove, not workspace close",

@@ -16,8 +16,8 @@ The main thread plans, briefs, dispatches, and reviews. Subagents write the code
 - Subagents: `general-purpose` type with `model: "opus"`. Use `sonnet` only if the user asks for a
   cheaper run and the scope is mechanical. An explicit user choice overrides both.
 - Never use `fork`. It inherits the main thread's model and context.
-- One subagent per scope. At most five running, or the user's lower limit. More scopes run in
-  stages.
+- One subagent per scope. Subagents never spawn subagents. At most five running, or the user's
+  lower limit. More scopes run in stages.
 - Work autonomously. Do not stop to ask; follow the `reporting` skill for questions.
 - Inside Herdr (`HERDR_ENV=1`), when scopes need their own checkouts or the user asks for Herdr,
   dispatch with the `herdr-agents` skill instead of `Agent`. All other rules here still apply.
