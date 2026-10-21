@@ -146,7 +146,8 @@ forge CLI. Bucket index: [`skills/ship/`](skills/ship/README.md).
 - **[commit](skills/ship/commit/SKILL.md)** — Split the worktree into focused conventional commits
   with a mandatory gitmoji, guarding against commits on a protected branch.
 - **[pr](skills/ship/pr/SKILL.md)** — Push the branch and open a GitHub PR or GitLab MR with the
-  forge's own CLI, targeting the branch your strategy dictates.
+  forge's own CLI, targeting the branch your strategy dictates. Asked to merge, it waits for green
+  checks, merges, returns to an updated main, and removes the merged branch and worktree.
 - **[release](skills/ship/release/SKILL.md)** — Draft curated release notes from the commit range,
   update an existing changelog, and publish the release.
 
@@ -155,7 +156,9 @@ shared allow/ask/deny rules in `.claude/settings.json` govern them. A template s
 [`templates/claude-settings.json`](templates/claude-settings.json)
 — merge it into your project's `.claude/settings.json` for read-only git allowed automatically,
 mutating git/`gh`/`glab` escalated with `permissions.ask`, force-push escalated to human approval,
-and destructive commands such as `git reset --hard` denied.
+and destructive commands such as `git reset --hard` denied. It also adds a `UserPromptSubmit` hook
+that reminds the agent on every prompt to implement through `dev:subagents`, apply the dev skills,
+and ship through the ship skills, so you never have to name them.
 
 ### docs
 
@@ -185,35 +188,46 @@ explicit failure, never a false validation pass.
 
 Implementation workflow tools. Bucket index: [`skills/dev/`](skills/dev/README.md).
 
-- **[subagents](skills/dev/subagents/SKILL.md)** — Orchestrate strictly scoped subagents from a
-  main thread that only plans and reviews.
-- **[self-documenting](skills/dev/self-documenting/SKILL.md)** — Keep the code the single source
-  of truth: comments answer why in three lines at most, docs record decisions, CLAUDE.md and
-  AGENTS.md carry only how to work.
+- **[subagents](skills/dev/subagents/SKILL.md)**: The main thread plans, briefs, and reviews.
+  Strictly scoped subagents write the code.
+- **[herdr-agents](skills/dev/herdr-agents/SKILL.md)**: Inside Herdr, run each scope as a named
+  agent in its own git worktree, then integrate the diffs and delete the worktrees.
+- **[design-principles](skills/dev/design-principles/SKILL.md)**: DRY, loose coupling, separation
+  of concerns, minimal diffs. Every change deletes the code it replaces.
+- **[testing](skills/dev/testing/SKILL.md)**: Test only business logic and its corner cases.
+  Delete tests for removed or replaced behavior.
+- **[research](skills/dev/research/SKILL.md)**: Decide from current docs, peer projects, and
+  claims verified against the code.
+- **[reporting](skills/dev/reporting/SKILL.md)**: Plain, concrete reports. No mid-run questions;
+  open questions as one numbered list with recommendations at the end.
+- **[self-documenting](skills/dev/self-documenting/SKILL.md)**: The code is the single source of
+  truth. Comments state why, docs record decisions, AGENTS.md holds how to work, and every change
+  fixes or deletes the prose it makes false.
 
 ```text
-/subagents implement the outlined scope — orchestrate and review, delegate the code
+/subagents implement the outlined scope, orchestrate and review, delegate the code
+/herdr-agents fan the scopes out to agents in Herdr worktrees
+/design-principles build the invitations feature
+/testing write tests for the pricing rules
+/research compare queues for background jobs on Bun
+/reporting where are we and what is next
 /self-documenting clean up the comments in the auth module
 ```
 
-The main thread stays on Fable or Opus and holds the judgement — it assesses the system, decides the
-path, briefs, dispatches, reviews, and pivots when the evidence says to. Subagents
-run on Opus unless you say otherwise, get briefs naming the files they own and the files off limits,
-and leave git alone. Every file belongs to exactly one scope; contracts land in a stage before the
-code that consumes them. At most five subagents run at once — a scope with more parts becomes
-sequential stages, and each stage is reviewed against the real diff, not the subagents' own
-summaries, before the next one starts.
+Each concern has exactly one skill. The main thread stays on Fable or Opus and reviews the real
+diff, never a subagent's summary. Subagents run on Opus, own disjoint files, and leave git alone.
+At most five run at once; more scopes become stages.
 
-`self-documenting` activates on its own whenever code, comments, docs, or agent instruction files
-are written or edited, even when the request never mentions documentation. Every line of prose is a
-second copy of something the code already holds, and copies drift. So comments stay rare, answer why
-rather than what, and never exceed three lines; docs carry architecture and design decisions rather
-than a description of how the system works; and CLAUDE.md, AGENTS.md, rules and skills carry only
-the conventions that shape how work is done, a few hundred lines at most, because they load into
-every message. Prose never points into the code, since a path, symbol, or line number dangles the
-moment its target moves, and location is described only as architecture, never as paths. Asked for
-narration anyway, the skill delivers the version that survives the next
-change, says in a sentence what it did instead, and leaves the final call with you.
+### ui
+
+UI craft that complements the motion skills (`emil-design-eng`, `apple-design`, `animate`).
+Bucket index: [`skills/ui/`](skills/ui/README.md).
+
+- **[design-system](skills/ui/design-system/SKILL.md)**: One visual system: tokens, one component
+  per pattern, full component states, stable sizes, and fixes made in the system.
+- **[screens](skills/ui/screens/SKILL.md)**: Complete, predictable, fast screens: every state,
+  known UX patterns, rendering only what is visible, matched to the design and checked in the
+  real UI.
 
 ## Requirements
 
@@ -239,7 +253,8 @@ change, says in a sentence what it did instead, and leaves the final call with y
 ├── skills/
 │   ├── ship/                      # setup, commit, pr, release
 │   ├── docs/md-writer/
-│   └── dev/                       # subagents, self-documenting
+│   ├── dev/                       # subagents, herdr-agents, design-principles, testing, research, reporting, self-documenting
+│   └── ui/                        # design-system, screens
 └── templates/claude-settings.json # Recommended Claude permissions
 ```
 

@@ -12,7 +12,7 @@
     {
       "name": "ship",
       "source": "./skills/ship",
-      "description": "Git shipping workflow — conventional commits with gitmojis, PRs and MRs with the matching forge CLI, curated releases.",
+      "description": "Git shipping workflow: conventional commits with gitmojis, PRs and MRs opened and merged with the matching forge CLI, curated releases.",
       "category": "workflow",
       "keywords": [
         "git",
@@ -38,7 +38,7 @@
     {
       "name": "dev",
       "source": "./skills/dev",
-      "description": "Implementation workflow — orchestrate strictly scoped subagents from a reviewing main thread, and keep the code the single source of truth with why-only comments and decision-only docs.",
+      "description": "Implementation workflow: scoped subagents with a reviewing main thread, design principles, testing, research, plain reporting, and self-documenting code.",
       "category": "workflow",
       "keywords": [
         "subagents",
@@ -49,6 +49,19 @@
         "comments",
         "documentation",
         "claude-md"
+      ]
+    },
+    {
+      "name": "ui",
+      "source": "./skills/ui",
+      "description": "UI craft that complements the motion skills: one design system and complete, predictable, fast screens matched to the design.",
+      "category": "workflow",
+      "keywords": [
+        "ui",
+        "ux",
+        "design-system",
+        "tokens",
+        "performance"
       ]
     }
   ]
