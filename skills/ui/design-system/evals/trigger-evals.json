@@ -1,0 +1,22 @@
+[
+  {"query": "the empty state here looks different from the rest of the app, fix it", "should_trigger": true},
+  {"query": "build the settings card from this figma", "should_trigger": true},
+  {"query": "these toasts aren't from our design system", "should_trigger": true},
+  {"query": "add a dark mode pair for the input background", "should_trigger": true},
+  {"query": "the save button grows when loading and the row jumps", "should_trigger": true},
+  {"query": "make all the tiles the same size", "should_trigger": true},
+  {"query": "we have three different modal shells, unify them", "should_trigger": true},
+  {"query": "icons are inconsistent across screens, fix it", "should_trigger": true},
+  {"query": "add a token for the new accent color", "should_trigger": true},
+  {"query": "the sheet has no close button", "should_trigger": true},
+  {"query": "make the popover spring open from its trigger", "should_trigger": false},
+  {"query": "what easing should this drawer use?", "should_trigger": false},
+  {"query": "commit these changes", "should_trigger": false},
+  {"query": "add a unique index on users.email", "should_trigger": false},
+  {"query": "write tests for the pricing module", "should_trigger": false},
+  {"query": "deploy the API to staging", "should_trigger": false},
+  {"query": "what's the weather in Berlin", "should_trigger": false},
+  {"query": "rename the env var API_URL to API_BASE_URL", "should_trigger": false},
+  {"query": "explain how jest module mocking works", "should_trigger": false},
+  {"query": "show me the git log for the last week", "should_trigger": false}
+]

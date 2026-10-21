@@ -1,0 +1,24 @@
+{
+  "name": "ui",
+  "version": "1.0.0",
+  "description": "UI craft that complements the motion skills: one design system with tokens and shared components, and complete, predictable, fast screens matched to the design.",
+  "author": {
+    "name": "skrrt-sh",
+    "url": "https://github.com/skrrt-sh"
+  },
+  "homepage": "https://github.com/skrrt-sh/skills",
+  "repository": "https://github.com/skrrt-sh/skills",
+  "license": "MIT",
+  "keywords": [
+    "ui",
+    "ux",
+    "design-system",
+    "tokens",
+    "components",
+    "performance"
+  ],
+  "skills": [
+    "./design-system",
+    "./screens"
+  ]
+}
