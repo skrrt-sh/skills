@@ -4,11 +4,12 @@
     {
       "id": 1,
       "prompt": "Install the skrrt status line.",
-      "expected_output": "The agent runs the bundled installer, reports the installed script and settings paths, and mentions the Nerd Font requirement.",
+      "expected_output": "The agent runs the bundled installer, reports the installed script and settings paths, and mentions the Nerd Font requirement. It then walks the user through the bar, explaining that the +N -M on the git pill is the uncommitted diff and on the context pill is the session's own edits.",
       "assertions": [
         "Runs the bundled install-statusline.sh rather than copying files or editing settings.json by hand",
         "Reports the installed script path and the settings file it changed",
-        "Says the icons need a Nerd Font"
+        "Says the icons need a Nerd Font",
+        "Explains that +N -M beside the git branch is the uncommitted diff, and beside the context pill outside a repo is the lines Claude changed this session"
       ]
     },
     {

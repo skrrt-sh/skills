@@ -16,6 +16,17 @@ allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/install-statusline.sh:*)
    it.
 3. Tell the user the bar appears on the next refresh and its icons need a Nerd Font in the
    terminal.
+4. Walk the user through the bar, left to right, using [Reading the bar](#reading-the-bar).
+
+## Reading the bar
+
+- Model, then folder.
+- Git branch. Its `+N -M` tail is the uncommitted diff against the last commit, untracked files
+  included: what the next commit would ship, whoever wrote it.
+- Context: tokens in use against a 300k soft budget. Green below half, yellow from half, red past
+  the budget. Outside a git repo it carries the `+N -M` tail instead: lines Claude changed in this
+  session, so it lives and resets with the context.
+- `5h` and `wk`: rate limit used, with time until reset. Red from 80%.
 
 ## Guardrails
 

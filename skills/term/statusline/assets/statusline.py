@@ -8,7 +8,8 @@ INK, FADED = "#1e1e2e", "#585b70"
 MAUVE, BLUE, FLAMINGO = "#cba6f7", "#89b4fa", "#f2cdcd"
 TEAL, PEACH, YELLOW, RED = "#94e2d5", "#fab387", "#f9e2af", "#f38ba8"
 GREEN = "#a6e3a1"
-DEEP_BLUE, DEEP_FLAMINGO = "#3b4a6b", "#5e4853"
+DEEP_FLAMINGO = "#5e4853"
+DEEP_GREEN, DEEP_YELLOW, DEEP_RED = "#3e5243", "#5c5544", "#5e3b4a"
 
 CTX_BUDGET = 300_000
 
@@ -115,15 +116,12 @@ def loc(added, removed):
 
 home = os.path.expanduser("~")
 name = "~" if cwd == home else os.path.basename(cwd.rstrip("/")) or "/"
-# in a repo: uncommitted diff on the git pill; outside: session edits on the folder pill
+# uncommitted diff rides on the git pill
+pills.append(pill(BLUE, f" {name}"))
 if b := branch(cwd):
-    pills.append(pill(BLUE, f" {name}"))
     pills.append(pill(FLAMINGO, f"\uf418 {b}", tail=loc(*diffstat(cwd)), tail_color=DEEP_FLAMINGO))
-else:
-    cost = d.get("cost") or {}
-    session = loc(cost.get("total_lines_added") or 0, cost.get("total_lines_removed") or 0)
-    pills.append(pill(BLUE, f" {name}", tail=session, tail_color=DEEP_BLUE))
 
+cost = d.get("cost") or {}
 cw = d.get("context_window") or {}
 if (ctx := cw.get("used_percentage")) is not None:
     u = cw.get("current_usage") or {}
@@ -131,8 +129,10 @@ if (ctx := cw.get("used_percentage")) is not None:
     # gauge against a 300k soft budget rather than the model's real window
     if used:
         ctx = used / CTX_BUDGET * 100
-    ctx_color = RED if ctx > 100 else YELLOW if ctx >= 50 else GREEN
-    pills.append(pill(ctx_color, f"{circle(ctx)} {tokens(used)}"))
+    ctx_color, deep = (RED, DEEP_RED) if ctx > 100 else (YELLOW, DEEP_YELLOW) if ctx >= 50 else (GREEN, DEEP_GREEN)
+    # outside a repo, fall back to the session's edit count, which shares the context's lifetime
+    session = None if b else loc(cost.get("total_lines_added") or 0, cost.get("total_lines_removed") or 0)
+    pills.append(pill(ctx_color, f"{circle(ctx)} {tokens(used)}", tail=session, tail_color=deep))
 
 limits = d.get("rate_limits") or {}
 for key, label, color in (("five_hour", "5h", PEACH), ("seven_day", "wk", YELLOW)):
