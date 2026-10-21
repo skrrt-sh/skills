@@ -1,0 +1,22 @@
+[
+  {"query": "where are we, what's next?", "should_trigger": true},
+  {"query": "give me a status update on the search sync work", "should_trigger": true},
+  {"query": "I don't get it, explain again in simple words", "should_trigger": true},
+  {"query": "summarize what changed since Monday for the client", "should_trigger": true},
+  {"query": "list the open questions you have, with your recommendations", "should_trigger": true},
+  {"query": "do it all start to finish and don't ask me anything until the end", "should_trigger": true},
+  {"query": "write the final report for this stage", "should_trigger": true},
+  {"query": "draft a reply to the vendor email in my tone", "should_trigger": true},
+  {"query": "draw the architecture as a mermaid diagram", "should_trigger": true},
+  {"query": "explain the plan to me like I'm new to the project", "should_trigger": true},
+  {"query": "commit these changes", "should_trigger": false},
+  {"query": "rename the env var API_URL to API_BASE_URL", "should_trigger": false},
+  {"query": "add a unique index on users.email", "should_trigger": false},
+  {"query": "bump the node version in .nvmrc to 22", "should_trigger": false},
+  {"query": "split this pane to the right in herdr", "should_trigger": false},
+  {"query": "delete the dist folder", "should_trigger": false},
+  {"query": "run npm install", "should_trigger": false},
+  {"query": "format this file with prettier", "should_trigger": false},
+  {"query": "add a .gitignore entry for .env.local", "should_trigger": false},
+  {"query": "show me the git log for the last week", "should_trigger": false}
+]

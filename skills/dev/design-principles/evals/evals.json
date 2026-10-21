@@ -1,0 +1,95 @@
+{
+  "skill_name": "design-principles",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Add a discount code feature to checkout: percentage and fixed-amount codes, expiry dates, one code per order. The order total is already computed in the cart module.",
+      "expected_output": "Discount rules live in one pure domain module behind a narrow interface, reuse the existing total computation, and keep persistence and HTTP at the edges.",
+      "assertions": [
+        "Reuses the existing order total computation rather than reimplementing it",
+        "Discount rules live in a module with no HTTP, database, or clock access of its own; time is passed in",
+        "Other modules use the discount logic through a narrow function or interface, not its internals",
+        "Adds no options or features beyond percentage, fixed, expiry, and one code per order"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The invoice PDF and the invoice email both format money the same way with two copy-pasted functions, and the email one has a rounding bug. Fix the bug.",
+      "expected_output": "The two copies are merged into one money formatter used by both callers, and the rounding bug is fixed once.",
+      "assertions": [
+        "Replaces the two copies with one shared formatter",
+        "Both the PDF and the email paths call the shared formatter",
+        "Fixes the rounding in the shared formatter only",
+        "Changes nothing unrelated to the formatter"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Shipping and tax both have a validateAddress function. They look nearly identical, but shipping requires a street line and tax only needs country and postal code. Clean up the duplication.",
+      "expected_output": "The two validators stay separate, because they encode different rules that change for different reasons; at most a genuinely shared piece, such as postal code format, is extracted.",
+      "assertions": [
+        "Does not merge the two validators into one function with mode flags",
+        "Explains that the validators change for different reasons",
+        "Extracts only logic that is genuinely the same rule, if any"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "We're switching session storage from the in-memory map to Redis. Implement the Redis store.",
+      "expected_output": "The Redis store replaces the in-memory one in the same change: the old store, its wiring, config keys, fallbacks, and tests that only covered it are deleted, and no reference to it remains.",
+      "assertions": [
+        "Deletes the in-memory session store rather than leaving it as a fallback",
+        "Removes config, flags, and wiring that only selected or served the old store",
+        "Removes tests that only guarded the in-memory store",
+        "Searches for and removes remaining references to the old store",
+        "Leaves no commented-out code or legacy twin of the old store",
+        "Removes config keys and docs lines that describe the in-memory store"
+      ]
+    },
+    {
+      "prompt": "Ship the marketing site so I can share a preview link. (The repo has a wrangler.toml and deploys to Cloudflare Workers.)",
+      "expected_output": "The agent deploys with the project's existing Cloudflare Workers setup via wrangler and does not introduce another host or build service.",
+      "assertions": [
+        "Checks the project's existing deploy setup before choosing a path",
+        "Deploys with wrangler to Cloudflare Workers",
+        "Does not introduce Vercel, Netlify, or another hosting service",
+        "Reports the preview URL"
+      ],
+      "id": 5
+    },
+    {
+      "id": 6,
+      "prompt": "Add a client-side setting that lets users switch the app between live and sandbox mode. Each user can have API keys in both modes; make the key list show only the keys for the active mode. (API keys are rows in an api_keys table linked to users; there is currently no mode column.)",
+      "expected_output": "API keys get a mode marker (a column or tag set in place, since the app is pre-launch), and the list filters on it by the client setting. No key row is ever deleted, and no delete endpoint, cascade, or cleanup job is added.",
+      "assertions": [
+        "Adds a mode marker (e.g. a mode or is_sandbox column/tag) to API keys instead of removing rows",
+        "Filters the key list by the active mode setting at read time",
+        "Adds no DELETE query, delete endpoint, cascade, or cleanup job for API keys",
+        "Keeps the mode switch on the client and adds no admin-panel toggle"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "The horizontal product carousel on the Home screen looks right on iOS but clips cards and loses snapping on Android. Make Android look like iOS. (The app has a shared HorizontalCarousel component used by Home, Collection, and Profile screens; Home passes some style overrides of its own.)",
+      "expected_output": "The agent finds the root cause in the shared carousel component and fixes it there once, so every screen that uses the carousel is fixed. It adds no Home-only style override or Platform.OS branch at the call site.",
+      "assertions": [
+        "Locates the cause in the shared HorizontalCarousel component, not only the Home screen",
+        "Fixes it once in the shared component rather than adding a Home-only override",
+        "Does not add a Platform.OS check or one-off style patch at an individual call site",
+        "Searches for and covers the other screens that use the carousel (Collection, Profile)",
+        "Removes any Home-specific workaround the fix makes unnecessary"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Commits in this repository should be authored with my work name and email, not my personal ones. Set that up. (Other repos on this machine must keep using the personal identity; the user's ~/.gitconfig already has an includeIf block for another directory.)",
+      "expected_output": "The identity is set only for this repository or its directory, through repo-local git config or an includeIf entry that matches the existing pattern. Global user.name and user.email are not changed.",
+      "assertions": [
+        "Does not run git config --global to change user.name or user.email",
+        "Sets the identity with repo-local git config or a directory-scoped includeIf, matching the existing pattern",
+        "Checks the existing ~/.gitconfig includeIf setup before choosing an approach",
+        "Shows that this repo resolves to the work identity and another directory still resolves to the personal one"
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "name": "dev",
-  "version": "1.1.0",
-  "description": "Implementation workflow — orchestrate strictly scoped subagents from a reviewing main thread, and keep the code the single source of truth with why-only comments and decision-only docs.",
+  "version": "1.2.0",
+  "description": "Implementation workflow. Orchestrate scoped subagents from a reviewing main thread, build DRY and loosely coupled, delete replaced code, test only business logic, research before deciding, report plainly, and keep the code the single source of truth.",
   "author": {
     "name": "skrrt-sh",
     "url": "https://github.com/skrrt-sh"
@@ -11,16 +11,27 @@
   "license": "MIT",
   "keywords": [
     "subagents",
+    "herdr",
+    "worktrees",
     "orchestration",
     "parallel",
     "delegation",
     "code-review",
+    "dry",
+    "architecture",
+    "testing",
+    "cleanup",
     "comments",
     "documentation",
     "claude-md"
   ],
   "skills": [
     "./subagents",
-    "./self-documenting"
+    "./self-documenting",
+    "./herdr-agents",
+    "./design-principles",
+    "./testing",
+    "./research",
+    "./reporting"
   ]
 }

@@ -1,0 +1,96 @@
+{
+  "skill_name": "testing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write tests for src/users/service.ts. It has a UserService class with getters, a toDTO mapper, a call to bcrypt.hash, and a canDeleteAccount method that checks outstanding invoices and admin status.",
+      "expected_output": "Tests target canDeleteAccount and its corner cases through the public API. Getters, the plain mapper, and bcrypt are left untested, and the response says why.",
+      "assertions": [
+        "Tests canDeleteAccount, including outstanding invoices, admin accounts, and the boundary between them",
+        "Writes no tests for getters or the plain toDTO mapping",
+        "Writes no test asserting bcrypt hashing works",
+        "Tests go through public methods, not private helpers",
+        "States briefly which code was left untested and why"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Orders over 100 EUR used to get free shipping. Product changed it: free shipping now starts at 150 EUR and never applies to bulky items. Update the code and tests. The existing tests include 'free shipping over 100' and 'charges shipping under 100'.",
+      "expected_output": "The two old threshold tests are rewritten to the new rule, not kept beside new ones, and the bulky-item exception and the 150 boundary get corner-case tests.",
+      "assertions": [
+        "No test still asserts the 100 EUR threshold",
+        "The old threshold tests are rewritten or deleted rather than kept next to new ones",
+        "Tests the 150 EUR boundary: just below, exactly at, and above",
+        "Tests that a bulky item over 150 EUR still pays shipping",
+        "Deletes fixtures or helpers that only the old tests used"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Fix the bug where splitting a 10.00 bill three ways loses a cent.",
+      "expected_output": "The rounding is fixed and exactly one test reproduces the lost cent. No unrelated tests are added.",
+      "assertions": [
+        "Adds one test that fails before the fix and passes after it",
+        "The test asserts the shares sum to the original total",
+        "Adds no tests for unrelated code"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "CI is red: test 'rejects expired coupons' fails after my change to the coupon module. Make CI green.",
+      "expected_output": "The failure is investigated as a possible regression. The test is not deleted, skipped, or loosened to pass; either the code is fixed or the conflict is reported to the user.",
+      "assertions": [
+        "Does not delete, skip, or weaken the failing test",
+        "Determines whether the change broke the expired-coupon rule",
+        "Fixes the code, or reports to the user that the change contradicts the tested rule"
+      ]
+    },
+    {
+      "prompt": "I fixed the avatar upload on the profile screen. Verify it works. (The profile screen is behind login and there is no test account.)",
+      "expected_output": "The agent creates a test account or seeds one, logs in, exercises the upload on the real screen, and reports what it observed, instead of skipping the check or asking the user for credentials.",
+      "assertions": [
+        "Creates a test account or seed data itself",
+        "Logs in and reaches the profile screen",
+        "Exercises the avatar upload in the running app",
+        "Does not report the fix as verified without running it",
+        "Does not ask the user for credentials before trying to create an account"
+      ],
+      "id": 5
+    },
+    {
+      "id": 6,
+      "prompt": "The test 'runs and dead-letters the work queue' in the message-bus integration suite failed once in about 13 full CI runs. A similar flake in the permissions tests turned out to be a request sent before its listener was subscribed. Fix this one.",
+      "expected_output": "The agent finds the ordering race or timing assumption behind the flake, makes it reproducible, and fixes the root cause, for example by awaiting subscription readiness. It does not raise timeouts or add sleeps. It runs the suite 20 times in a row and reports the result.",
+      "assertions": [
+        "Identifies a specific root cause (e.g. publish or reply before subscription is ready) with evidence",
+        "Does not raise timeouts, add retries, or insert fixed sleeps to hide the flake",
+        "Does not skip, delete, or loosen the test's assertions",
+        "Runs the affected suite 20 times in a row after the fix and reports the pass count"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "I changed the bottom tab bar and the item detail screen in the Expo app. Check that it all works before I merge. (The app ships to iOS and Android; no simulator or emulator is currently running.)",
+      "expected_output": "The agent boots its own iOS simulator and Android emulator, runs the app on both, walks the changed tab bar and item detail screen, and checks that the unchanged flows still work. It reports what it ran and saw on each platform. It does not rely on typecheck or unit tests alone.",
+      "assertions": [
+        "Runs the app on an iOS simulator",
+        "Runs the app on an Android emulator",
+        "Exercises the changed tab bar and item detail screen on both platforms",
+        "Does not report the change as verified from typecheck, lint, or unit tests alone",
+        "Reports per platform what was run and observed, and shuts down the devices it started"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "I fixed reasoning-text streaming for one LLM provider in our SDK. Verify it. (The provider API key is configured for the local dev server; the server takes a few seconds to start and prints 'listening on' when ready. Unit tests with recorded fixtures already pass.)",
+      "expected_output": "The agent starts the local server, waits for the 'listening on' log line rather than a fixed sleep, and sends a real streaming request to the live provider. It confirms the reasoning deltas arrive and that non-reasoning streaming still works, then reports the request and the observed output. It does not call the fix verified on the recorded fixtures alone.",
+      "assertions": [
+        "Sends at least one real streaming request to the live provider, not only recorded fixtures",
+        "Waits for server readiness on the log line or an event, not with a fixed sleep",
+        "Confirms reasoning deltas actually arrive in the stream",
+        "Checks that a plain non-reasoning stream still works",
+        "Reports what was run and what was observed, and stops the server it started"
+      ]
+    }
+  ]
+}

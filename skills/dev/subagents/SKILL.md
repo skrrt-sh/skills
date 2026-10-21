@@ -1,64 +1,62 @@
 ---
 name: subagents
-description: Orchestrate subagents to implement a multi-part scope — the main thread plans, briefs, dispatches, and reviews; strictly scoped subagents on Opus write the code. Use whenever the user asks for subagents, parallel or fan-out implementation, or handing work to agents, and for any plan with several independent parts they want done at once, even without the word subagent.
+description: Orchestrate subagents to implement code changes. The main thread plans, briefs, dispatches, and reviews. Strictly scoped subagents on Opus write the code. Use for any implementation, audit, or fix that is more than a one-line edit, whenever the user asks for subagents, parallel work, or handing work to agents, even without the word subagent.
 ---
 
-# Subagent Development
+# Subagents
 
-The main thread holds the judgement — it assesses, decides, briefs, dispatches, reviews, and
-pivots; the implementation comes from subagents. The split is the point: an orchestrator that
-keeps its hands off the code keeps its context for the decisions, and a subagent that owns one
-bounded scope cannot drift into another's.
+The main thread plans, briefs, dispatches, and reviews. Subagents write the code.
 
 ## Roles
 
-- Main thread: Fable or Opus. On anything else, say so and offer `/model` before dispatching. It
-  owns every call on direction, and edits only to review-fix — a rename, a missed import;
-  anything larger is a scope.
-- Subagents: `model: "opus"` on every `Agent` call — `sonnet` when the user asks for a cheaper
-  run and the scope is mechanical. An explicit user choice overrides both.
-- Start each subagent fresh, the default `general-purpose` type. A fork inherits the main
-  thread's model and context, so the override is silently dropped and scopes bleed.
-- One subagent per scope; at most five in flight, or the lower number the user names. More
-  scopes than that means stages.
+- Main thread: Fable or Opus. On another model, tell the user and offer `/model` before
+  dispatching.
+- The main thread edits only small review fixes, such as a rename or a missing import. A larger
+  fix is a new scope.
+- Subagents: `general-purpose` type with `model: "opus"`. Use `sonnet` only if the user asks for a
+  cheaper run and the scope is mechanical. An explicit user choice overrides both.
+- Never use `fork`. It inherits the main thread's model and context.
+- One subagent per scope. At most five running, or the user's lower limit. More scopes run in
+  stages.
+- Work autonomously. Do not stop to ask; follow the `reporting` skill for questions.
+- Inside Herdr (`HERDR_ENV=1`), when scopes need their own checkouts or the user asks for Herdr,
+  dispatch with the `herdr-agents` skill instead of `Agent`. All other rules here still apply.
 
 ## Process
 
-1. Assess before anything is cut — the system and the plan both. The system: its architecture,
-   its conventions, the actual state of what the scope touches; broad reading goes to a read-only
-   `Explore` subagent on Opus, since the main thread's context is for decisions, briefs, and
-   reviews. The plan: does it fit what you found, is its approach the right one, does it follow
-   the established patterns of the codebase and its stack rather than introduce an anti-pattern.
-   Whatever is wrong is corrected here, with the user, before it becomes anyone's brief. Without an
-   outline, draft one from the assessment and confirm it.
-2. Cut the scope along the seams the codebase already has. The test of a scope: one agent finishes
-   it without reading another's in-flight work, and every file belongs to exactly one scope.
-   Contracts other scopes build on land in a stage before their consumers; work that will not
-   partition stays with one agent.
-3. Brief each subagent. It starts with none of your context, so a brief is markedly more specific
-   than an ordinary task prompt and covers: the goal, what already exists and where, the files it
-   owns and the files off limits, the contracts other scopes are built against, the command that
-   proves acceptance, the quality bar below, and a short report-back — files changed, acceptance
-   output, blockers. Shape it to the task; the coverage is what matters.
-4. Dispatch the stage's agents in a single message so they run concurrently, then review the
-   stage yourself: the diff, touched files against their owners, the acceptance commands and the
-   whole-tree build, test, and lint rerun, the quality bar. A subagent's summary is a claim; the
-   diff is the evidence. Fix the small and local; send anything larger back out as a fresh
-   subagent with a corrected brief — the agent that erred still carries the reasoning behind the
-   error. Work discovered along the way becomes a new scope in a later stage. When the evidence
-   says the path is wrong — a contract that will not hold, an approach the code resists — pivot:
-   redraw the affected scopes, re-brief, and tell the user what changed and why. Only a change to
-   the goal itself is theirs to make.
-5. After the last stage passes, check the whole against the written scope: every item landed,
-   nothing beyond it. Report what each stage produced, the commands you ran and their results,
-   what you fixed, and what remains — failing tests as failing, with their output.
+1. Assess. Fetch first, work from the latest target branch, and check open PRs for overlapping
+   work. Send broad reading to an `Explore` subagent on Opus. Check that the plan fits the
+   architecture and the codebase's patterns. Correct a wrong plan with the user before briefing.
+   Without an outline, draft one and confirm it.
+2. Split. A scope is finishable without another scope's in-progress work. Every file belongs to
+   exactly one scope. Generated files, such as migrations, lockfiles, and snapshots, belong to one
+   scope per stage; regenerate them after integrating. Contracts land in a stage before their
+   consumers. Work that cannot be split stays in one scope.
+3. Brief. The subagent has none of your context. Brief later stages from what earlier stages
+   actually landed: real contracts, signatures, paths. State the goal, the relevant existing code, the
+   files it owns, the files off limits, the contracts it builds against, the acceptance command,
+   the quality bar, and the report format: files changed, acceptance output, blockers.
+4. Dispatch a stage's agents in one message. Then review: read the diff, check file ownership,
+   rerun the acceptance commands and the full build, tests, and lint, and check the quality bar.
+   Search for an existing component or helper matching each new one; merge duplicates.
+   A summary is a claim; the diff is the evidence. Fix small issues yourself. Send larger ones to
+   a new subagent with a corrected brief, never back to the one that erred. New work always gets
+   a new agent. Before stopping an agent, salvage its diff. Newly found work
+   becomes a scope in a later stage. If the evidence shows the approach is wrong, redraw the
+   affected scopes, re-brief, and tell the user what changed and why. Only the user changes the
+   goal.
+5. Finish. Verify every scope item landed and nothing beyond it. Report each stage's result, the
+   commands run and their output, your fixes, and what remains. Report failures as failures.
 
 ## Quality bar
 
-Pass it into every brief and hold every review to it:
+Put it in every brief. Enforce it in every review.
 
-- Implement exactly the scope: no speculative abstraction, no unrequested features.
-- Smallest diff that does the job; match the surrounding code's style and idiom.
-- Let the code speak for itself. Comment only what the code cannot say.
-- Leave git alone — the orchestrator owns commits, branches, and pushes.
-- Report honestly: failing tests as failing, skipped work as skipped, guesses as guesses.
+- Follow the `design-principles`, `testing`, `self-documenting`, and `research` skills.
+- UI scopes: also follow the `ui` skills and load the installed design and motion skills, such as
+  `emil-design-eng`, `apple-design`, `animate`, and `animate-expo`.
+- Never read `.env` files, keys, or process lists. Never use the user's servers, databases,
+  devices, or ports; start your own and stop them before reporting.
+- Never ask the user. Take the recommended option and list the question in the report.
+- Do not touch git. The orchestrator owns commits, branches, and pushes.
+- Report honestly: failing as failing, skipped as skipped, guesses as guesses.

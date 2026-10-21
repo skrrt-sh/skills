@@ -12,6 +12,7 @@
         "No two subagents are given the same file to create or edit",
         "The router wiring is owned by exactly one scope, in a stage after the pieces it joins exist",
         "Each brief names the files it owns, the files off limits, and the command that proves acceptance",
+        "Each brief tells the subagent to follow the design-principles, testing, and self-documenting skills",
         "The main thread reads the resulting diff and runs the project's tests rather than trusting the subagents' summaries"
       ]
     },
@@ -40,7 +41,7 @@
     },
     {
       "id": 4,
-      "prompt": "Split this 400-line parser function into subagent work — I want three agents on it at once so it goes faster.",
+      "prompt": "Split this 400-line parser function into subagent work: I want three agents on it at once so it goes faster.",
       "expected_output": "An explanation that a single function cannot be partitioned into non-overlapping scopes, and a proposal that does not produce conflicting edits.",
       "assertions": [
         "The response does not dispatch multiple subagents over the same file",
@@ -75,6 +76,42 @@
         "src/graphql/schema.ts",
         "src/graphql/resolvers/invoices.ts",
         "README.md"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Implement the catalog sync plan with subagents: S1 add a pagination helper for supplier catalogs, S2 page through supplier A's catalog endpoint, S3 page through supplier B's catalog endpoint. (Your local main is behind: since the last pull, two PRs that touch the sync service's supplier clients were merged into origin/main, and an open PR adds a generic cursor pagination helper under the shared HTTP module.)",
+      "expected_output": "The orchestrator fetches first, plans from the latest origin/main, finds the open PR's pagination helper, and either builds on it or reshapes S1 with the user instead of dispatching a duplicate helper against a stale tree.",
+      "assertions": [
+        "Runs git fetch (or equivalent) before planning or dispatching any subagent",
+        "Plans and briefs against origin/main rather than the stale local main",
+        "Checks open PRs and names the one that already adds a cursor pagination helper",
+        "Does not dispatch a scope that writes a second pagination helper alongside the open PR's one without raising the overlap",
+        "No subagent is dispatched before the overlap with the open PR is resolved or surfaced"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Add a Buy button to all three notification variants in the feed (new product, price drop, back in stock) using subagents. (The design system already has a BuyButton component used on the category page and the product page.)",
+      "expected_output": "Briefs point every scope at the existing BuyButton, the UI quality bar loads the design and motion skills, and the review searches for any new button component and merges duplicates back into BuyButton.",
+      "assertions": [
+        "Every brief names the existing design-system BuyButton as the component to reuse",
+        "Briefs tell UI subagents to follow the ui skills and load installed design skills such as emil-design-eng and apple-design",
+        "The review step searches the diff for newly created button components or button variants",
+        "Any duplicate buy-button component found in review is merged into the existing BuyButton rather than accepted",
+        "The three variants end up rendering the same component, not three variations"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Fetch the latest main and implement the two remaining profile features with subagents. Verify each one on iOS and Android simulators against a real running backend. (The user already has a dev server on port 3000 and a booted iPhone simulator for their own testing.)",
+      "expected_output": "Subagents start and later stop their own backend and simulators on their own ports, never touching the user's server or booted simulator, and report real verification results that the orchestrator re-checks.",
+      "assertions": [
+        "Each brief forbids using the user's running server, port 3000, or the user's booted simulator",
+        "Each brief tells the subagent to start its own backend and simulators and stop them before reporting",
+        "No brief or command reads .env files or lists processes",
+        "The orchestrator reruns or inspects the verification itself instead of accepting the subagents' 'verified' claims",
+        "Nothing started by the run is still running when the final report is given"
       ]
     }
   ]

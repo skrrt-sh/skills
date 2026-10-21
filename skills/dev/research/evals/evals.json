@@ -1,0 +1,74 @@
+{
+  "skill_name": "research",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We need background jobs for the Bun API. Pick a queue and set it up.",
+      "expected_output": "Before choosing, the agent reads current official docs and compares how established projects run jobs on Bun, presents a short list of options with trade-offs and one recommendation, and names its sources.",
+      "assertions": [
+        "Reads current official docs for the candidates before choosing",
+        "Compares at least two established options rather than building a custom queue",
+        "Presents options with their main trade-off and one recommendation",
+        "Names the source behind each key fact",
+        "Does not state version numbers or features without a source"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The gateway signs every outbound request, right? Write that into the security section.",
+      "expected_output": "The agent checks the code before writing. If the code does not sign requests, it says so and does not write the claim.",
+      "assertions": [
+        "Searches the code for request signing before writing anything",
+        "Does not write the claim if the code does not support it",
+        "Tells the user plainly what the code actually does"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Check how other apps do pull-to-refresh with haptics and tell me what we should do. Don't start implementing yet.",
+      "expected_output": "Research of platform guidelines and established apps, a short recommendation, and no code changes.",
+      "assertions": [
+        "Consults the platform's official guidelines",
+        "Looks at how established apps implement it",
+        "Gives one recommendation with its trade-off",
+        "Makes no code changes"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Rewrite the closing line of our cold outreach email. Instead of asking for a call, use an open invitation to reply whenever they're ready. (The current draft ends with 'Can we book 15 minutes this week?')",
+      "expected_output": "Before recommending the open-invitation close, the agent looks for evidence that it performs, such as published reply-rate data or documented tests. It names and dates its sources, says plainly when no data exists, and presents the options with the trade-off.",
+      "assertions": [
+        "Looks for evidence (data or documented tests) on whether open-invitation closes perform before recommending one",
+        "Names the source and date behind any performance claim",
+        "Does not invent reply-rate numbers or present an unsupported claim as fact",
+        "States plainly if no reliable data was found",
+        "Presents the call-ask and open-invitation options with their trade-off and one recommendation"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Find a contract template for fixed-price website development work that we can base our own client contract on.",
+      "expected_output": "The agent prefers templates from authoritative or widely used sources, cross-checks key clauses against a second independent source, ignores a site's own claim that its template is good, and names every source with its date.",
+      "assertions": [
+        "Uses templates from authoritative or established sources (professional bodies, legal organizations, widely used open-source contract projects)",
+        "Does not rely on a random website's or vendor's own claim that its template is good",
+        "Cross-checks key clauses (scope, payment, IP, acceptance) against at least one second independent source",
+        "Names each source with its date",
+        "Says what is unknown or needs a lawyer instead of inventing legal facts"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Our approval proxy holds an outgoing API request until an admin approves it in the mobile app. What happens if nobody approves within 45 seconds, and how should we handle it? Don't implement anything yet.",
+      "expected_output": "The agent reads the current docs of the clients and protocols involved on timeouts and cancellation, checks how major clients behave from docs or source, studies how an open-source approval proxy handles pending approvals, gives options with trade-offs and a recommendation, and changes no code.",
+      "assertions": [
+        "Reads the current official docs on request timeouts, progress signals, or cancellation for the protocol involved",
+        "Checks actual client timeout behavior from docs or source code rather than memory",
+        "Looks at how at least one existing open-source approval proxy or gateway handles pending approvals",
+        "Presents options with their main trade-off and one recommendation, naming the source behind each key fact",
+        "Makes no code changes"
+      ]
+    }
+  ]
+}

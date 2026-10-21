@@ -1,0 +1,6 @@
+interface:
+  display_name: "Testing"
+  short_description: "Test only business logic and corner cases; delete tests for replaced behavior"
+  default_prompt: "Use $testing to decide which tests to write, keep, and delete: business logic and its corner cases only, nothing internal, obvious, or third-party, and no tests left for removed behavior."
+policy:
+  allow_implicit_invocation: true

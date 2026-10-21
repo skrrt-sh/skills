@@ -1,0 +1,24 @@
+id = "skrrt.herdr-mail"
+name = "herdr-mail"
+version = "0.1.0"
+min_herdr_version = "0.9.1"
+description = "Mail between agents: messages wait for an idle recipient, and child status changes report to the parent."
+platforms = ["linux", "macos"]
+
+[[events]]
+on = "pane.agent_status_changed"
+command = ["bash", "bin/herdr-mail", "hook"]
+
+[[events]]
+on = "pane.exited"
+command = ["bash", "bin/herdr-mail", "hook"]
+
+[[events]]
+on = "pane.closed"
+command = ["bash", "bin/herdr-mail", "hook"]
+
+[[panes]]
+id = "log"
+title = "Agent mail"
+placement = "overlay"
+command = ["bash", "bin/herdr-mail", "log"]

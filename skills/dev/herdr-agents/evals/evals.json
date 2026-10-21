@@ -1,0 +1,123 @@
+{
+  "skill_name": "herdr-agents",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We're inside Herdr. Implement scopes A (parser) and B (formatter) in parallel, each agent in its own worktree.",
+      "expected_output": "Two Herdr worktrees and two named Claude agents on Opus, prompted concurrently, then reviewed in their checkouts and integrated into the main checkout.",
+      "assertions": [
+        "Checks HERDR_ENV=1 before issuing any herdr control command",
+        "Creates one worktree per scope with herdr worktree create and --no-focus",
+        "Reads pane and workspace IDs from the JSON response rather than guessing them",
+        "Starts each agent with --kind claude and --model opus passed after --",
+        "Registers each child with herdr-mail watch and prompts both before waiting on either",
+        "Ends every brief with the mail protocol, naming herdr-mail by absolute path",
+        "Collects reports with herdr-mail wait in the background rather than scraping terminals",
+        "Reviews each scope with git -C <checkout> diff and runs the acceptance commands inside the checkout"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Dispatch the three scopes with herdr. One of the agents is stuck asking whether it may run npm install.",
+      "expected_output": "The blocked agent's question is read and surfaced to the user; the orchestrator does not approve it on its own.",
+      "assertions": [
+        "Recognises the blocked state from the [status … blocked] mail",
+        "Reads the blocked agent with herdr agent read before acting",
+        "Asks the user about the approval rather than sending keys to answer it",
+        "Does not re-submit the brief to the blocked agent"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use herdr worktrees for this: stage 1 adds the Store interface, stage 2 has two scopes that implement it.",
+      "expected_output": "Stage 1 is integrated into the main checkout, then stage 2 worktrees are cut from a git stash create snapshot that contains the Store interface, with nothing committed or signed.",
+      "assertions": [
+        "Runs stage 1 to completion and reviews it before creating stage 2 worktrees",
+        "Creates the stage 2 worktrees from a git stash create snapshot rather than committing or applying a patch",
+        "The stage 2 checkouts contain the Store interface",
+        "Never pushes the scope/* branches"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Fan these four scopes out to agents in worktrees.",
+      "expected_output": "Outside Herdr (HERDR_ENV unset), the skill says so and falls back to the Agent tool instead of driving another Herdr session.",
+      "assertions": [
+        "Runs the HERDR_ENV check first",
+        "States that it is not running inside Herdr",
+        "Issues no herdr worktree, pane, or agent commands",
+        "Dispatches the scopes with the Agent tool instead"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Scope parser's agent reports state=question: it asks whether the AST should keep comments. The user says yes. Scope formatter is still working.",
+      "expected_output": "The answer goes to the parser agent through herdr-mail send, which holds it until parser is idle; the working formatter agent receives nothing.",
+      "assertions": [
+        "Sends the answer with herdr-mail send to the parser agent only",
+        "Does not type into the parser agent with a raw agent prompt mid-turn",
+        "Does not message the formatter agent while it is working",
+        "Restarts herdr-mail wait in the background after handling the mail"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Both herdr scopes passed review. Wrap up.",
+      "expected_output": "Each diff is integrated and confirmed, then each worktree is removed with worktree remove --force, its scope branch deleted with git branch -d, and git worktree prune run at the end.",
+      "assertions": [
+        "Confirms each scope's diff is present in the main checkout before removing its worktree",
+        "Removes worktrees with herdr worktree remove, not workspace close",
+        "Deletes each scope branch only after confirming its diff landed and it holds no commits",
+        "Runs git worktree prune and verifies no scope/* worktrees or branches remain",
+        "Does not remove scope/* worktrees from an earlier run without asking the user"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Use herdr agents for the three scopes. (herdr plugin list shows no skrrt.herdr-mail plugin.)",
+      "expected_output": "The orchestrator asks the user before linking the bundled herdr-mail plugin, since it runs in every Herdr session, and suggests the Bash allow rule for children.",
+      "assertions": [
+        "Checks herdr plugin list for skrrt.herdr-mail at the skill's assets path",
+        "Asks the user before running herdr plugin link",
+        "Links the bundled assets/herdr-mail directory, not a community plugin",
+        "Suggests allowing the herdr-mail path in Bash permissions so children are not blocked"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "continue orchestrating. (We are inside Herdr. Three herdr scopes, api, web and docs, were dispatched earlier in this run; api already mailed its done report while you were idle, web and docs are still working.)",
+      "expected_output": "The orchestrator resumes through herdr-mail: it handles api's pending report (review its checkout diff), restarts the background herdr-mail wait, and leaves the working agents alone.",
+      "assertions": [
+        "Reads the pending mail or api's report rather than re-dispatching any scope",
+        "Reviews api with git -C <checkout> diff and runs its acceptance command inside the checkout",
+        "Restarts herdr-mail wait as a background Bash command, not a sleep loop or terminal polling",
+        "Sends no prompt or message to the still-working web and docs agents",
+        "Does not re-send any brief to an agent that already received one"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "The herdr agent 'billing' finished, its diff passed review and is integrated. Review found two follow-up fixes in the same billing code: wrong tax rounding for one region, and newly created plans refused as unsupported. Get them done.",
+      "expected_output": "The follow-ups become new scopes, each with a new named agent in a fresh worktree cut from a base that includes the integrated billing diff; the finished billing agent is not re-briefed, and its worktree is removed.",
+      "assertions": [
+        "Does not send the follow-up work to the finished 'billing' agent with agent prompt or herdr-mail send",
+        "Creates a new worktree and starts a new named agent for each follow-up scope",
+        "The new worktrees are based on a git stash create snapshot (or HEAD on a clean tree) that contains the integrated billing diff",
+        "Removes the billing worktree with herdr worktree remove --force and deletes its scope branch after confirming its diff landed",
+        "Each new brief ends with the herdr-mail protocol"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "We're inside Herdr. The 'payments' agent mailed: 'git commit failed because commit signing is unavailable. Should I keep going uncommitted and commit at the end?'",
+      "expected_output": "The orchestrator replies through herdr-mail that the child must not touch git at all, keeps the work uncommitted in the checkout, and later integrates the diff itself with git apply, checking the scope branch for stray commits.",
+      "assertions": [
+        "Replies to payments with herdr-mail send, not by typing into its pane",
+        "The reply tells the child not to commit, push, or retry signing, and to keep working in its checkout",
+        "Does not ask the user to fix signing or commit on the child's behalf",
+        "When integrating, checks git log \"$base..scope/payments\" for commits before removing the worktree",
+        "Integrates the child's work with git diff --cached --binary piped into git apply --index, not by merging or cherry-picking the scope branch"
+      ]
+    }
+  ]
+}

@@ -58,9 +58,10 @@
       "expected_output": "CLAUDE.md gains only the durable convention, the ESLint rule, while the situational facts are turned away with a pointer to where each belongs.",
       "assertions": [
         "The ESLint rule against default exports is added as a convention",
-        "The skipped flaky test, the finished migration, and the module ownership are not added to CLAUDE.md",
+        "The skipped flaky test, the finished migration, and the module ownership are not added to AGENTS.md or CLAUDE.md",
         "The response names where each excluded fact belongs, such as the tracker, git history, or a CODEOWNERS file",
-        "The resulting CLAUDE.md stays within a few hundred lines"
+        "The resulting AGENTS.md stays within a few hundred lines",
+        "The content is written to AGENTS.md, and CLAUDE.md holds only the line @AGENTS.md"
       ],
       "files": [
         "CLAUDE.md"
@@ -122,9 +123,10 @@
       "expected_output": "A few lines naming the layered structure and where a new piece of each kind goes, with no paths, and an explanation that the tree is a lookup while the structure is the rule.",
       "assertions": [
         "The section names the structure, layers such as routes, handlers and data access, and the rule for placing new code within it",
-        "No directory path or file name is written into CLAUDE.md",
+        "No directory path or file name is written into AGENTS.md or CLAUDE.md",
         "The response explains that the tree is a lookup the agent can make and only the structure is a rule",
-        "The addition is a few lines rather than a listing"
+        "The addition is a few lines rather than a listing",
+        "The content is written to AGENTS.md, and CLAUDE.md holds only the line @AGENTS.md"
       ],
       "files": [
         "CLAUDE.md",
@@ -148,6 +150,67 @@
         "lib/auth-stuff.js",
         "index.js",
         "scripts/misc/nightly.js"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "We replaced the REST polling sync with a websocket push. The code change is done. Finish the change.",
+      "expected_output": "Every comment, doc, README, and instruction file line that still describes polling is fixed or deleted, so only the websocket decision remains.",
+      "assertions": [
+        "Finds and fixes or deletes comments that still describe polling",
+        "Fixes or deletes README and doc lines that describe polling as the sync mechanism",
+        "Fixes or deletes CLAUDE.md or AGENTS.md lines that refer to polling",
+        "Leaves no two statements that contradict each other about how sync works",
+        "Does not add prose describing how the websocket code works"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Our CLAUDE.md has 120 lines: code style rules, the test and lint commands, a 'Current status' section listing in-progress features, a file map of src/, notes from last week's incident, and how the billing service processes webhooks. There is no AGENTS.md. Tidy up our agent instructions.",
+      "expected_output": "AGENTS.md is created with only the how-to-work content (style rules, commands), CLAUDE.md is reduced to the single line @AGENTS.md, and the status, file map, incident notes, and webhook mechanics are dropped with a note on where each belongs.",
+      "assertions": [
+        "Creates AGENTS.md containing the code style rules and the test and lint commands",
+        "CLAUDE.md contains only the line @AGENTS.md",
+        "AGENTS.md has no current status, in-progress features, or progress notes",
+        "AGENTS.md has no file map of src/",
+        "AGENTS.md has no incident notes and no description of how webhook processing works",
+        "The response says where the removed content belongs: git history, the tracker, or the code"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "We just fixed the 'Maximum call stack size exceeded' crash on the Discovery screen's first load. The cause was the carousel's onScroll handler setting state that re-triggered the scroll position effect, and the fix was to read the index from a ref inside the handler. Comment this fix somewhere so nobody undoes it during the next refactor. (The fix is already in src/features/discovery/featured-carousel.tsx.)",
+      "expected_output": "One comment of three lines or fewer, placed at the fix, stating why the ref is needed (state here re-enters the scroll effect and overflows the stack). It does not narrate the code, tell the incident story, or point anywhere else, and nothing goes into AGENTS.md, CLAUDE.md, or a doc.",
+      "assertions": [
+        "Exactly one comment is added, placed at the fixed line or block",
+        "The comment is three lines or fewer",
+        "The comment states the reason, that using state here re-enters the effect and overflows the stack, rather than describing what the code does",
+        "The comment holds no date, ticket, incident narrative, file path, or symbol pointer",
+        "No entry about the fix is added to AGENTS.md, CLAUDE.md, a README, or a doc"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Change the SDK so it strips every credential header on every request path, not only the header the key arrived in. Ship it. (docs/architecture.md has a 'Keys' section saying the SDK strips only the header the key arrived in. No reason for the change has been written down anywhere.)",
+      "expected_output": "The code change, plus the 'Keys' statement in docs/architecture.md replaced in the same change by one statement of the new decision. Since no reason was given, the agent asks for it instead of making one up, and the old statement is not left beside the new one.",
+      "assertions": [
+        "The 'Keys' section no longer says only the arriving header is stripped",
+        "The doc holds exactly one statement of the stripping decision, with no old and new versions side by side",
+        "No reason for the change is invented: the response asks the user for one, or records only a reason the user gave",
+        "The doc edit is part of the same change as the code, not deferred or left for the user",
+        "No prose is added explaining how the stripping code works step by step"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "The team settings feature is merged and working. Tidy up its docs. (docs/settings/ holds plan-v1.md, plan-v1-stage2.md, and handoff-2026-10-16.md. They hold the stage plans, a walkthrough of how settings resolve, three open questions, and the decision that team-level settings override user-level ones.)",
+      "expected_output": "The plan and handoff docs are retired: deleted, with the open questions moved to the tracker and the one lasting decision (team settings override user settings) kept as a short decision record. The walkthrough of how settings resolve is dropped because the code now holds it.",
+      "assertions": [
+        "The stage plan docs and the handoff note are deleted rather than updated",
+        "The open questions are moved to the tracker or listed for the user to file, not kept in a doc",
+        "The team-over-user precedence decision is kept as a short decision statement",
+        "No section describing how settings resolve is kept or rewritten",
+        "No new doc is created that points into the code by path or symbol"
       ]
     }
   ]
