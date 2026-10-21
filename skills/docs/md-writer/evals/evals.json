@@ -45,6 +45,42 @@
         "The response does not claim the document is lint-clean",
         "The response identifies how to make markdownlint available"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "Tell me the status: what our changes bring and how it looks before and after, concise and in simple terms. Use Mermaid diagrams and report it as an md doc, I can't view Mermaid in the terminal. (The repository has a docs/ folder with no frontmatter convention.)",
+      "expected_output": "A single new lowercase-hyphenated Markdown file with frontmatter, an H1 matching the title, a one-line summary, and two Mermaid diagrams (before and after). Labels use <br/> for line breaks. The validator runs and the file path is reported instead of pasting the diagrams into chat.",
+      "assertions": [
+        "A Markdown file is written rather than diagrams only printed in chat",
+        "The document contains Mermaid before and after diagrams and no ASCII-art diagrams",
+        "No Mermaid label contains a literal \\n",
+        "The bundled validator is run on the file and its result reported",
+        "The response gives the file path"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Draw one simple Mermaid schema of the overall architecture: which modules produce events onto NATS and which consume them. One doc only, not several. (docs/architecture/ exists with an overview.md that uses title and description frontmatter.)",
+      "expected_output": "Exactly one new document in docs/architecture/ using the existing title/description frontmatter vocabulary, containing a single flowchart showing producers and consumers connected through NATS, a related link to overview.md, and a passing validator run.",
+      "assertions": [
+        "Exactly one new Markdown file is created",
+        "The document contains exactly one Mermaid diagram showing producer to NATS to consumer relationships",
+        "The frontmatter follows the existing title and description vocabulary without invented metadata",
+        "overview.md is listed in related as a relative path and is not edited",
+        "The bundled validator is run on the new file"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Move our permission-layer plan docs into docs/agent/permissions/, check what other agent docs we have and link them if needed, and fact-check the plan against the code. Keep it short. (Three plan files are in docs/ root; docs/agent/ holds two existing agent docs; one plan claims a checkPermission middleware that the code does not have.)",
+      "expected_output": "The three plans are moved into docs/agent/permissions/ with lowercase hyphenated names, their related fields point to genuinely overlapping agent docs via correct relative paths, the claim that contradicts the code is corrected or flagged, and every moved file is validated.",
+      "assertions": [
+        "All three plan files end up under docs/agent/permissions/ and the old copies are removed",
+        "related entries are relative paths that resolve from the new location",
+        "The checkPermission claim is corrected or explicitly flagged as not present in the code",
+        "Existing agent docs are not edited beyond related and updated fields",
+        "The validator is run on every moved or changed file"
+      ]
     }
   ]
 }

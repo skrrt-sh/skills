@@ -1,0 +1,6 @@
+interface:
+  display_name: "Screens"
+  short_description: "Complete, predictable, fast screens matched to the design"
+  default_prompt: "Use $screens for this UI change."
+policy:
+  allow_implicit_invocation: true

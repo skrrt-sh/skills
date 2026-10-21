@@ -1,0 +1,72 @@
+{
+  "skill_name": "design-system",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "The empty state on the Orders screen looks different from everywhere else. Fix it.",
+      "expected_output": "The agent finds the shared empty-state component, makes Orders use it, and checks every other screen for divergent copies instead of restyling Orders alone.",
+      "assertions": [
+        "Searches for an existing shared empty-state component before editing",
+        "Orders uses the shared component rather than a restyled local copy",
+        "Checks other screens for divergent empty states and merges them",
+        "Introduces no new raw color, spacing, or radius values"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Here's the Figma for the new settings card: 18px padding, #7B32F8 accent, 14px radius. Build it.",
+      "expected_output": "The agent maps the values to the nearest existing tokens and reports where the design differs from the system instead of adding raw values or new near-duplicate tokens.",
+      "assertions": [
+        "Uses existing spacing, color, and radius tokens",
+        "Does not add a near-duplicate token for a value close to an existing one",
+        "Reports where the design differs from the system",
+        "Reuses existing components for the card's controls"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "The Save button grows when it shows its spinner and the row jumps. Fix it.",
+      "expected_output": "The fix lives in the shared button component: the loader replaces content inside a fixed-size box, so every button stops jumping, not just this one.",
+      "assertions": [
+        "Fixes the shared button component, not this screen only",
+        "The button keeps the same size while loading",
+        "The spinner replaces the label inside the same box"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "The filter icon on the Feed screen is wrong: it's a funnel, and it should be the sliders icon from our icon set. Fix it.",
+      "expected_output": "The agent swaps the icon at its shared source or searches every use of the filter icon, so the Feed, Discovery, and any other filter control all show the same sliders icon from the one icon set, at the same stroke weight and scale size.",
+      "assertions": [
+        "Searches the codebase for every use of the filter icon, not only the Feed screen",
+        "Every filter control ends up with the same icon, changed at a shared source or at each use",
+        "The icon comes from the project's existing icon set, not a new library, an SVG copy, or an emoji",
+        "Icon size and stroke come from the existing scale rather than raw values",
+        "The response lists the screens that changed"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "In dark mode the text inputs disappear: when focused, their background matches the screen background. Fix it.",
+      "expected_output": "The fix is in the input's surface tokens: a dark-mode pair that keeps the input distinct from its container in every state (default, focus, disabled, error). The shared input component uses those tokens and every screen with inputs is checked, with no per-screen color overrides.",
+      "assertions": [
+        "The fix changes theme tokens or the shared input component, not a single screen",
+        "The input background stays visibly distinct from its container in dark mode in default, focus, disabled, and error states",
+        "Light mode is checked too and stays distinct",
+        "No raw hex values are added to screens to patch the problem",
+        "Other screens that use inputs are checked and reported"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "On the landing page the clients block separates items with dots ('Fintech · Mobile · 2025'). Our design rule is slashes for this. Fix it.",
+      "expected_output": "The agent finds the system's separator (a component or token), uses it here, and replaces every other dot-separated inline list in the app with it, so there is one separator style. Hand-typed '·' or '/' strings are not scattered through screens.",
+      "assertions": [
+        "Uses or creates one shared separator component or style rather than typing slashes into this block",
+        "Searches for other inline lists that use dots or other separators and moves them to the shared one",
+        "Ends with one separator style across the app",
+        "Adds no new spacing or color values for the separator outside the tokens"
+      ]
+    }
+  ]
+}

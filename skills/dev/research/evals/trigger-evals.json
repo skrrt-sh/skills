@@ -1,0 +1,22 @@
+[
+  {"query": "check how other apps handle offline sync and recommend an approach", "should_trigger": true},
+  {"query": "which queue should we use for background jobs on Bun?", "should_trigger": true},
+  {"query": "compare Auth0 and Clerk for our login flow", "should_trigger": true},
+  {"query": "what's the current best practice for Expo deep linking?", "should_trigger": true},
+  {"query": "look at how the big open source projects structure their plugin system", "should_trigger": true},
+  {"query": "is it true that Workers KV is eventually consistent? check before we rely on it", "should_trigger": true},
+  {"query": "research how rivals price this and tell me what we should charge", "should_trigger": true},
+  {"query": "before we build auth, see what libraries people actually use and trust", "should_trigger": true},
+  {"query": "verify the claim in the docs that the gateway retries failed calls", "should_trigger": true},
+  {"query": "gather what people on reddit say about NATS vs Kafka for this scale", "should_trigger": true},
+  {"query": "commit these changes", "should_trigger": false},
+  {"query": "open a PR for this branch", "should_trigger": false},
+  {"query": "fix the typo in the login button label", "should_trigger": false},
+  {"query": "rename the variable userId to accountId in this file", "should_trigger": false},
+  {"query": "run the test suite", "should_trigger": false},
+  {"query": "add comments to the reconcile module", "should_trigger": false},
+  {"query": "show me the git log for the last week", "should_trigger": false},
+  {"query": "bump the node version in .nvmrc to 22", "should_trigger": false},
+  {"query": "delete the unused helper in utils", "should_trigger": false},
+  {"query": "what's the weather in Berlin", "should_trigger": false}
+]

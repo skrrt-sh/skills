@@ -1,0 +1,22 @@
+[
+  {"query": "build the activity feed screen", "should_trigger": true},
+  {"query": "add a resend code button to the OTP screen", "should_trigger": true},
+  {"query": "the dashboard feels cluttered, clean it up", "should_trigger": true},
+  {"query": "the list lags with a thousand items", "should_trigger": true},
+  {"query": "make the onboarding flow match the figma screens", "should_trigger": true},
+  {"query": "it flashes 'no items' before the data loads", "should_trigger": true},
+  {"query": "check the pricing page at 1100px and on mobile", "should_trigger": true},
+  {"query": "the connection indicator shows connected when it isn't", "should_trigger": true},
+  {"query": "group the settings page into sections", "should_trigger": true},
+  {"query": "tapping scan twice pushes the screen twice", "should_trigger": true},
+  {"query": "tune the spring on the bottom sheet drag", "should_trigger": false},
+  {"query": "what's that bouncy effect called when a modal opens?", "should_trigger": false},
+  {"query": "commit these changes", "should_trigger": false},
+  {"query": "open a PR for this branch", "should_trigger": false},
+  {"query": "add a unique index on users.email", "should_trigger": false},
+  {"query": "write tests for the refund rules", "should_trigger": false},
+  {"query": "compare NATS and Kafka for our event bus", "should_trigger": false},
+  {"query": "bump the node version in .nvmrc to 22", "should_trigger": false},
+  {"query": "what's the weather in Berlin", "should_trigger": false},
+  {"query": "show me the git log for the last week", "should_trigger": false}
+]

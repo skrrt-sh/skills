@@ -24,8 +24,9 @@ status: "draft"
 ```
 
 Add `author`, `version`, `tags`, `category`, `aliases`, `related`, `refs`, or `audience` only when
-the user, repository, or document supplies a real value. Never invent metadata. For new documents,
-use today's date and `version: "1.0.0"` only when the repository versions individual documents.
+the user, repository, or document supplies a real value. Never invent metadata or body content;
+leave unknown sections pending or ask. For new documents, use today's date and
+`version: "1.0.0"` only when the repository versions individual documents.
 
 Make the H1 match `title`. Follow it with a one-line blockquote summary. Add a table of contents
 when it materially improves navigation, typically at five or more H2 sections.

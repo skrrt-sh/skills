@@ -1,6 +1,6 @@
 ---
 name: release
-description: Draft, prepare, or publish a GitHub or GitLab release. Use when the user asks for release notes, wants to publish a release, or asks what changed since the last tag.
+description: Draft, prepare, tag, or publish a GitHub or GitLab release. Use whenever the user asks for release notes or a release description, a summary of what changed for a version or since the last tag, or to prepare, tag, or publish a release. Not for deleting or moving existing tags.
 allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/detect-forge-cli.sh:*)
 ---
 
@@ -14,8 +14,11 @@ Derive release facts from tags, commits, diffs, and repository configuration.
    - **Notes only**: produce release text; do not edit files, tag, push, or publish.
    - **Prepare**: update requested local release files; do not tag, push, or publish.
    - **Publish**: perform the verified publication flow below.
-2. Read `.agents/ship.md` at the repository root. If missing, stop and ask the user to run
-   `/setup`. Validate the release branch and tag rules it defines.
+2. Read `.agents/ship.md` at the repository root and validate the release branch and tag rules
+   it defines. If it is missing in a repository that is not the user's own, such as open source
+   or an org-wide repo, never run setup: follow its contributing rules, treat its default branch
+   as protected, and ask for the tag format if those rules do not give one. Otherwise stop and
+   ask the user to run `/setup`.
 3. For Claude Code plugin repositories, read
    [references/claude-plugin-releases.md](references/claude-plugin-releases.md).
 4. Run `git fetch origin --tags` so local tag data is current, then validate the requested tag

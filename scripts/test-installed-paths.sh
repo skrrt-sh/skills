@@ -10,6 +10,7 @@ mkdir -p "${test_dir}/installed" "${test_dir}/project" "${test_dir}/bin"
 ln -s "${repo_root}/skills/ship/setup" "${test_dir}/installed/setup"
 ln -s "${repo_root}/skills/ship/pr" "${test_dir}/installed/pr"
 ln -s "${repo_root}/skills/docs/md-writer" "${test_dir}/installed/md-writer"
+ln -s "${repo_root}/skills/term/statusline" "${test_dir}/installed/statusline"
 
 cat > "${test_dir}/bin/gh" <<'SCRIPT'
 #!/usr/bin/env bash
@@ -38,5 +39,16 @@ printf '%s\n' '---' 'title: "Guide"' 'description: "Test"' 'created: "2026-08-06
   'updated: "2026-08-06"' 'status: "draft"' '---' '' '# Guide' '' '> Test.' > guide.md
 CLAUDE_SKILL_DIR="${test_dir}/installed/md-writer"
 "${CLAUDE_SKILL_DIR}/scripts/validate-md.sh" guide.md >/dev/null 2>&1
+
+config_dir="${test_dir}/claude config"
+mkdir -p "${config_dir}"
+printf '{"statusLine":{"type":"command","command":"old"},"theme":"dark"}\n' > "${config_dir}/settings.json"
+CLAUDE_SKILL_DIR="${test_dir}/installed/statusline"
+statusline_output="$(CLAUDE_CONFIG_DIR="${config_dir}" \
+  "${CLAUDE_SKILL_DIR}/scripts/install-statusline.sh")"
+grep -Fq 'PREVIOUS_STATUSLINE={"type":"command","command":"old"}' <<< "${statusline_output}"
+jq -e '.theme == "dark"' "${config_dir}/settings.json" >/dev/null
+printf '{"model":{"display_name":"Opus"},"cwd":"/"}' |
+  sh -c "$(jq -r '.statusLine.command' "${config_dir}/settings.json")" | grep -Fq 'Opus'
 
 printf 'installed-path tests passed\n'

@@ -108,6 +108,10 @@
     "should_trigger": false
   },
   {
+    "query": "move our CLAUDE.md over to AGENTS.md and strip out the stale status notes",
+    "should_trigger": true
+  },
+  {
     "query": "write a post for our engineering blog about how we migrated the ledger to event sourcing",
     "should_trigger": false
   }

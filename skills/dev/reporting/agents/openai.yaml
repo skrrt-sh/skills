@@ -1,0 +1,6 @@
+interface:
+  display_name: "Reporting"
+  short_description: "Plain, concrete reports; questions as one numbered list at the end"
+  default_prompt: "Use $reporting for every update and final report: plain words, defined terms, concrete specifics, done or not done per ask, and open questions as one numbered list with recommendations at the end."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,86 @@
+{
+  "skill_name": "reporting",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Implement the three settings changes from the plan. Don't ask me anything until you're done.",
+      "expected_output": "The agent works through without stopping, takes the recommended option on each open point, and ends with a done or not done line per change and one numbered list of open questions with recommendations.",
+      "assertions": [
+        "Does not stop mid-run to ask a question",
+        "Takes the recommended option where a choice comes up and records it",
+        "Final report states done or not done for each of the three changes",
+        "Open questions appear once, at the end, as a numbered list with a recommendation each",
+        "Report contains no time estimates and no em dashes"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Where are we on the ledger work? Explain it simply, I don't remember the details.",
+      "expected_output": "A short plain-language status: what is done, what is next, and open questions, with no internal labels such as stage numbers or decision IDs and every term defined.",
+      "assertions": [
+        "Uses no internal labels such as stage numbers or decision IDs",
+        "Defines any technical term before using it",
+        "States concretely what is done and what is next",
+        "Fits in a short message rather than a long document"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Draw the architecture of the sync flow as a mermaid diagram.",
+      "expected_output": "The diagram is written to a separate markdown file and the reply points to it, because the terminal cannot render Mermaid.",
+      "assertions": [
+        "Writes the Mermaid diagram to a separate .md file",
+        "Does not paste the raw Mermaid source as the main reply",
+        "Tells the user where the file is"
+      ]
+    },
+    {
+      "prompt": "Deploy the API to staging. You have the railway CLI and I allow you to use it.",
+      "expected_output": "The agent deploys itself with the railway CLI. When the first deploy fails, it reads the logs, fixes the cause, and redeploys, reporting the result rather than handing the user a command.",
+      "assertions": [
+        "Runs the deploy with the railway CLI itself",
+        "On a failure, reads the logs and attempts a fix before reporting",
+        "Does not hand the user a command to paste",
+        "Does not ask for permission to use railway again",
+        "Final report states done or not done with the real deploy result"
+      ],
+      "id": 4
+    },
+    {
+      "id": 5,
+      "prompt": "Run the SDK's full test suite and report. (The Redis store integration tests need a Redis server; none is running locally. Podman is installed.)",
+      "expected_output": "The agent starts its own Redis-compatible container (for example Valkey) with podman, runs the full suite including the Redis tests, stops the container, and reports real results instead of 'Redis tests did not run'.",
+      "assertions": [
+        "Does not end the run with the Redis tests reported as skipped or not run without first trying to start a server",
+        "Starts its own Redis or Valkey container with podman rather than asking the user to start one",
+        "Reports the actual pass and fail counts of the Redis tests from the run",
+        "Stops the container it started before the final report",
+        "Does not hand the user a command to run the tests themselves"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Finish the auth plugin for the SDK. Two design choices are still open: whether request hooks can read all incoming headers, and whether self-hosted setups verify tokens against a JWKS URL. Don't ask me during the work.",
+      "expected_output": "The agent finishes with the recommended option on each choice and ends with a short numbered list of plain-language questions, each stating what it decides, the options, and a recommendation, with JWKS and hooks defined in simple words.",
+      "assertions": [
+        "Does not stop mid-run to ask either question",
+        "Each open question states in plain words what it decides for the user, not just the technical option",
+        "Defines JWKS and request hook in simple words before or where they are used",
+        "Each question lists the options and gives a recommendation, numbered so the user can answer by number",
+        "Uses no internal labels such as D3, Q7, or stage numbers in the questions"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Draft my reply to a new supplier's onboarding contact, ready to paste. Their email asks three things: which documents we already sent and when, why our order volume dropped in August, and whether we ship to the EU. Keep my tone: short and direct. Include the list of documents we sent: signed NDA, tax form, insurance certificate.",
+      "expected_output": "A paste-ready email in the user's short direct tone that lists the documents as a list rather than a table, invents no send dates, volume reasons, or EU shipping answer, and states in one line which of those facts it needs from the user.",
+      "assertions": [
+        "Lists the sent documents as a list, not a table",
+        "Invents no send dates, reason for the volume drop, or EU shipping answer",
+        "Names the missing facts in one plain line instead of guessing them",
+        "Gives the rest of the email ready to paste, not an outline",
+        "Contains no apologies, filler pleasantries, or em dashes"
+      ]
+    }
+  ]
+}

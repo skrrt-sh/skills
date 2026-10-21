@@ -1,0 +1,6 @@
+interface:
+  display_name: "Research"
+  short_description: "Decide from current docs, peer projects, and verified claims"
+  default_prompt: "Use $research before deciding: read current official docs, study how established projects solve it, cross-check sources, verify claims against the code, and recommend one option."
+policy:
+  allow_implicit_invocation: true

@@ -13,6 +13,6 @@ repository and forge state, so pair them with the permission rules in
 `templates/claude-settings.json`.
 
 - **[commit](./commit/SKILL.md)** — Conventional commits with mandatory gitmojis, split into focused changes.
-- **[pr](./pr/SKILL.md)** — Push branches and open GitHub PRs or GitLab MRs with the matching CLI.
+- **[pr](./pr/SKILL.md)** — Push branches, open GitHub PRs or GitLab MRs, and merge them when asked, with the matching CLI.
 - **[release](./release/SKILL.md)** — Draft curated release notes and publish GitHub or GitLab releases.
 - **[setup](./setup/SKILL.md)** — Add a short agent pointer and select a branching strategy.

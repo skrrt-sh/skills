@@ -1,0 +1,6 @@
+interface:
+  display_name: "Herdr Agents"
+  short_description: "Run scoped agents in Herdr worktrees and integrate their diffs"
+  default_prompt: "Use $herdr-agents to dispatch each scope to its own Herdr worktree and agent, then review and integrate the results."
+policy:
+  allow_implicit_invocation: true

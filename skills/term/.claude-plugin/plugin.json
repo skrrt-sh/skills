@@ -1,0 +1,21 @@
+{
+  "name": "term",
+  "version": "1.0.0",
+  "description": "Terminal look and feel for Claude Code: a Catppuccin Mocha status line with model, git, context use, and rate limits.",
+  "author": {
+    "name": "skrrt-sh",
+    "url": "https://github.com/skrrt-sh"
+  },
+  "homepage": "https://github.com/skrrt-sh/skills",
+  "repository": "https://github.com/skrrt-sh/skills",
+  "license": "MIT",
+  "keywords": [
+    "statusline",
+    "terminal",
+    "catppuccin",
+    "claude-code"
+  ],
+  "skills": [
+    "./statusline"
+  ]
+}

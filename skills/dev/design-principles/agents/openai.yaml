@@ -1,0 +1,6 @@
+interface:
+  display_name: "Design Principles"
+  short_description: "DRY, loose coupling, separated concerns, minimal diffs, delete replaced code"
+  default_prompt: "Use $design-principles while implementing or refactoring: one home per fact, explicit contracts between modules, one concern per module, the smallest diff, and deletion of the code the change replaces."
+policy:
+  allow_implicit_invocation: true

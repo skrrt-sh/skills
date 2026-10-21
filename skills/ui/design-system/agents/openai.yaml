@@ -1,0 +1,6 @@
+interface:
+  display_name: "Design System"
+  short_description: "One design system: tokens, shared components, system-level fixes"
+  default_prompt: "Use $design-system for this UI change."
+policy:
+  allow_implicit_invocation: true

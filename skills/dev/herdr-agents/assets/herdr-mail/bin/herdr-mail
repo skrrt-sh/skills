@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Mail between Herdr agents. Mail is held until its recipient is idle, so nothing is typed into
+# an agent mid-turn; the plugin's hooks deliver it and report child status to the parent.
+# Usage: herdr-mail watch <agent> | send <agent|parent> <text|-> | wait [seconds] | read | log
+
+herdr="${HERDR_BIN_PATH:-herdr}"
+sock="${HERDR_SOCKET_PATH:?herdr-mail runs only inside Herdr}"
+store="${HERDR_MAIL_DIR:-$(dirname "${sock}")/mail/$(basename "${sock}")}"
+
+box() { printf '%s/%s' "${store}" "${1//:/_}"; }
+
+me() { printf '%s' "${HERDR_PANE_ID:?HERDR_PANE_ID is not set}"; }
+
+resolve() {
+  if [[ "${1}" == parent ]]; then
+    cat "$(box "$(me)")/parent"
+  else
+    "${herdr}" agent get "${1}" | jq -re .result.agent.pane_id
+  fi
+}
+
+enqueue() {
+  local b tmp
+  b="$(box "${1}")"
+  mkdir -p "${b}/new" "${b}/tmp"
+  tmp="${b}/tmp/$(date +%s)-$$-${RANDOM}"
+  printf '%s\n' "${2}" >"${tmp}"
+  mv "${tmp}" "${b}/new/"
+  printf '%s -> %s\n%s\n\n' "$(date +%T)" "${1}" "${2}" >>"${store}/log"
+}
+
+# Print and consume everything queued. The mv into cur/ claims a message, so a hook and a waiter
+# racing on one box never both take it.
+take() {
+  local f
+  mkdir -p "${1}/cur"
+  for f in "${1}"/new/*; do
+    [[ -e "${f}" ]] || continue
+    mv "${f}" "${1}/cur/" 2>/dev/null || continue
+    cat "${1}/cur/${f##*/}"
+    rm -f "${1}/cur/${f##*/}"
+  done
+}
+
+waiting() {
+  [[ -f "${1}/waiter" ]] && kill -0 "$(cat "${1}/waiter")" 2>/dev/null
+}
+
+# A live `wait` takes its own mail; otherwise an idle recipient gets it as one prompt.
+deliver() {
+  local b status text
+  b="$(box "${1}")"
+  waiting "${b}" && return 0
+  status="$("${herdr}" agent get "${1}" 2>/dev/null | jq -r .result.agent.agent_status)" || return 0
+  [[ "${status}" == idle || "${status}" == "done" ]] || return 0
+  text="$(take "${b}")"
+  [[ -n "${text}" ]] || return 0
+  "${herdr}" agent prompt "${1}" "${text}" >/dev/null 2>&1 || enqueue "${1}" "${text}"
+}
+
+notify() {
+  local parent
+  parent="$(cat "${1}/parent" 2>/dev/null)" || return 0
+  enqueue "${parent}" "[status $(cat "${1}/name") ${2}] ${3}"
+  deliver "${parent}"
+}
+
+cmd_watch() {
+  local child cb mb
+  child="$(resolve "${1}")"
+  cb="$(box "${child}")"
+  mb="$(box "$(me)")"
+  mkdir -p "${cb}/new" "${mb}/new"
+  printf '%s\n' "$(me)" >"${cb}/parent"
+  printf '%s\n' "${1}" >"${cb}/name"
+  [[ -f "${mb}/name" ]] || printf 'parent\n' >"${mb}/name"
+}
+
+cmd_send() {
+  local to text
+  to="$(resolve "${1}")"
+  text="${2:--}"
+  [[ "${text}" == - ]] && text="$(cat)"
+  enqueue "${to}" "[mail from $(cat "$(box "$(me)")/name" 2>/dev/null || me) $(me)]
+${text}"
+  deliver "${to}"
+}
+
+cmd_wait() {
+  local out deadline=0
+  waiter_box="$(box "$(me)")"
+  mkdir -p "${waiter_box}/new"
+  printf '%s\n' "$$" >"${waiter_box}/waiter"
+  trap 'rm -f "${waiter_box}/waiter"' EXIT
+  [[ -n "${1:-}" ]] && deadline=$(($(date +%s) + ${1}))
+  while :; do
+    out="$(take "${waiter_box}")"
+    if [[ -n "${out}" ]]; then
+      printf '%s\n' "${out}"
+      return 0
+    fi
+    ((deadline == 0 || $(date +%s) < deadline)) || return 124
+    sleep 1
+  done
+}
+
+cmd_hook() {
+  local pane b status last
+  [[ -d "${store}" ]] || return 0
+  pane="$(jq -r .data.pane_id <<<"${HERDR_PLUGIN_EVENT_JSON}")"
+  b="$(box "${pane}")"
+  [[ -d "${b}" ]] || return 0
+  case "${HERDR_PLUGIN_EVENT:-}" in
+    pane.closed) rm -rf "${b}" ;;
+    pane.exited)
+      notify "${b}" "${pane}" exited
+      rm -rf "${b}"
+      ;;
+    pane.agent_status_changed)
+      status="$(jq -r '.data.agent_status // "none"' <<<"${HERDR_PLUGIN_EVENT_JSON}")"
+      last="$(cat "${b}/status" 2>/dev/null || true)"
+      printf '%s\n' "${status}" >"${b}/status"
+      [[ "${status}" != "${last}" ]] || return 0
+      case "${status}" in
+        blocked | done) notify "${b}" "${pane}" "${status}" ;;
+        idle) [[ "${last}" != working ]] || notify "${b}" "${pane}" "done" ;;
+        *) ;;
+      esac
+      [[ "${status}" != idle && "${status}" != "done" ]] || deliver "${pane}"
+      ;;
+    *) ;;
+  esac
+}
+
+[[ "${1:-}" == hook ]] || mkdir -p "${store}"
+case "${1:-}" in
+  watch) cmd_watch "${2:?usage: herdr-mail watch <agent>}" ;;
+  send) cmd_send "${2:?usage: herdr-mail send <agent|parent> <text|->}" "${3:--}" ;;
+  wait) cmd_wait "${2:-}" ;;
+  read) take "$(box "$(me)")" ;;
+  log)
+    touch "${store}/log"
+    exec tail -n 200 -f "${store}/log"
+    ;;
+  hook) cmd_hook ;;
+  *)
+    sed -n '6p' "${0}" >&2
+    exit 2
+    ;;
+esac
