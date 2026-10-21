@@ -28,7 +28,8 @@ chmod +x "${target}"
 previous="$(jq -c '.statusLine // empty' "${settings}")"
 [[ -z "${previous}" ]] || printf 'PREVIOUS_STATUSLINE=%s\n' "${previous}"
 updated="$(mktemp)"
-jq --arg cmd "${target}" '.statusLine = {type: "command", command: $cmd, padding: 0}' \
+# statusLine.command runs through a shell, so a config path with spaces must stay one word.
+jq --arg cmd "${target}" '.statusLine = {type: "command", command: ($cmd | @sh), padding: 0}' \
   "${settings}" > "${updated}"
 mv "${updated}" "${settings}"
 

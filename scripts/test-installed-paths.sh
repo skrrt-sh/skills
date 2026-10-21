@@ -40,16 +40,15 @@ printf '%s\n' '---' 'title: "Guide"' 'description: "Test"' 'created: "2026-08-06
 CLAUDE_SKILL_DIR="${test_dir}/installed/md-writer"
 "${CLAUDE_SKILL_DIR}/scripts/validate-md.sh" guide.md >/dev/null 2>&1
 
-mkdir -p "${test_dir}/config"
-printf '{"statusLine":{"type":"command","command":"old"},"theme":"dark"}\n' > "${test_dir}/config/settings.json"
+config_dir="${test_dir}/claude config"
+mkdir -p "${config_dir}"
+printf '{"statusLine":{"type":"command","command":"old"},"theme":"dark"}\n' > "${config_dir}/settings.json"
 CLAUDE_SKILL_DIR="${test_dir}/installed/statusline"
-statusline_output="$(CLAUDE_CONFIG_DIR="${test_dir}/config" \
+statusline_output="$(CLAUDE_CONFIG_DIR="${config_dir}" \
   "${CLAUDE_SKILL_DIR}/scripts/install-statusline.sh")"
 grep -Fq 'PREVIOUS_STATUSLINE={"type":"command","command":"old"}' <<< "${statusline_output}"
-[[ -x "${test_dir}/config/statusline/statusline.py" ]]
-jq -e --arg cmd "${test_dir}/config/statusline/statusline.py" \
-  '.statusLine.command == $cmd and .theme == "dark"' "${test_dir}/config/settings.json" >/dev/null
-printf '{"model":{"display_name":"Opus"},"cwd":"/"}' | "${test_dir}/config/statusline/statusline.py" |
-  grep -Fq 'Opus'
+jq -e '.theme == "dark"' "${config_dir}/settings.json" >/dev/null
+printf '{"model":{"display_name":"Opus"},"cwd":"/"}' |
+  sh -c "$(jq -r '.statusLine.command' "${config_dir}/settings.json")" | grep -Fq 'Opus'
 
 printf 'installed-path tests passed\n'
