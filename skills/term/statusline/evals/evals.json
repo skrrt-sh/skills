@@ -6,10 +6,12 @@
       "prompt": "Install the skrrt status line.",
       "expected_output": "The agent runs the bundled installer, reports the installed script and settings paths, and mentions the Nerd Font requirement. It then walks the user through the bar, explaining that the +N -M on the git pill is the uncommitted diff and on the context pill is the session's own edits.",
       "assertions": [
+        "Asks the user for a context budget, offering 100k, 200k and 256k, and says it is visual feedback that never caps the real context window",
         "Runs the bundled install-statusline.sh rather than copying files or editing settings.json by hand",
         "Reports the installed script path and the settings file it changed",
         "Says the icons need a Nerd Font",
-        "Explains that +N -M beside the git branch is the uncommitted diff, and beside the context pill outside a repo is the lines Claude changed this session"
+        "Explains that +N -M beside the git branch is the uncommitted diff, and beside the context pill outside a repo is the lines Claude changed this session",
+        "Explains that past the budget the context pill turns red and reads new session"
       ]
     },
     {
@@ -30,6 +32,16 @@
         "Reports that python3 is required",
         "Does not edit settings.json by hand",
         "Does not claim the status line was installed"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Install the skrrt status line with a 100k context budget.",
+      "expected_output": "The agent skips the budget question and runs the installer with 100000, then reports the budget it set.",
+      "assertions": [
+        "Does not ask for a budget the user already gave",
+        "Runs the bundled installer with 100000 as its argument",
+        "Reports the budget from BUDGET"
       ]
     }
   ]

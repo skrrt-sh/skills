@@ -6,6 +6,9 @@ fail() {
   exit 1
 }
 
+budget="${1:-256000}"
+[[ "${budget}" =~ ^[1-9][0-9]*$ ]] || fail "budget must be a positive token count, got '${budget}'"
+
 command -v python3 >/dev/null || fail 'python3 is required'
 command -v jq >/dev/null || fail 'jq is required'
 
@@ -29,8 +32,9 @@ previous="$(jq -c '.statusLine // empty' "${settings}")"
 [[ -z "${previous}" ]] || printf 'PREVIOUS_STATUSLINE=%s\n' "${previous}"
 updated="$(mktemp)"
 # statusLine.command runs through a shell, so a config path with spaces must stay one word.
-jq --arg cmd "${target}" '.statusLine = {type: "command", command: ($cmd | @sh), padding: 0}' \
+jq --arg cmd "${target}" --arg budget "${budget}" \
+  '.statusLine = {type: "command", command: "\($cmd | @sh) \($budget)", padding: 0}' \
   "${settings}" > "${updated}"
 mv "${updated}" "${settings}"
 
-printf 'INSTALLED=%s\nSETTINGS=%s\n' "${target}" "${settings}"
+printf 'INSTALLED=%s\nSETTINGS=%s\nBUDGET=%s\n' "${target}" "${settings}" "${budget}"
