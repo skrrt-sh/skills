@@ -1,0 +1,35 @@
+{
+  "skill_name": "statusline",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Install the skrrt status line.",
+      "expected_output": "The agent runs the bundled installer, reports the installed script and settings paths, and mentions the Nerd Font requirement.",
+      "assertions": [
+        "Runs the bundled install-statusline.sh rather than copying files or editing settings.json by hand",
+        "Reports the installed script path and the settings file it changed",
+        "Says the icons need a Nerd Font"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Set up the skrrt statusline. I already have a custom one configured.",
+      "expected_output": "The agent runs the installer and shows the previous statusLine setting and any script backup so the user can restore them.",
+      "assertions": [
+        "Runs the bundled installer",
+        "Shows the replaced statusLine setting from PREVIOUS_STATUSLINE",
+        "Names the backup file when the installer printed BACKUP"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Install the skrrt status line. (python3 is not installed on this machine.)",
+      "expected_output": "The installer fails on the missing python3; the agent reports it and stops without editing settings.json.",
+      "assertions": [
+        "Reports that python3 is required",
+        "Does not edit settings.json by hand",
+        "Does not claim the status line was installed"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+[
+  {"query": "install the skrrt status line", "should_trigger": true},
+  {"query": "set up your statusline for me", "should_trigger": true},
+  {"query": "give me the catppuccin status bar with rate limits", "should_trigger": true},
+  {"query": "update my status line to the latest skrrt version", "should_trigger": true},
+  {"query": "I lost my statusline after reinstalling, put the skrrt one back", "should_trigger": true},
+  {"query": "show context usage and the weekly limit in my claude code status line", "should_trigger": true},
+  {"query": "install the status line from the term plugin", "should_trigger": true},
+  {"query": "I want the pill status bar with model, branch and lines changed", "should_trigger": true},
+  {"query": "configure the skrrt statusline on this new laptop", "should_trigger": true},
+  {"query": "restore the skrrt status line", "should_trigger": true},
+  {"query": "commit these changes", "should_trigger": false},
+  {"query": "open a PR for this branch", "should_trigger": false},
+  {"query": "change my terminal font to JetBrains Mono", "should_trigger": false},
+  {"query": "add a status badge to the README", "should_trigger": false},
+  {"query": "build a status page for the API", "should_trigger": false},
+  {"query": "show the order status in the checkout screen", "should_trigger": false},
+  {"query": "rebind ctrl+s in claude code", "should_trigger": false},
+  {"query": "allow npm commands in settings.json", "should_trigger": false},
+  {"query": "what's the git status", "should_trigger": false},
+  {"query": "set up the ship workflow for this repo", "should_trigger": false},
+  {"query": "write a runbook for the deploy", "should_trigger": false}
+]

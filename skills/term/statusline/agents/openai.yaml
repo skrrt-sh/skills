@@ -1,0 +1,6 @@
+interface:
+  display_name: "Status line"
+  short_description: "Install the skrrt Claude Code status line"
+  default_prompt: "Use $statusline to install the skrrt status line."
+policy:
+  allow_implicit_invocation: true

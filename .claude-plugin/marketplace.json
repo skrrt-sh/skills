@@ -63,6 +63,18 @@
         "tokens",
         "performance"
       ]
+    },
+    {
+      "name": "term",
+      "source": "./skills/term",
+      "description": "Terminal look and feel for Claude Code: a Catppuccin Mocha status line with model, git, context use, and rate limits.",
+      "category": "workflow",
+      "keywords": [
+        "statusline",
+        "terminal",
+        "catppuccin",
+        "claude-code"
+      ]
     }
   ]
 }

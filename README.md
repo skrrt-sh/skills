@@ -42,6 +42,8 @@ claude plugin marketplace add skrrt-sh/skills
 claude plugin install ship@skrrt
 claude plugin install docs@skrrt
 claude plugin install dev@skrrt
+claude plugin install ui@skrrt
+claude plugin install term@skrrt
 ```
 
 Or, from inside a session:
@@ -51,6 +53,8 @@ Or, from inside a session:
 /plugin install ship@skrrt
 /plugin install docs@skrrt
 /plugin install dev@skrrt
+/plugin install ui@skrrt
+/plugin install term@skrrt
 ```
 
 Each bucket is its own plugin, versioned and released independently — install only the ones you
@@ -229,6 +233,18 @@ Bucket index: [`skills/ui/`](skills/ui/README.md).
   known UX patterns, rendering only what is visible, matched to the design and checked in the
   real UI.
 
+### term
+
+Terminal look and feel for Claude Code. Bucket index: [`skills/term/`](skills/term/README.md).
+
+- **[statusline](skills/term/statusline/SKILL.md)**: Install a Catppuccin Mocha status line with
+  model, folder, git branch, lines changed, context use, and the 5-hour and weekly rate limits.
+  It lives in your Claude config directory, so plugin updates never move it.
+
+```text
+/statusline install the skrrt status line
+```
+
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — any version with plugin
@@ -236,6 +252,7 @@ Bucket index: [`skills/ui/`](skills/ui/README.md).
 - `gh` for GitHub remotes, `glab` for GitLab remotes (used by `/pr` and `/release`)
 - Node.js 22.20+ — the `npx skills` installer declares `>=22.20.0`, and the `md-writer`
   validator's `markdownlint-cli2` requires `>=22` as of 0.23
+- `python3`, `jq`, and a [Nerd Font](https://www.nerdfonts.com) for `statusline`
 
 ## Repository Structure
 
@@ -254,7 +271,8 @@ Bucket index: [`skills/ui/`](skills/ui/README.md).
 │   ├── ship/                      # setup, commit, pr, release
 │   ├── docs/md-writer/
 │   ├── dev/                       # subagents, herdr-agents, design-principles, testing, research, reporting, self-documenting
-│   └── ui/                        # design-system, screens
+│   ├── ui/                        # design-system, screens
+│   └── term/                      # statusline
 └── templates/claude-settings.json # Recommended Claude permissions
 ```
 
