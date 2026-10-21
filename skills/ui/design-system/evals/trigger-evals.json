@@ -18,5 +18,7 @@
   {"query": "what's the weather in Berlin", "should_trigger": false},
   {"query": "rename the env var API_URL to API_BASE_URL", "should_trigger": false},
   {"query": "explain how jest module mocking works", "should_trigger": false},
-  {"query": "show me the git log for the last week", "should_trigger": false}
+  {"query": "show me the git log for the last week", "should_trigger": false},
+  {"query": "rewrite the empty state text to sound friendlier", "should_trigger": false},
+  {"query": "add a fade-in when the toast appears", "should_trigger": false}
 ]
