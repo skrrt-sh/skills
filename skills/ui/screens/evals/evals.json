@@ -73,13 +73,13 @@
     {
       "id": 7,
       "prompt": "Build the withdraw flow: the user picks an amount and a wallet, confirms, and the transfer goes pending, then completes or fails. Put it all on the wallet screen.",
-      "expected_output": "The agent splits the flow into steps instead of one crowded screen: amount, wallet, confirm, then a status step that shows pending, completed, and failed from the real transfer state and ends on a receipt. Confirm blocks a double submit, back returns to the previous step, and each status is forced and checked in the real UI.",
+      "expected_output": "The agent splits the flow into steps instead of one crowded screen: amount, wallet, confirm, then a status step that shows pending, completed, and failed from the real transfer state and ends on a receipt. Confirm blocks a double submit, back steps through the flow before submit, the receipt leads to the wallet or history rather than back to confirm, and each status is forced and checked in the real UI.",
       "assertions": [
         "Splits the flow into separate steps rather than fitting it on the wallet screen",
         "Shows pending, completed, and failed from the real transfer state, not an optimistic guess",
         "Ends on a result or receipt step with the transfer details",
         "The confirm action shows a pending state and blocks a double submit",
-        "Back from any step returns to the screen the user came from",
+        "Before submit, back returns to the previous step; after submit, the receipt leads to the wallet or history, never back to confirm",
         "Forces each status with seeded data or a dev toggle and checks it in a simulator or headless browser"
       ]
     }

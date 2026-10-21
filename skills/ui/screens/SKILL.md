@@ -20,7 +20,8 @@ refresh rate on the slowest target.
 - Hide a section that has nothing to show, unless its empty state guides the user.
 - Media reserves its aspect-ratio box with a placeholder. Never crop unless the design does.
 - A flow too big for one screen splits into steps, shows every status, and ends on a receipt.
-  Back returns where the user came from.
+  Before submit, back steps through the flow. After submit, the receipt leads to the result's
+  home, such as the wallet or history, never back to confirm.
 
 ## Patterns
 

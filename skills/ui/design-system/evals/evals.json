@@ -72,12 +72,13 @@
     {
       "id": 7,
       "prompt": "On the iPad and on touch laptops our cards stay highlighted after a tap. Hover styles are enabled with an isDesktop check. Fix it.",
-      "expected_output": "The agent removes the device-type check and gates hover styles by capability with (hover: hover) and (pointer: fine), in the shared card or a shared hover utility, so taps never leave a sticky hover anywhere, and lists the components it changed.",
+      "expected_output": "The agent removes the device-type check and gates hover styles by capability with (hover: hover) and (pointer: fine), in the shared card or a shared hover utility, then checks taps on a hybrid touch-and-mouse device, since the media query describes only the primary pointer, and lists the components it changed.",
       "assertions": [
         "Removes the device-type or user-agent check that enables hover",
         "Gates hover styles with (hover: hover) and (pointer: fine) or the platform equivalent",
         "The fix lives in a shared component, utility, or token layer rather than one screen",
         "Mouse hover on a fine-pointer device still works",
+        "Checks that a tap on a hybrid touch-and-mouse device leaves no lasting highlight, not relying on the media query alone",
         "Lists every component or screen that used the old check"
       ]
     }

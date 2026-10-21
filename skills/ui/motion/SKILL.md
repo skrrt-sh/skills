@@ -11,8 +11,8 @@ win on conflict.
 ## Load
 
 - Load `emil-design-eng`, `apple-design`, and `animate` (web) or `animate-expo` (Expo) if
-  installed. Reviews add `review-animations`; audits add `improve-animations` or
-  `find-animation-opportunities`.
+  installed. Audits add `improve-animations` or `find-animation-opportunities`. For a review,
+  ask the user to run `/review-animations`; it cannot load on its own.
 
 ## Keep
 
