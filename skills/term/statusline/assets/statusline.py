@@ -10,6 +10,8 @@ TEAL, PEACH, YELLOW, RED = "#94e2d5", "#fab387", "#f9e2af", "#f38ba8"
 GREEN = "#a6e3a1"
 DEEP_BLUE, DEEP_FLAMINGO = "#3b4a6b", "#5e4853"
 
+CTX_BUDGET = 300_000
+
 
 def rgb(hex_):
     return ";".join(str(int(hex_[i : i + 2], 16)) for i in (1, 3, 5))
@@ -94,7 +96,11 @@ cw = d.get("context_window") or {}
 if (ctx := cw.get("used_percentage")) is not None:
     u = cw.get("current_usage") or {}
     used = sum(u.get(k) or 0 for k in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"))
-    pills.append(pill(level(ctx, TEAL), f"{circle(ctx)} {tokens(used)}"))
+    # gauge against a 300k soft budget rather than the model's real window
+    if used:
+        ctx = used / CTX_BUDGET * 100
+    ctx_color = RED if ctx > 100 else YELLOW if ctx >= 50 else GREEN
+    pills.append(pill(ctx_color, f"{circle(ctx)} {tokens(used)}"))
 
 limits = d.get("rate_limits") or {}
 for key, label, color in (("five_hour", "5h", PEACH), ("seven_day", "wk", YELLOW)):
