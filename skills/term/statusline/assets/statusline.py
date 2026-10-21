@@ -11,7 +11,8 @@ GREEN = "#a6e3a1"
 DEEP_FLAMINGO = "#5e4853"
 DEEP_GREEN, DEEP_YELLOW, DEEP_RED = "#3e5243", "#5c5544", "#5e3b4a"
 
-CTX_BUDGET = 300_000
+# soft context budget in tokens, passed by the installer; display only, never caps the real window
+CTX_BUDGET = int(sys.argv[1]) if len(sys.argv) > 1 else 256_000
 
 
 def rgb(hex_):
@@ -48,6 +49,10 @@ CIRCLE = ["\U000f0766"] + [chr(0xF0A9E + i) for i in range(8)]
 def circle(pct):
     i = 0 if pct <= 0 else min(8, max(1, round(pct / 12.5)))
     return CIRCLE[i]
+
+
+# nf-md-alert
+ALERT = "\U000f0026"
 
 
 def until(ts):
@@ -126,13 +131,14 @@ cw = d.get("context_window") or {}
 if (ctx := cw.get("used_percentage")) is not None:
     u = cw.get("current_usage") or {}
     used = sum(u.get(k) or 0 for k in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"))
-    # gauge against a 300k soft budget rather than the model's real window
+    # gauge against the soft budget rather than the model's real window
     if used:
         ctx = used / CTX_BUDGET * 100
     ctx_color, deep = (RED, DEEP_RED) if ctx > 100 else (YELLOW, DEEP_YELLOW) if ctx >= 50 else (GREEN, DEEP_GREEN)
     # outside a repo, fall back to the session's edit count, which shares the context's lifetime
     session = None if b else loc(cost.get("total_lines_added") or 0, cost.get("total_lines_removed") or 0)
-    pills.append(pill(ctx_color, f"{circle(ctx)} {tokens(used)}", tail=session, tail_color=deep))
+    gauge = f"{ALERT} {tokens(used)} new session" if ctx > 100 else f"{circle(ctx)} {tokens(used)}"
+    pills.append(pill(ctx_color, gauge, tail=session, tail_color=deep))
 
 limits = d.get("rate_limits") or {}
 for key, label, color in (("five_hour", "5h", PEACH), ("seven_day", "wk", YELLOW)):

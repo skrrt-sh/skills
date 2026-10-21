@@ -1,6 +1,6 @@
 {
   "name": "term",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Terminal look and feel for Claude Code: a Catppuccin Mocha status line with model, git, context use, and rate limits.",
   "author": {
     "name": "skrrt-sh",
