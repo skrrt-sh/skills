@@ -45,8 +45,9 @@ The main thread plans, briefs, dispatches, and reviews. Subagents write the code
    becomes a scope in a later stage. If the evidence shows the approach is wrong, redraw the
    affected scopes, re-brief, and tell the user what changed and why. Only the user changes the
    goal.
-5. Finish. Verify every scope item landed and nothing beyond it. Report each stage's result, the
-   commands run and their output, your fixes, and what remains. Report failures as failures.
+5. Finish. Verify every scope item landed, nothing beyond it, and no `HACK:` marker remains.
+   Report each stage's result, the commands run and their output, your fixes, and what remains.
+   Report failures as failures.
 
 ## Quality bar
 

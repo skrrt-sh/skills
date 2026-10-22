@@ -90,6 +90,18 @@
         "Checks the existing ~/.gitconfig includeIf setup before choosing an approach",
         "Shows that this repo resolves to the work identity and another directory still resolves to the personal one"
       ]
+    },
+    {
+      "id": 9,
+      "prompt": "Checkout crashes with \"Cannot read properties of undefined (reading 'price')\" in OrderSummary for a few users. Fix it fast.",
+      "expected_output": "The agent finds why a cart line has no product, such as a product deleted while still in a cart, and fixes it where cart lines are loaded so no caller can receive one. It adds no optional chaining, default, or try/catch at the crash site, and it covers the other readers of cart lines.",
+      "assertions": [
+        "Traces why the product is undefined before changing code",
+        "Fixes it where cart lines are loaded or validated, not in OrderSummary",
+        "Does not add optional chaining, a default price, or a try/catch at the crash site",
+        "Makes the invalid state unrepresentable or rejected at the entry point, such as with a type or validation",
+        "Checks other components that read cart lines for the same assumption"
+      ]
     }
   ]
 }

@@ -44,8 +44,12 @@ Goal: every future change touches one place.
 
 ## Fixes
 
-- Fix the root cause at the shared component, never with a one-off hack or flag.
+- Fix the root cause at the shared component. Never hide the symptom with a one-off flag, guard,
+  special case, swallowed error, sleep around a race, cast, suppression, or edited generated code.
+- Fix the class of bug, not the instance: a stricter type, one validated entry point, or a check.
 - Find every similar occurrence and fix them all.
+- Exception: a hack marked `// HACK:` may bridge stages of a staged change. A cleanup stage
+  deletes them all.
 - Fix every in-scope issue you find, small ones included.
 - After two failed fixes for the same symptom, stop patching. Find the root cause with evidence.
 
