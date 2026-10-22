@@ -5,8 +5,8 @@
 <h1 align="center">Skrrt Skills</h1>
 
 <p align="center">
-  Agent skills by skrrt-sh — ship your git work properly. Conventional commits,<br>
-  pull and merge requests, releases, and the markdown that documents them.
+  Agent skills by skrrt-sh — ship your git work properly. Commits, pull requests and releases,<br>
+  docs, coding discipline, UI craft, and a status line for Claude Code.
 </p>
 
 <p align="center">
@@ -125,11 +125,9 @@ skills.sh install (see the note on skill names below). It will:
 ```
 
 **Skill names depend on how you installed.** Claude Code namespaces plugin skills by plugin
-name, and each bucket is its own plugin — so a plugin install gives you `/ship:commit`, `/ship:pr`,
-`/ship:release`, `/ship:setup`, `/docs:md-writer`, `/dev:subagents`, and `/dev:self-documenting`.
-A skills.sh or `~/.claude/skills` install uses the bare names — `/commit`, `/pr`, `/release`,
-`/setup`, `/md-writer`, `/subagents`, `/self-documenting`. The rest of this README uses the bare
-names for brevity.
+name, and each bucket is its own plugin — so a plugin install gives you `/<bucket>:<skill>`, such as
+`/ship:commit` or `/ui:taste`. A skills.sh or `~/.claude/skills` install uses the bare skill name —
+`/commit`, `/taste`. The rest of this README uses the bare names for brevity.
 
 ## Skills
 
