@@ -93,14 +93,14 @@
     },
     {
       "id": 9,
-      "prompt": "Checkout crashes with \"Cannot read properties of undefined (reading 'price')\" in OrderSummary for a few users. Fix it fast.",
-      "expected_output": "The agent finds why a cart line has no product, such as a product deleted while still in a cart, and fixes it where cart lines are loaded so no caller can receive one. It adds no optional chaining, default, or try/catch at the crash site, and it covers the other readers of cart lines.",
+      "prompt": "Checkout crashes with \"Cannot read properties of undefined (reading 'price')\" in OrderSummary for a few users. Fix it fast. (Cart lines are loaded by loadCart, which joins products by ID; an admin can delete a product that is still in someone's cart, and OrderSummary, CartBadge, and the order email all read line.product.)",
+      "expected_output": "The agent traces the crash to cart lines whose product was deleted and fixes it in loadCart, so no reader receives a line without a product. It adds no optional chaining, default, or try/catch at the crash site, and it checks CartBadge and the order email.",
       "assertions": [
-        "Traces why the product is undefined before changing code",
-        "Fixes it where cart lines are loaded or validated, not in OrderSummary",
+        "Traces the undefined product to cart lines whose product was deleted",
+        "Fixes it in loadCart or the cart-line type, not in OrderSummary",
         "Does not add optional chaining, a default price, or a try/catch at the crash site",
-        "Makes the invalid state unrepresentable or rejected at the entry point, such as with a type or validation",
-        "Checks other components that read cart lines for the same assumption"
+        "Makes a line without a product unrepresentable or rejected where cart lines load",
+        "Checks CartBadge and the order email for the same assumption"
       ]
     }
   ]
