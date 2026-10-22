@@ -1,6 +1,6 @@
 {
   "name": "dev",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Implementation workflow. Orchestrate scoped subagents from a reviewing main thread, build DRY and loosely coupled, delete replaced code, test only business logic, research before deciding, report plainly, and keep the code the single source of truth.",
   "author": {
     "name": "skrrt-sh",
