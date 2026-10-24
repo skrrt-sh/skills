@@ -149,7 +149,8 @@ Coding and design are separate tracks. Call one entry point per track:
 
 `subagents` pulls in `design-principles`, `testing`, `self-documenting`, `research`, and
 `reporting` on its own; you never call them. `design` loads `emil-design-eng`, `apple-design`,
-and `animate` (or `animate-expo` in Expo), so install those too.
+and `animate` (or `animate-expo` in Expo), so install those too, plus `expo-native-ui` for Expo
+screens.
 
 `statusline` sits outside the flow and only styles the Claude Code terminal.
 

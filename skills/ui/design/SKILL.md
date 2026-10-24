@@ -11,7 +11,8 @@ moves, and feels.
 ## 1. Load the craft skills
 
 Invoke each skill below with the Skill tool at its step. Never skip one or work from memory of it.
-All except `expo-native-ui` come from `emilkowalski/skills`. If one is missing, say so in the report.
+All except `expo-native-ui` come from `emilkowalski/skills`. If the Skill tool refuses one as
+user-only, read its installed `SKILL.md` and follow it. If one is missing, say so in the report.
 
 - Always, before anything else: `emil-design-eng` and `apple-design`.
 - Building motion: `animate` on the web, `animate-expo` in Expo. Expo screens add
