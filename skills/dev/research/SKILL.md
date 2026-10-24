@@ -5,7 +5,8 @@ description: Research before designing or deciding. Read current official docs, 
 
 # Research
 
-Decide from evidence, not memory. This applies to code and to copy, sales, legal, and UX choices.
+Decide from evidence, not memory. This applies to code and to copy, sales, and legal choices.
+UI and UX choices take their sources from the `design` skill instead.
 
 ## Before deciding
 
