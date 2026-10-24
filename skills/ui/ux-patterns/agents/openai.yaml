@@ -1,6 +1,0 @@
-interface:
-  display_name: "UX Patterns"
-  short_description: "Stories, established patterns, and principles before any UI design"
-  default_prompt: "Use $ux-patterns before designing this."
-policy:
-  allow_implicit_invocation: true

@@ -1,6 +1,0 @@
-interface:
-  display_name: "Taste"
-  short_description: "How pages and screens look and read: layout, type, restraint, plain copy"
-  default_prompt: "Use $taste to review or fix how this page looks and reads."
-policy:
-  allow_implicit_invocation: true

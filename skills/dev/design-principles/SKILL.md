@@ -85,7 +85,7 @@ The new solution replaces the old one in the same change.
 - Keep an old path only if the user asks or deployed clients depend on it. Before launch, change
   schemas in place: no backfills or compatibility paths.
 - Tests follow the `testing` skill. Comments and docs follow the `self-documenting` skill. UI
-  follows the `ui` skills.
+  follows the `design` skill.
 
 ## Safety
 

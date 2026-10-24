@@ -1,0 +1,6 @@
+interface:
+  display_name: "Design"
+  short_description: "Crafted UI on top of Emil Kowalski's and Apple's design skills"
+  default_prompt: "Use $design to design and build this screen."
+policy:
+  allow_implicit_invocation: true

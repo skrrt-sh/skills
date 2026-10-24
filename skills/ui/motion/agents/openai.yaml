@@ -1,6 +1,0 @@
-interface:
-  display_name: "Motion"
-  short_description: "Project motion settings on top of Emil Kowalski's and Apple's skills"
-  default_prompt: "Use $motion for this animation change."
-policy:
-  allow_implicit_invocation: true

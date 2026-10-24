@@ -30,6 +30,7 @@
       "assertions": [
         "Consults the platform's official guidelines",
         "Looks at how established apps implement it",
+        "Takes UI sources from the design skill: Apple's guidelines and top apps, with no GOV.UK, NN/g, or Baymard",
         "Gives one recommendation with its trade-off",
         "Makes no code changes"
       ]

@@ -96,7 +96,7 @@
       "expected_output": "Briefs point every scope at the existing BuyButton, the UI quality bar loads the design and motion skills, and the review searches for any new button component and merges duplicates back into BuyButton.",
       "assertions": [
         "Every brief names the existing design-system BuyButton as the component to reuse",
-        "Briefs tell UI subagents to follow the ui skills and load installed design skills such as emil-design-eng and apple-design",
+        "Briefs tell UI subagents to follow the design skill",
         "The review step searches the diff for newly created button components or button variants",
         "Any duplicate buy-button component found in review is merged into the existing BuyButton rather than accepted",
         "The three variants end up rendering the same component, not three variations"

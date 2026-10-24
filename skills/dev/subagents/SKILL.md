@@ -54,8 +54,9 @@ The main thread plans, briefs, dispatches, and reviews. Subagents write the code
 Put it in every brief. Enforce it in every review.
 
 - Follow the `design-principles`, `testing`, `self-documenting`, and `research` skills.
-- UI scopes: also follow the `ui` skills and load the installed design and motion skills, such as
-  `emil-design-eng`, `apple-design`, `animate`, and `animate-expo`.
+- UI scopes: also follow the `design` skill. It owns how the UI looks and moves. A subagent
+  returns its variants to the main thread, which shows them to the user and dispatches the
+  integration stage only after the user picks one.
 - Never read `.env` files, keys, or process lists. Never use the user's servers, databases,
   devices, or ports; start your own and stop them before reporting.
 - Never ask the user. Take the recommended option and list the question in the report.
