@@ -1,0 +1,22 @@
+[
+  {"query": "design a new onboarding flow for the app", "should_trigger": true},
+  {"query": "this screen looks generic, make it look premium", "should_trigger": true},
+  {"query": "redesign the sidebar, it looks bad", "should_trigger": true},
+  {"query": "animate the icon when the connection turns on", "should_trigger": true},
+  {"query": "make the settings page feel like a modern app", "should_trigger": true},
+  {"query": "show me a few variants for the empty state", "should_trigger": true},
+  {"query": "the modal looks cramped and ugly, improve the UI", "should_trigger": true},
+  {"query": "build the pricing page for the landing site", "should_trigger": true},
+  {"query": "add a progressive blur at the top of the list", "should_trigger": true},
+  {"query": "make the main window and the menu bar popover look polished", "should_trigger": true},
+  {"query": "fix the null pointer in the sync service", "should_trigger": false},
+  {"query": "write tests for the pricing rules", "should_trigger": false},
+  {"query": "commit and open a PR", "should_trigger": false},
+  {"query": "migrate the database schema to add a tags column", "should_trigger": false},
+  {"query": "why is the rust build failing in CI", "should_trigger": false},
+  {"query": "clean up the comments in the auth module", "should_trigger": false},
+  {"query": "research which queue to use for background jobs", "should_trigger": false},
+  {"query": "set up the release notes for v2", "should_trigger": false},
+  {"query": "add rate limiting to the API", "should_trigger": false},
+  {"query": "install the status line", "should_trigger": false}
+]

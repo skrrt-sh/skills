@@ -54,14 +54,13 @@
     {
       "name": "ui",
       "source": "./skills/ui",
-      "description": "UI craft that complements the motion skills: one design system and complete, predictable, fast screens matched to the design.",
+      "description": "One design skill on top of Emil Kowalski's and Apple's design skills: modern references, variants, and on-screen checks.",
       "category": "workflow",
       "keywords": [
         "ui",
         "ux",
-        "design-system",
-        "tokens",
-        "performance"
+        "design",
+        "motion"
       ]
     },
     {

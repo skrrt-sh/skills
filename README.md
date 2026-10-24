@@ -6,7 +6,7 @@
 
 <p align="center">
   Agent skills by skrrt-sh — ship your git work properly. Commits, pull requests and releases,<br>
-  docs, coding discipline, UI craft, and a status line for Claude Code.
+  docs, coding discipline, UI design, and a status line for Claude Code.
 </p>
 
 <p align="center">
@@ -126,8 +126,8 @@ skills.sh install (see the note on skill names below). It will:
 
 **Skill names depend on how you installed.** Claude Code namespaces plugin skills by plugin
 name, and each bucket is its own plugin — so a plugin install gives you `/<bucket>:<skill>`, such as
-`/ship:commit` or `/ui:taste`. A skills.sh or `~/.claude/skills` install uses the bare skill name —
-`/commit`, `/taste`. The rest of this README uses the bare names for brevity.
+`/ship:commit` or `/dev:subagents`. A skills.sh or `~/.claude/skills` install uses the bare skill
+name — `/commit`, `/subagents`. The rest of this README uses the bare names for brevity.
 
 ## Skills
 
@@ -137,6 +137,21 @@ just means the agent runs raw `git commit` instead. Side effects are gated where
 permission rules in [`templates/claude-settings.json`](templates/claude-settings.json), which put
 `git commit`, `git push`, and the forge create commands behind an approval prompt. `setup` is a
 run-once configurator, so it stays explicit-only.
+
+Coding and design are separate tracks. Call one entry point per track:
+
+| You want to | Call |
+| --- | --- |
+| Write or fix code | `/dev:subagents <task>` |
+| Design or polish UI | `/ui:design <task>` |
+| Build a feature with UI | `/dev:subagents /ui:design <task>` |
+| Commit, open a PR, release | `/ship:commit`, `/ship:pr`, `/ship:release` |
+
+`subagents` pulls in `design-principles`, `testing`, `self-documenting`, `research`, and
+`reporting` on its own; you never call them. `design` loads `emil-design-eng`, `apple-design`,
+and `animate` (or `animate-expo` in Expo), so install those too.
+
+`statusline` sits outside the flow and only styles the Claude Code terminal.
 
 ### ship
 
@@ -222,20 +237,15 @@ At most five run at once; more scopes become stages.
 
 ### ui
 
-UI craft that complements the motion skills (`emil-design-eng`, `apple-design`, `animate`).
-Bucket index: [`skills/ui/`](skills/ui/README.md).
+UI design, separate from coding. Bucket index: [`skills/ui/`](skills/ui/README.md).
 
-- **[ux-patterns](skills/ui/ux-patterns/SKILL.md)**: Design from user stories, then established UX
-  patterns for the platform, then a few chosen principles. No design for its own sake.
-- **[taste](skills/ui/taste/SKILL.md)**: How a page looks and reads: keep what works, one grid,
-  restraint with decoration, plain copy said once.
-- **[motion](skills/ui/motion/SKILL.md)**: Project motion settings on top of Emil Kowalski's and
-  Apple's motion skills: few small accents, one motion language, smooth and interruptible.
-- **[design-system](skills/ui/design-system/SKILL.md)**: One visual system: tokens, one component
-  per pattern, full component states, stable sizes, and fixes made in the system.
-- **[screens](skills/ui/screens/SKILL.md)**: Complete, predictable, fast screens: every state,
-  known UX patterns, rendering only what is visible, matched to the design and checked in the
-  real UI.
+- **[design](skills/ui/design/SKILL.md)**: Load Emil Kowalski's and Apple's design skills, study
+  current best-in-class products, show 2 or 3 variants before building, and check every changed
+  screen on screen.
+
+```text
+/design redesign the settings screen, it looks generic
+```
 
 ### term
 
@@ -275,7 +285,7 @@ Terminal look and feel for Claude Code. Bucket index: [`skills/term/`](skills/te
 │   ├── ship/                      # setup, commit, pr, release
 │   ├── docs/md-writer/
 │   ├── dev/                       # subagents, herdr-agents, design-principles, testing, research, reporting, self-documenting
-│   ├── ui/                        # ux-patterns, taste, motion, design-system, screens
+│   ├── ui/design/
 │   └── term/                      # statusline
 └── templates/claude-settings.json # Recommended Claude permissions
 ```

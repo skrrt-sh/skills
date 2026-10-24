@@ -1,7 +1,7 @@
 {
   "name": "ui",
-  "version": "1.1.0",
-  "description": "UI craft that complements the motion skills: design from user stories and established UX patterns, one design system, tasteful layout and copy, motion settings on top of Emil Kowalski's skills, and complete, fast screens.",
+  "version": "2.0.0",
+  "description": "One design skill on top of Emil Kowalski's and Apple's design skills: study modern products, show variants, build with care, check it on screen.",
   "author": {
     "name": "skrrt-sh",
     "url": "https://github.com/skrrt-sh"
@@ -12,22 +12,12 @@
   "keywords": [
     "ui",
     "ux",
-    "design-system",
-    "tokens",
-    "components",
-    "performance",
-    "ux-patterns",
-    "user-stories",
+    "design",
     "motion",
-    "taste",
-    "copywriting",
-    "typography"
+    "emil-design-eng",
+    "apple-design"
   ],
   "skills": [
-    "./design-system",
-    "./motion",
-    "./screens",
-    "./taste",
-    "./ux-patterns"
+    "./design"
   ]
 }

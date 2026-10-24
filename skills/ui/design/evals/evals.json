@@ -1,0 +1,40 @@
+{
+  "skill_name": "design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Change the app icon from the packet to a pirate hat with a skull and animate it turning on and off. Show me examples first.",
+      "expected_output": "The agent loads emil-design-eng, apple-design and animate, builds two or three distinct icon variants with on and off motion, shows them, and waits for the user's pick before finishing.",
+      "assertions": [
+        "Invokes emil-design-eng and apple-design with the Skill tool, plus animate for web motion",
+        "Builds the variants with Emil's prototype skill, not mattpocock-skills:prototype",
+        "Builds two or three distinct variants instead of one",
+        "Shows the variants before treating any as final",
+        "Makes the on and off motion interruptible and reversible"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Redesign our settings screen, it looks generic. Make it feel like a modern premium app.",
+      "expected_output": "The agent studies current best-in-class products and Mobbin flows live, cites them, picks the expected pattern, builds it with the product's own components and the craft skills' depth and motion, and checks screenshots in both themes before reporting.",
+      "assertions": [
+        "Looks up current products such as Linear, Raycast, or Apple's apps live and names them",
+        "Takes guidelines from Apple's HIG and top designers' writing, and cites no GOV.UK, NN/g, or Baymard",
+        "Reuses the product's existing components and tokens",
+        "Uses depth, materials, or motion where the craft skills call for it instead of stripping them out",
+        "Screenshots every changed screen in both themes and at the smallest and largest size before reporting"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I love the skull icon. The bones should spin when connecting and snap back when connected. Don't change the drawing.",
+      "expected_output": "The agent keeps the existing artwork untouched, adds the spinning and snapping states on top of it, makes repeated toggles land on the nearest rest position, and steps through interrupt and reverse cases on screen.",
+      "assertions": [
+        "Keeps the existing artwork paths instead of redrawing them",
+        "Adds the new states on top of the existing artwork",
+        "Repeated toggles snap to the nearest rest position without jumps",
+        "Steps through interrupt, reverse, quick toggles, and reduced motion on screen"
+      ]
+    }
+  ]
+}
