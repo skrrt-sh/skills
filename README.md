@@ -133,8 +133,7 @@ name — `/commit`, `/subagents`. The rest of this README uses the bare names fo
 ## Skills
 
 Skills are grouped into buckets under [`skills/`](skills/). Every one is user-invocable by name, and
-all but `setup` also activate on their own when the task fits — that is the point: a hidden skill
-just means the agent runs raw `git commit` instead. Side effects are gated where they happen, by the
+all but `setup` also activate on their own when the task fits. Side effects are gated where they happen, by the
 permission rules in [`templates/claude-settings.json`](templates/claude-settings.json), which put
 `git commit`, `git push`, and the forge create commands behind an approval prompt. `setup` is a
 run-once configurator, so it stays explicit-only.
@@ -361,8 +360,7 @@ artifacts from running evals, not committed.
 2. Add `"./<name>"` to the `skills` array in `skills/<bucket>/.claude-plugin/plugin.json` — the
    bucket's own plugin manifest, and where Claude Code reads it from.
 3. Add `"./skills/<bucket>/<name>"` to the `skills` array in the root `.claude-plugin/plugin.json`,
-   the repo-wide aggregate (the skills.sh CLI discovers skills by scanning for `SKILL.md`, but the
-   aggregate is the declared inventory).
+   the repo-wide aggregate.
 4. Add a linked entry to the bucket's `README.md` and to the [Skills](#skills) section above.
 
 `.claude-plugin/marketplace.json` needs no edit for a new skill — it lists buckets, not skills.

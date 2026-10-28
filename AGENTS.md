@@ -20,16 +20,11 @@ Every skill must also carry `agents/openai.yaml` (Codex interface and invocation
 `evals/evals.json` (at least three behavior cases); every model-invocable skill additionally
 needs `evals/trigger-evals.json` (20+ queries, 8+ each way). `scripts/validate-skills.sh` fails
 without them, and it also fails on any frontmatter key outside `name`, `description`, `allowed-tools`,
-and `disable-model-invocation`: the Agent Skills spec subset plus one exception, so the skills
-still package for claude.ai and the Skills API. `setup` is that exception: a run-once
-configurator the user enters deliberately, so it sets `disable-model-invocation: true` and
-`allow_implicit_invocation: false`. Every other skill stays model-invocable, because hiding one
-drops its description from the agent's context and the agent then runs the raw `git`/`gh`/`glab`
-command instead of the governed workflow. Side effects are gated by the permission rules in
-`templates/claude-settings.json`, not by hiding skills. A skill that bundles scripts
-pre-approves them with
-`allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/<name>.sh:*)` and invokes them directly, with no
-`bash` prefix and no quotes, or the permission rule stops matching.
+and `disable-model-invocation`. Only `setup` sets `disable-model-invocation: true` and
+`allow_implicit_invocation: false`; every other skill stays model-invocable. Gate side effects with
+the permission rules in `templates/claude-settings.json`. A skill that bundles scripts pre-approves
+them with `allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/<name>.sh:*)` and invokes them directly,
+with no `bash` prefix and no quotes.
 
 When adding or renaming a skill, keep four places in sync:
 
