@@ -111,7 +111,7 @@ skills.sh install (see the note on skill names below). It will:
 
 - Add a short, marker-delimited pointer to `AGENTS.md` at the repo root, creating it if missing.
   An existing `CLAUDE.md` or `.claude/CLAUDE.md` is moved into it and deleted, because Claude Code
-  reads `AGENTS.md` only when no `CLAUDE.md` exists. `CLAUDE.local.md` is left alone
+  (v2.1.277 or later) reads `AGENTS.md` only when no `CLAUDE.md` exists. `CLAUDE.local.md` is left alone
 - Analyze the repo — CI, feature flags, contributor count, deploy cadence, existing branches —
   and recommend a **branching strategy** (GitHub Flow, Trunk-Based Development, or Gitflow),
   with all three presented so you make the final call
