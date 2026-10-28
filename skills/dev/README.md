@@ -11,7 +11,7 @@ namespaced `/dev:<name>`.
 - **[testing](./testing/SKILL.md)**: Test only business logic and its corner cases. Delete tests for removed or replaced behavior.
 - **[research](./research/SKILL.md)**: Decide from current docs, peer projects, and claims verified against the code.
 - **[reporting](./reporting/SKILL.md)**: Plain, concrete reports. No mid-run questions; open questions as one numbered list with recommendations at the end.
-- **[self-documenting](./self-documenting/SKILL.md)**: The code is the single source of truth. Comments state why, docs record decisions, AGENTS.md holds how to work, and every change fixes or deletes the prose it makes false.
+- **[self-documenting](./self-documenting/SKILL.md)**: The code is the single source of truth. Docs are only the README, architecture, decisions, and a transient plan. AGENTS.md is the only instruction file, and every change fixes or deletes the prose it makes false.
 
 Each concern has exactly one skill. `subagents` puts `design-principles`, `testing`,
 `self-documenting`, and `research` into every brief and holds every review to them.

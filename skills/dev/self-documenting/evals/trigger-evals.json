@@ -112,6 +112,18 @@
     "should_trigger": true
   },
   {
+    "query": "add a decision to docs/decisions.md that we're going with clerk instead of auth0 for login",
+    "should_trigger": true
+  },
+  {
+    "query": "update docs/architecture.md now that we split the notifier out into its own service",
+    "should_trigger": true
+  },
+  {
+    "query": "all four stages of the search revamp are merged, can we delete docs/plan-search.md now",
+    "should_trigger": true
+  },
+  {
     "query": "write a post for our engineering blog about how we migrated the ledger to event sourcing",
     "should_trigger": false
   }
