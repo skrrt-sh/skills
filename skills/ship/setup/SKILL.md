@@ -32,11 +32,8 @@ repository.
    ```
 
    The script appends the content of `CLAUDE.md` and `.claude/CLAUDE.md` to `AGENTS.md`, keeps one
-   `skrrt:ship` block, and deletes them. Never migrate them by hand.
-
-   If it exits with `STATUS=relative-imports`, nothing was written: report that the moved file's
-   `@` imports would resolve from the repository root instead, ask the user to rewrite them
-   relative to the root, and rerun after they do.
+   `skrrt:ship` block, and deletes them. It rewrites relative `@` imports from `.claude/CLAUDE.md`
+   so they still reach the same files from the root. Never migrate them by hand.
 
 6. Report the selected strategy, whether each file changed, and every `MIGRATED_FILE`. Report each
    `BLOCKING_FILE` as stopping Claude Code from reading `AGENTS.md`; never edit or delete it.

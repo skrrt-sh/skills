@@ -94,11 +94,12 @@
     {
       "id": 9,
       "prompt": "Use $setup with GitHub Flow. (The repository has AGENTS.md and a .claude/CLAUDE.md that contains the line \"See @docs/rules.md\".)",
-      "expected_output": "The configure script stops with STATUS=relative-imports and changes nothing. The agent reports that the import would resolve from the repository root after the move, asks the user to rewrite it relative to the root, and reruns only after they do.",
+      "expected_output": "Setup completes. The configure script moves the nested rules into AGENTS.md with the import rewritten to \"See @.claude/docs/rules.md\", so it still reaches the same file, and deletes .claude/CLAUDE.md.",
       "assertions": [
-        "AGENTS.md, .claude/CLAUDE.md, and .agents/ship.md are unchanged after the failed run",
-        "The agent explains that the @ import must be rewritten relative to the repository root",
-        "The agent does not edit .claude/CLAUDE.md or migrate it by hand"
+        "AGENTS.md contains the line \"See @.claude/docs/rules.md\"",
+        ".claude/CLAUDE.md no longer exists",
+        "The agent does not ask the user to rewrite the import",
+        "The migration is done by the configure script, not by hand edits"
       ]
     },
     {

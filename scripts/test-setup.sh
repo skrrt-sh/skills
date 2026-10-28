@@ -123,16 +123,18 @@ mkdir -p "${imports_dir}/.claude"
 cd "${imports_dir}"
 git init -q
 printf 'Shared rule.\n' > AGENTS.md
-printf 'Nested rule.\n\nSee @rules.md\n' > .claude/CLAUDE.md
-imports_sum="$(cksum AGENTS.md .claude/CLAUDE.md)"
-if output="$("${setup_script}" --strategy github-flow 2>&1)"; then
-  fail 'relative imports in .claude/CLAUDE.md were accepted'
-fi
-grep -Fq 'STATUS=relative-imports FILE=.claude/CLAUDE.md' <<<"${output}" ||
-  fail 'relative imports were not reported'
-[[ "${imports_sum}" == "$(cksum AGENTS.md .claude/CLAUDE.md)" ]] ||
-  fail 'files changed despite relative imports'
-[[ ! -e .agents ]] || fail '.agents was created despite relative imports'
+# The backticks are literal Markdown code spans.
+# shellcheck disable=SC2016
+printf '%s\n' 'See @rules.md' 'See @./other.md and @../docs/a.md' 'See @/abs/x.md' 'See @~/y.md' \
+  'Run `see @code.md` first' '```' '@fenced.md' '```' '@../AGENTS.md' > .claude/CLAUDE.md
+"${setup_script}" --strategy github-flow >/dev/null
+[[ ! -e .claude/CLAUDE.md ]] || fail '.claude/CLAUDE.md remained'
+# shellcheck disable=SC2016
+for expected in 'See @.claude/rules.md' 'See @.claude/other.md and @docs/a.md' 'See @/abs/x.md' \
+  'See @~/y.md' 'Run `see @code.md` first' '@fenced.md'; do
+  grep -Fxq "${expected}" AGENTS.md || fail "import line missing after rebasing: ${expected}"
+done
+if grep -Fq '@AGENTS.md' AGENTS.md; then fail 'rebased import made AGENTS.md import itself'; fi
 
 # The fake HOME is the parent itself, so its user-scope file must be skipped while the
 # project-style CLAUDE.md beside it is reported.

@@ -49,18 +49,6 @@ cd "${repo_root}"
 instruction_file='AGENTS.md'
 nested_file='.claude/CLAUDE.md'
 
-# Imports resolve relative to the importing file, so moving this one to the root would retarget
-# them. Checked before anything is written.
-if [[ -f "${nested_file}" && ! "${nested_file}" -ef "${instruction_file}" ]] &&
-  awk '
-    /^[[:space:]]*(```|~~~)/ { fenced = !fenced; next }
-    !fenced && /(^|[[:space:]])@[^[:space:]\/~]/ { found = 1; exit }
-    END { exit !found }
-  ' "${nested_file}"; then
-  printf 'STATUS=relative-imports FILE=%s\n' "${nested_file}" >&2
-  exit 1
-fi
-
 mkdir -p .agents
 # Claude Code reads AGENTS.md only while none of these exists, so their content moves into it.
 migrate_candidates=(CLAUDE.md "${nested_file}")
@@ -90,13 +78,64 @@ check_markers() {
   fi
 }
 
-# A root CLAUDE.md that imports AGENTS.md would make AGENTS.md import itself.
-drop_self_import() {
-  if [[ "${1}" == CLAUDE.md ]]; then
-    awk '!/^[[:space:]]*@(\.\/)?AGENTS\.md[[:space:]]*$/'
-  else
-    cat
-  fi
+# Imports resolve relative to the importing file, so the nested file's relative imports gain a
+# .claude/ prefix. Code is not imported, so fenced blocks and code spans stay as written.
+# An import of AGENTS.md is dropped, since AGENTS.md would then import itself.
+rebase_imports() {
+  local nested=0
+  [[ "${1}" == "${nested_file}" ]] && nested=1
+  awk -v nested="${nested}" '
+    function rebase(path) {
+      while (substr(path, 1, 2) == "./") path = substr(path, 3)
+      if (substr(path, 1, 3) == "../") return substr(path, 4)
+      return ".claude/" path
+    }
+    function rewrite(text, at_start,   out, token, lead, path) {
+      out = ""
+      if (!at_start) text = "x" text
+      while (match(text, /(^|[[:space:]])@[^[:space:]]+/)) {
+        token = substr(text, RSTART, RLENGTH)
+        lead = substr(token, 1, 1) == "@" ? "" : substr(token, 1, 1)
+        path = substr(token, length(lead) + 2)
+        if (path !~ /^[\/~]/) path = rebase(path)
+        out = out substr(text, 1, RSTART - 1) lead "@" path
+        text = substr(text, RSTART + RLENGTH)
+      }
+      out = out text
+      return at_start ? out : substr(out, 2)
+    }
+    function closing(text, size,   offset) {
+      offset = 0
+      while (match(text, /`+/)) {
+        if (RLENGTH == size) return offset + RSTART
+        offset += RSTART + RLENGTH - 1
+        text = substr(text, RSTART + RLENGTH)
+      }
+      return 0
+    }
+    function rebase_line(line,   out, at_start, start, size, rest, end) {
+      out = ""
+      at_start = 1
+      while (match(line, /`+/)) {
+        start = RSTART
+        size = RLENGTH
+        rest = substr(line, start + size)
+        out = out rewrite(substr(line, 1, start - 1), at_start) substr(line, start, size)
+        end = closing(rest, size)
+        at_start = 0
+        if (end == 0) { line = rest; continue }
+        out = out substr(rest, 1, end - 1 + size)
+        line = substr(rest, end + size)
+      }
+      return out rewrite(line, at_start)
+    }
+    /^[[:space:]]*(```|~~~)/ { fenced = !fenced; print; next }
+    fenced { print; next }
+    {
+      line = nested ? rebase_line($0) : $0
+      if (line !~ /^[[:space:]]*@(\.\/)?AGENTS\.md[[:space:]]*$/) print line
+    }
+  '
 }
 
 strip_block() {
@@ -133,7 +172,7 @@ for candidate in "${migrate_candidates[@]}"; do
   check_markers "${candidate}" "${legacy_start}" "${legacy_end}" invalid-legacy-markers
   strip_block "${candidate}" "${legacy_start}" "${legacy_end}" |
     strip_block - "${start_marker}" "${end_marker}" |
-    drop_self_import "${candidate}" > "${stripped_tmp}"
+    rebase_imports "${candidate}" > "${stripped_tmp}"
   append_section "${merged_tmp}" "${stripped_tmp}"
 done
 
