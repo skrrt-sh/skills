@@ -2,18 +2,13 @@
 set -euo pipefail
 
 usage() {
-  printf 'usage: configure-ship.sh --instruction-file <path> --strategy <github-flow|trunk-based|gitflow>\n' >&2
+  printf 'usage: configure-ship.sh --strategy <github-flow|trunk-based|gitflow>\n' >&2
 }
 
-instruction_file=''
 strategy=''
 
 while [[ "$#" -gt 0 ]]; do
   case "${1}" in
-    --instruction-file)
-      instruction_file="${2:-}"
-      shift 2
-      ;;
     --strategy)
       strategy="${2:-}"
       shift 2
@@ -24,14 +19,6 @@ while [[ "$#" -gt 0 ]]; do
       ;;
   esac
 done
-
-case "${instruction_file}" in
-  CLAUDE.md | AGENTS.md | .claude/CLAUDE.md | .github/AGENTS.md) ;;
-  *)
-    usage
-    exit 1
-    ;;
-esac
 
 case "${strategy}" in
   github-flow | trunk-based | gitflow) ;;
@@ -58,65 +45,147 @@ for required_file in "${pointer_asset}" "${strategy_asset}"; do
 done
 
 cd "${repo_root}"
-mkdir -p "$(dirname "${instruction_file}")" .agents
+
+instruction_file='AGENTS.md'
+nested_file='.claude/CLAUDE.md'
+
+mkdir -p .agents
+# Claude Code reads AGENTS.md only while none of these exists, so their content moves into it.
+migrate_candidates=(CLAUDE.md "${nested_file}")
 
 instruction_tmp="$(mktemp "${instruction_file}.tmp.XXXXXX")"
-normalized_tmp="$(mktemp "${instruction_file}.normalized.XXXXXX")"
+merged_tmp="$(mktemp "${instruction_file}.merged.XXXXXX")"
+stripped_tmp="$(mktemp "${instruction_file}.stripped.XXXXXX")"
 policy_tmp="$(mktemp '.agents/ship.md.tmp.XXXXXX')"
 policy_block_tmp="$(mktemp '.agents/ship.md.block.XXXXXX')"
 cleanup() {
-  rm -f "${instruction_tmp}" "${normalized_tmp}" "${policy_tmp}" "${policy_block_tmp}"
+  rm -f "${instruction_tmp}" "${merged_tmp}" "${stripped_tmp}" "${policy_tmp}" "${policy_block_tmp}"
 }
 trap cleanup EXIT
 
 start_marker='<!-- skrrt:ship -->'
 end_marker='<!-- /skrrt:ship -->'
-start_count=0
-end_count=0
+legacy_start='<!-- skrrt:branching -->'
+legacy_end='<!-- /skrrt:branching -->'
+
+check_markers() {
+  local file="${1}" start="${2}" finish="${3}" status="${4}" start_count end_count
+  start_count="$(grep -cF "${start}" "${file}" || true)"
+  end_count="$(grep -cF "${finish}" "${file}" || true)"
+  if [[ "${start_count}" -gt 1 || "${end_count}" -gt 1 || "${start_count}" -ne "${end_count}" ]]; then
+    printf 'STATUS=%s FILE=%s\n' "${status}" "${file}" >&2
+    exit 1
+  fi
+}
+
+# Imports resolve relative to the importing file, so the nested file's relative imports gain a
+# .claude/ prefix. Code is not imported, so fenced blocks and code spans stay as written.
+# An import of AGENTS.md is dropped, since AGENTS.md would then import itself.
+rebase_imports() {
+  local nested=0
+  [[ "${1}" == "${nested_file}" ]] && nested=1
+  awk -v nested="${nested}" '
+    function rebase(path) {
+      while (substr(path, 1, 2) == "./") path = substr(path, 3)
+      if (substr(path, 1, 3) == "../") return substr(path, 4)
+      return ".claude/" path
+    }
+    function rewrite(text, at_start,   out, token, lead, path) {
+      out = ""
+      if (!at_start) text = "x" text
+      while (match(text, /(^|[[:space:]])@[^[:space:]]+/)) {
+        token = substr(text, RSTART, RLENGTH)
+        lead = substr(token, 1, 1) == "@" ? "" : substr(token, 1, 1)
+        path = substr(token, length(lead) + 2)
+        if (path !~ /^[\/~]/) path = rebase(path)
+        out = out substr(text, 1, RSTART - 1) lead "@" path
+        text = substr(text, RSTART + RLENGTH)
+      }
+      out = out text
+      return at_start ? out : substr(out, 2)
+    }
+    function closing(text, size,   offset) {
+      offset = 0
+      while (match(text, /`+/)) {
+        if (RLENGTH == size) return offset + RSTART
+        offset += RSTART + RLENGTH - 1
+        text = substr(text, RSTART + RLENGTH)
+      }
+      return 0
+    }
+    function rebase_line(line,   out, at_start, start, size, rest, end) {
+      out = ""
+      at_start = 1
+      while (match(line, /`+/)) {
+        start = RSTART
+        size = RLENGTH
+        rest = substr(line, start + size)
+        out = out rewrite(substr(line, 1, start - 1), at_start) substr(line, start, size)
+        end = closing(rest, size)
+        at_start = 0
+        if (end == 0) { line = rest; continue }
+        out = out substr(rest, 1, end - 1 + size)
+        line = substr(rest, end + size)
+      }
+      return out rewrite(line, at_start)
+    }
+    /^[[:space:]]*(```|~~~)/ { fenced = !fenced; print; next }
+    fenced { print; next }
+    {
+      line = nested ? rebase_line($0) : $0
+      if (line !~ /^[[:space:]]*@(\.\/)?AGENTS\.md[[:space:]]*$/) print line
+    }
+  '
+}
+
+strip_block() {
+  awk -v start="${2}" -v finish="${3}" '
+    $0 == start { removing = 1; next }
+    removing && $0 == finish { removing = 0; next }
+    !removing { print }
+  ' "${1}"
+}
+
+append_section() {
+  if [[ -s "${1}" && -s "${2}" ]]; then
+    printf '\n' >> "${1}"
+  fi
+  awk '1' "${2}" >> "${1}"
+}
+
+migrated_files=()
 
 if [[ -f "${instruction_file}" ]]; then
-  start_count="$(grep -cF "${start_marker}" "${instruction_file}" || true)"
-  end_count="$(grep -cF "${end_marker}" "${instruction_file}" || true)"
+  check_markers "${instruction_file}" "${start_marker}" "${end_marker}" invalid-markers
+  check_markers "${instruction_file}" "${legacy_start}" "${legacy_end}" invalid-legacy-markers
+  strip_block "${instruction_file}" "${legacy_start}" "${legacy_end}" > "${merged_tmp}"
 fi
 
-if [[ "${start_count}" -gt 1 || "${end_count}" -gt 1 || "${start_count}" -ne "${end_count}" ]]; then
-  printf 'STATUS=invalid-markers FILE=%s\n' "${instruction_file}" >&2
-  exit 1
-fi
-
-if [[ "${start_count}" -eq 0 ]]; then
-  if [[ -s "${instruction_file}" ]]; then
-    awk '1; END { print "" }' "${instruction_file}" > "${instruction_tmp}"
+for candidate in "${migrate_candidates[@]}"; do
+  [[ -f "${candidate}" || -L "${candidate}" ]] || continue
+  migrated_files+=("${candidate}")
+  # A symlink between the two files, or a dangling one, carries no content of its own.
+  if [[ ! -f "${candidate}" || "${candidate}" -ef "${instruction_file}" ]]; then
+    continue
   fi
-  awk '1' "${pointer_asset}" >> "${instruction_tmp}"
-else
+  check_markers "${candidate}" "${start_marker}" "${end_marker}" invalid-markers
+  check_markers "${candidate}" "${legacy_start}" "${legacy_end}" invalid-legacy-markers
+  strip_block "${candidate}" "${legacy_start}" "${legacy_end}" |
+    strip_block - "${start_marker}" "${end_marker}" |
+    rebase_imports "${candidate}" > "${stripped_tmp}"
+  append_section "${merged_tmp}" "${stripped_tmp}"
+done
+
+if grep -qxF "${start_marker}" "${merged_tmp}"; then
   awk -v start="${start_marker}" -v finish="${end_marker}" '
     FNR == NR { block = block $0 ORS; next }
     $0 == start { printf "%s", block; replacing = 1; next }
     replacing && $0 == finish { replacing = 0; next }
     !replacing { print }
-  ' "${pointer_asset}" "${instruction_file}" > "${instruction_tmp}"
-fi
-
-legacy_start='<!-- skrrt:branching -->'
-legacy_end='<!-- /skrrt:branching -->'
-legacy_start_count="$(grep -cF "${legacy_start}" "${instruction_tmp}" || true)"
-legacy_end_count="$(grep -cF "${legacy_end}" "${instruction_tmp}" || true)"
-
-if [[ "${legacy_start_count}" -gt 1 || "${legacy_end_count}" -gt 1 ||
-  "${legacy_start_count}" -ne "${legacy_end_count}" ]]; then
-  printf 'STATUS=invalid-legacy-markers FILE=%s\n' "${instruction_file}" >&2
-  exit 1
-fi
-
-if [[ "${legacy_start_count}" -eq 1 ]]; then
-  awk -v start="${legacy_start}" -v finish="${legacy_end}" '
-    $0 == start { removing = 1; next }
-    removing && $0 == finish { removing = 0; next }
-    !removing { print }
-  ' "${instruction_tmp}" > "${normalized_tmp}"
+  ' "${pointer_asset}" "${merged_tmp}" > "${instruction_tmp}"
 else
-  awk '1' "${instruction_tmp}" > "${normalized_tmp}"
+  awk '1' "${merged_tmp}" > "${instruction_tmp}"
+  append_section "${instruction_tmp}" "${pointer_asset}"
 fi
 
 policy_start='<!-- skrrt:policy -->'
@@ -166,14 +235,45 @@ if [[ ! -f .agents/ship.md ]] || ! cmp -s "${policy_tmp}" .agents/ship.md; then
   policy_status='changed'
 fi
 
-if [[ ! -f "${instruction_file}" ]] || ! cmp -s "${normalized_tmp}" "${instruction_file}"; then
-  mv "${normalized_tmp}" "${instruction_file}"
+if [[ ! -f "${instruction_file}" || -L "${instruction_file}" ]] ||
+  ! cmp -s "${instruction_tmp}" "${instruction_file}"; then
+  mv "${instruction_tmp}" "${instruction_file}"
   instruction_status='changed'
 fi
+
+for migrated in "${migrated_files[@]+"${migrated_files[@]}"}"; do
+  rm -f "${migrated}"
+done
 
 printf 'STATUS=ok\n'
 printf 'INSTRUCTION_FILE=%s\n' "${instruction_file}"
 printf 'INSTRUCTION_STATUS=%s\n' "${instruction_status}"
+for migrated in "${migrated_files[@]+"${migrated_files[@]}"}"; do
+  printf 'MIGRATED_FILE=%s\n' "${migrated}"
+done
+if [[ -e CLAUDE.local.md ]]; then
+  printf 'BLOCKING_FILE=CLAUDE.local.md\n'
+fi
+# Claude Code also loads these from every parent directory; only the user-scope file is exempt.
+user_memory=''
+user_memory_physical=''
+if [[ -n "${HOME:-}" ]]; then
+  user_memory="${HOME%/}/.claude/CLAUDE.md"
+  user_memory_physical="${user_memory}"
+  if home_physical="$(cd "${HOME}" 2>/dev/null && pwd -P)"; then
+    user_memory_physical="${home_physical%/}/.claude/CLAUDE.md"
+  fi
+fi
+ancestor="${repo_root}"
+while [[ "${ancestor}" != / ]]; do
+  ancestor="$(dirname "${ancestor}")"
+  for name in CLAUDE.md .claude/CLAUDE.md CLAUDE.local.md; do
+    blocker="${ancestor%/}/${name}"
+    [[ -e "${blocker}" ]] || continue
+    [[ "${blocker}" == "${user_memory}" || "${blocker}" == "${user_memory_physical}" ]] && continue
+    printf 'BLOCKING_FILE=%s\n' "${blocker}"
+  done
+done
 printf 'POLICY_FILE=.agents/ship.md\n'
 printf 'POLICY_STATUS=%s\n' "${policy_status}"
 printf 'STRATEGY=%s\n' "${strategy}"

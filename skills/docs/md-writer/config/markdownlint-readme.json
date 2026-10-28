@@ -1,0 +1,6 @@
+{
+  "extends": "./markdownlint-default.json",
+  "MD041": {
+    "allow_preamble": true
+  }
+}

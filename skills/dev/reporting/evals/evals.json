@@ -27,9 +27,9 @@
     {
       "id": 3,
       "prompt": "Draw the architecture of the sync flow as a mermaid diagram.",
-      "expected_output": "The diagram is written to a separate markdown file and the reply points to it, because the terminal cannot render Mermaid.",
+      "expected_output": "The diagram is written into the doc it belongs to, such as docs/architecture.md, or for a one-off to a markdown file outside the project, and the reply points to it, because the terminal cannot render Mermaid.",
       "assertions": [
-        "Writes the Mermaid diagram to a separate .md file",
+        "Writes the Mermaid diagram into the doc it belongs to, or for a one-off to a .md file outside the project",
         "Does not paste the raw Mermaid source as the main reply",
         "Tells the user where the file is"
       ]
@@ -80,6 +80,18 @@
         "Names the missing facts in one plain line instead of guessing them",
         "Gives the rest of the email ready to paste, not an outline",
         "Contains no apologies, filler pleasantries, or em dashes"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Remove the dead feature flags from the web app and swap the date library for something lighter. Don't ask me, just do it.",
+      "expected_output": "The agent finishes without asking and ends with one numbered list that puts each decision it took, such as the replacement date library and what it was chosen over, up for approval, each with enough context to read alone and a recommendation, and reports the requested flag and file deletions as done.",
+      "assertions": [
+        "Does not stop mid-run to ask a question",
+        "The numbered list at the end includes the choice of date library, naming the old library and any alternatives it was chosen over, and a recommendation",
+        "Reports the flag and file deletions as done, naming what each flag controlled, and does not put them up for approval",
+        "Every name the user may not know, such as the new library, comes with a few words on what it is; no internal labels",
+        "Items for approval and open questions share one numbered list at the end"
       ]
     }
   ]

@@ -109,8 +109,9 @@ Working on the skills themselves? Symlink every one of them into `~/.claude/skil
 In your agent, run it once per repo — `/ship:setup` on a plugin install, `/setup` on a
 skills.sh install (see the note on skill names below). It will:
 
-- Add a short, marker-delimited pointer to your existing instruction file — the first of
-  `CLAUDE.md`, `AGENTS.md`, `.claude/CLAUDE.md`, or `.github/AGENTS.md` that exists
+- Add a short, marker-delimited pointer to `AGENTS.md` at the repo root, creating it if missing.
+  An existing `CLAUDE.md` or `.claude/CLAUDE.md` is moved into it and deleted, because Claude Code
+  reads `AGENTS.md` only when no `CLAUDE.md` exists. `CLAUDE.local.md` is left alone
 - Analyze the repo — CI, feature flags, contributor count, deploy cadence, existing branches —
   and recommend a **branching strategy** (GitHub Flow, Trunk-Based Development, or Gitflow),
   with all three presented so you make the final call
@@ -132,8 +133,7 @@ name — `/commit`, `/subagents`. The rest of this README uses the bare names fo
 ## Skills
 
 Skills are grouped into buckets under [`skills/`](skills/). Every one is user-invocable by name, and
-all but `setup` also activate on their own when the task fits — that is the point: a hidden skill
-just means the agent runs raw `git commit` instead. Side effects are gated where they happen, by the
+all but `setup` also activate on their own when the task fits. Side effects are gated where they happen, by the
 permission rules in [`templates/claude-settings.json`](templates/claude-settings.json), which put
 `git commit`, `git push`, and the forge create commands behind an approval prompt. `setup` is a
 run-once configurator, so it stays explicit-only.
@@ -182,15 +182,15 @@ and ship through the ship skills, so you never have to name them.
 
 Documentation authoring tools. Bucket index: [`skills/docs/`](skills/docs/README.md).
 
-- **[md-writer](skills/docs/md-writer/SKILL.md)** — Knowledge-base markdown with YAML frontmatter,
-  Mermaid diagrams, related-document links, and a lint-clean finish.
+- **[md-writer](skills/docs/md-writer/SKILL.md)** — Format and validate the README, architecture,
+  decisions, and plan docs, with Mermaid diagrams, comparison tables, and a lint-clean finish.
 
 ```text
-/md-writer API integration guide for the payments service
+/md-writer write docs/architecture.md with one Mermaid diagram
 ```
 
-Or ask for a guide, spec, ADR, runbook, or API document — the skill activates on its own. Repository
-meta files such as README, CHANGELOG, CLAUDE.md, AGENTS.md, and SKILL.md are deliberately excluded.
+Or ask to write or edit the README, architecture, decisions, or plan docs, or to add a Mermaid
+diagram to one, and the skill activates on its own. AGENTS.md, CHANGELOG, and SKILL.md are excluded.
 As its final step it runs the bundled validator (`skills/docs/md-writer/scripts/validate-md.sh`),
 which walks up from the file for a
 project-level `.markdownlint.json` (`.jsonc`/`.yaml`/`.yml` also work) and falls back to the
@@ -198,8 +198,8 @@ skill's bundled default. It prefers a pinned local `markdownlint-cli2`, then the
 version through `npx`. The validator auto-fixes mechanical rules in place and reports only what
 needs judgment
 — line length, fence languages, headings, links — so the agent spends tokens on those alone. It
-lints documentation and knowledge-base content only — well-known repo files (`README`, `CLAUDE`,
-`CONTRIBUTING`, …) and `.claude/` files are skipped and never rewritten. Missing tooling is an
+lints the project docs, README included; other well-known repo files (`CHANGELOG`, `CONTRIBUTING`,
+…) and `.claude/` files are skipped and never rewritten. Missing tooling is an
 explicit failure, never a false validation pass.
 
 ### dev
@@ -216,11 +216,12 @@ Implementation workflow tools. Bucket index: [`skills/dev/`](skills/dev/README.m
   Delete tests for removed or replaced behavior.
 - **[research](skills/dev/research/SKILL.md)**: Decide from current docs, peer projects, and
   claims verified against the code.
-- **[reporting](skills/dev/reporting/SKILL.md)**: Plain, concrete reports. No mid-run questions;
-  open questions as one numbered list with recommendations at the end.
+- **[reporting](skills/dev/reporting/SKILL.md)**: Plain, concrete reports. No mid-run questions
+  unless a skill requires the user's choice; open questions as one numbered list with
+  recommendations at the end.
 - **[self-documenting](skills/dev/self-documenting/SKILL.md)**: The code is the single source of
-  truth. Comments state why, docs record decisions, AGENTS.md holds how to work, and every change
-  fixes or deletes the prose it makes false.
+  truth. Docs are only the README, architecture, decisions, and a transient plan. AGENTS.md is the
+  only instruction file, and every change fixes or deletes the prose it makes false.
 
 ```text
 /subagents implement the outlined scope, orchestrate and review, delegate the code
@@ -359,8 +360,7 @@ artifacts from running evals, not committed.
 2. Add `"./<name>"` to the `skills` array in `skills/<bucket>/.claude-plugin/plugin.json` — the
    bucket's own plugin manifest, and where Claude Code reads it from.
 3. Add `"./skills/<bucket>/<name>"` to the `skills` array in the root `.claude-plugin/plugin.json`,
-   the repo-wide aggregate (the skills.sh CLI discovers skills by scanning for `SKILL.md`, but the
-   aggregate is the declared inventory).
+   the repo-wide aggregate.
 4. Add a linked entry to the bucket's `README.md` and to the [Skills](#skills) section above.
 
 `.claude-plugin/marketplace.json` needs no edit for a new skill — it lists buckets, not skills.

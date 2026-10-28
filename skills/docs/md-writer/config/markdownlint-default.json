@@ -11,6 +11,24 @@
   "MD025": {
     "front_matter_title": ""
   },
+  "MD033": {
+    "allowed_elements": [
+      "a",
+      "br",
+      "details",
+      "div",
+      "h1",
+      "img",
+      "kbd",
+      "p",
+      "picture",
+      "source",
+      "strong",
+      "sub",
+      "summary",
+      "sup"
+    ]
+  },
   "MD060": {
     "style": "compact"
   }

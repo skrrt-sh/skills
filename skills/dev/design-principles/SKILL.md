@@ -50,7 +50,7 @@ Goal: every future change touches one place.
 - Find every similar occurrence and fix them all.
 - Exception: a hack commented `HACK:` may bridge stages of a staged change. A cleanup stage
   deletes them all.
-- Fix every in-scope issue you find, small ones included.
+- Fix every issue in touched code; report the rest unfixed.
 - After two failed fixes for the same symptom, stop patching. Find the root cause with evidence.
 
 ## State

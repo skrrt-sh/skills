@@ -1,6 +1,6 @@
 interface:
   display_name: "MD Writer"
-  short_description: "Write lint-clean knowledge-base Markdown"
-  default_prompt: "Use $md-writer to create a concise architecture guide with validated Markdown."
+  short_description: "Format and validate project docs"
+  default_prompt: "Use $md-writer to write docs/architecture.md with one Mermaid diagram and validate it."
 policy:
   allow_implicit_invocation: true

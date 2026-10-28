@@ -35,7 +35,8 @@ The main thread plans, briefs, dispatches, and reviews. Subagents write the code
 3. Brief. The subagent has none of your context. Brief later stages from what earlier stages
    actually landed: real contracts, signatures, paths. State the goal, the relevant existing code, the
    files it owns, the files off limits, the contracts it builds against, the acceptance command,
-   the quality bar, and the report format: files changed, acceptance output, blockers.
+   the quality bar, and the report format: files changed, acceptance output, blockers, and each
+   decision taken with what it was chosen over and why, so you can build the approval list.
 4. Dispatch a stage's agents in one message. Then review: read the diff, check file ownership,
    rerun the acceptance commands and the full build, tests, and lint, and check the quality bar.
    Search for an existing component or helper matching each new one; merge duplicates.
@@ -46,8 +47,10 @@ The main thread plans, briefs, dispatches, and reviews. Subagents write the code
    affected scopes, re-brief, and tell the user what changed and why. Only the user changes the
    goal.
 5. Finish. Verify every scope item landed, nothing beyond it, and no `HACK:` comment remains in
-   the changed code. Report each stage's result, the commands run and their output, your fixes,
-   and what remains. Report failures as failures.
+   the changed code. Report what each stage delivered, named by its content, not its number,
+   then the commands run and their output, your fixes, and what remains. List the decisions
+   you and the subagents took for approval, as the `reporting` skill says. Report failures as
+   failures.
 
 ## Quality bar
 

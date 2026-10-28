@@ -34,7 +34,7 @@ write_policy() {
     printf '\n<!-- skrrt:branching -->\n## Branching strategy\n\n'
     sed -n '3,$p' "${repo_root}/skills/ship/setup/assets/${strategy}.md"
     printf '<!-- /skrrt:branching -->\n'
-  } > "${repo}/CLAUDE.md"
+  } > "${repo}/AGENTS.md"
 }
 
 # --- commit-1: focused fix, unrelated draft must survive -------------------
@@ -131,53 +131,20 @@ Every list endpoint returns an opaque `next_cursor`.
 DOC
 git -C "${r}" add -A && git -C "${r}" commit -qm 'chore: initial fixture'
 
-# --- md-writer-3: established ADR structure to preserve --------------------
-r="${dest}/mdw-3-adr-update"
+# --- md-writer-3: established decisions log to extend ---------------------
+r="${dest}/mdw-3-decisions-update"
 git_init "${r}"
-mkdir -p "${r}/docs/adr"
-cat > "${r}/docs/adr/0012-cache.md" <<'DOC'
----
-title: "0012 — Cache layer"
-status: "proposed"
-decision-date: "2026-06-11"
----
+mkdir -p "${r}/docs"
+cat > "${r}/docs/decisions.md" <<'DOC'
+# Decisions
 
-# 0012 — Cache layer
+## Use Postgres for persistence
 
-> Which cache backend the read path should use.
+Chosen over MongoDB: every feature joins orders, users, and payments.
 
-## Context
+## Cache sessions in Memcached
 
-Read latency on the catalogue endpoint exceeds the 200ms budget at peak.
-
-## Options considered
-
-- In-process LRU
-- Redis
-- Memcached
-
-## Decision
-
-Pending.
-
-## Consequences
-
-Pending.
-DOC
-cat > "${r}/docs/adr/0011-queue.md" <<'DOC'
----
-title: "0011 — Queue backend"
-status: "accepted"
-decision-date: "2026-05-20"
----
-
-# 0011 — Queue backend
-
-> Which queue the ingest path should use.
-
-## Decision
-
-SQS, for operational familiarity.
+Chosen over Redis: sessions need no persistence or data structures.
 DOC
 git -C "${r}" add -A && git -C "${r}" commit -qm 'chore: initial fixture'
 

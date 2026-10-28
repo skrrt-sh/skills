@@ -127,66 +127,90 @@ def frontmatter(path):
     return keys, body
 
 
+def changed_paths(repo):
+    """Every path the run added or modified, untracked files included."""
+    out = git(repo, "status", "--porcelain", "--untracked-files=all")
+    return sorted(line.split(None, 1)[1] for line in out.splitlines() if line.strip())
+
+
+def fences(body):
+    """Opening fence languages; fences alternate open/close."""
+    return re.findall(r"^```(\w*)", body, re.M)[::2]
+
+
+def mermaid_blocks(body):
+    return re.findall(r"^```mermaid\n(.*?)^```", body, re.M | re.S)
+
+
+def section(body, heading):
+    """Text from a '## ' heading up to the next one."""
+    _, _, rest = body.partition(heading + "\n")
+    return rest.split("\n## ")[0]
+
+
 def grade_mdwriter(repo, name):
     res = []
-    docs = sorted(p for p in (repo / "docs").rglob("*.md")) if (repo / "docs").exists() else []
+    changed = changed_paths(repo)
+    arch = repo / "docs/architecture.md"
 
     if name == "eval-0-greenfield":
-        target = repo / "docs/local-postgres.md"
-        res.append(check("docs/local-postgres.md is created", target.exists(), str(target)))
-        res.append(check("Only that one document is created", len(docs) == 1,
-                         f"docs/: {[str(p.relative_to(repo)) for p in docs]}"))
-        if target.exists():
-            fm, body = frontmatter(target)
-            h1 = next((l[2:].strip() for l in body.splitlines() if l.startswith("# ")), "")
-            res.append(check("The H1 matches the frontmatter title",
-                             h1 == fm.get("title", "\x00"), f"title={fm.get('title')!r} h1={h1!r}"))
-            res.append(check("No invented author or external reference in frontmatter",
-                             "author" not in fm and "refs" not in fm, f"keys: {sorted(fm)}"))
-            res.append(check("Contains a Mermaid diagram", "```mermaid" in body, "```mermaid present" if "```mermaid" in body else "absent"))
-            # Fences alternate open/close; only the opening fence carries a language.
-            opening = re.findall(r"^```(\w*)", body, re.M)[::2]
-            res.append(check("Every code fence has a language", all(opening), f"opening fences: {opening}"))
+        res.append(check("Only docs/architecture.md is created", changed == ["docs/architecture.md"],
+                         f"changed: {changed}"))
+        if arch.exists():
+            text = arch.read_text()
+            dated = re.search(r"\b\d{4}-\d{2}-\d{2}\b|^(status|version|date):", text, re.M | re.I)
+            res.append(check("The document has no frontmatter and no dates, status, or version",
+                             not text.startswith("---") and not dated,
+                             f"frontmatter={text.startswith('---')} match={dated.group(0) if dated else None}"))
+            res.append(check("The document contains exactly one Mermaid diagram",
+                             len(mermaid_blocks(text)) == 1, f"{len(mermaid_blocks(text))} mermaid block(s)"))
+            res.append(check("Every code fence has a language", all(fences(text)), f"opening fences: {fences(text)}"))
+            res.append(check("No Mermaid label contains a literal \\n",
+                             not any("\\n" in b for b in mermaid_blocks(text)), "checked mermaid blocks"))
+        res.append(check("No ASCII-art diagram is drawn", None, "see summary.md"))
+        res.append(check("The bundled validator is run and its actual result is reported", None, "see summary.md"))
 
     if name == "eval-1-local-convention":
-        errors = repo / "docs/api/errors.md"
-        new_docs = [p for p in docs if p.name not in ("errors.md", "pagination.md")]
-        res.append(check("A new specification document is created", len(new_docs) == 1,
-                         f"new: {[str(p.relative_to(repo)) for p in new_docs]}"))
-        res.append(check("docs/api/errors.md is not edited",
-                         git(repo, "status", "--short", "docs/api/errors.md") == "",
-                         git(repo, "status", "--short") or "(clean)"))
-        if new_docs:
-            fm, _ = frontmatter(new_docs[0])
-            res.append(check("Uses the local title/owner/last_reviewed vocabulary, not the skill defaults",
-                             {"title", "owner", "last_reviewed"} <= set(fm), f"keys: {sorted(fm)}"))
-            res.append(check("Does not impose the skill's default status/created/updated fields",
-                             not ({"created", "updated", "status"} & set(fm)), f"keys: {sorted(fm)}"))
+        res.append(check("docs/architecture.md is created", arch.exists(), f"changed: {changed}"))
+        res.append(check("docs/api/errors.md and docs/api/pagination.md are not edited",
+                         not {"docs/api/errors.md", "docs/api/pagination.md"} & set(changed),
+                         f"changed: {changed}"))
+        if arch.exists():
+            fm, _ = frontmatter(arch)
+            res.append(check("Uses the existing title, owner, and last_reviewed vocabulary and no other fields",
+                             set(fm) <= {"title", "owner", "last_reviewed"} and "title" in fm,
+                             f"keys: {sorted(fm)}"))
+        res.append(check("No frontmatter value is invented", None, "see summary.md"))
+        res.append(check("Every changed Markdown file is validated", None, "see summary.md"))
 
-    if name == "eval-2-adr-update":
-        adr = repo / "docs/adr/0012-cache.md"
-        fm, body = frontmatter(adr)
-        res.append(check("The ADR metadata vocabulary is preserved",
-                         {"title", "status", "decision-date"} <= set(fm), f"keys: {sorted(fm)}"))
-        res.append(check("No skill-default frontmatter fields are grafted on",
-                         not ({"created", "updated", "version", "description"} & set(fm)), f"keys: {sorted(fm)}"))
-        res.append(check("The established section structure is preserved",
-                         all(h in body for h in ("## Context", "## Options considered", "## Decision", "## Consequences")),
-                         [l for l in body.splitlines() if l.startswith("## ")]))
-        res.append(check("The Redis decision is recorded", "Redis" in body.split("## Decision")[-1],
-                         body.split("## Decision")[-1][:200]))
-        res.append(check("No table of contents is introduced",
-                         "table of contents" not in body.lower(), "absent" if "table of contents" not in body.lower() else "present"))
-        res.append(check("The sibling ADR 0011 is untouched",
-                         git(repo, "status", "--short", "docs/adr/0011-queue.md") == "",
-                         git(repo, "status", "--short") or "(clean)"))
+    if name == "eval-2-decisions-update":
+        log = repo / "docs/decisions.md"
+        res.append(check("Only docs/decisions.md is changed", changed == ["docs/decisions.md"],
+                         f"changed: {changed}"))
+        body = log.read_text() if log.exists() else ""
+        heads = [l for l in body.splitlines() if l.startswith("## ")]
+        redis = next((h for h in heads if "Redis" in h), None)
+        res.append(check("The Memcached heading is rewritten in place to a Redis decision",
+                         len(heads) == 2 and heads[0] == "## Use Postgres for persistence"
+                         and redis == heads[1] and "Memcached" not in redis, f"headings: {heads}"))
+        if redis:
+            text = section(body, redis)
+            res.append(check("The rewritten decision names Memcached and the persistence reason",
+                             "Memcached" in text and "persist" in text.lower(), text.strip()[:200]))
+        marker = re.search(r"\b\d{4}-\d{2}-\d{2}\b|supersed|deprecated|status|history", body, re.I)
+        res.append(check("No history, date, status, or superseded note is added", not marker,
+                         marker.group(0) if marker else "absent"))
+        postgres = section(body, "## Use Postgres for persistence").strip()
+        res.append(check("The Postgres decision is unchanged",
+                         postgres == "Chosen over MongoDB: every feature joins orders, users, and payments.",
+                         postgres[:200]))
+        res.append(check("The bundled validator is run after editing", None, "see summary.md"))
 
     if name == "eval-3-no-linter":
-        target = repo / "docs/runbook.md"
-        res.append(check("docs/runbook.md is created", target.exists(), str(target)))
-        res.append(check("The run reports that validation could not run", None, "see summary.md"))
-        res.append(check("The run does not claim the document is lint-clean", None, "see summary.md"))
-        res.append(check("The run identifies how to make markdownlint available", None, "see summary.md"))
+        res.append(check("docs/architecture.md is created", arch.exists(), f"changed: {changed}"))
+        res.append(check("The response reports that validation could not run", None, "see summary.md"))
+        res.append(check("The response does not claim the document is lint-clean", None, "see summary.md"))
+        res.append(check("The response identifies how to make markdownlint available", None, "see summary.md"))
 
     return res
 
