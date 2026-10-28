@@ -14,7 +14,7 @@ before applying these defaults.
 
 - New docs get no frontmatter. Dates, status, and versions are state; git holds them.
 - If the repository's docs already use frontmatter, match its fields and add no new ones.
-- Never invent content; leave an unknown section pending and list the question in the report.
+- Never invent content; leave an unknown section out and list the question in the report.
 - One H1 per file. Skip a table of contents; these files are short enough to scan.
 
 ## One-off output

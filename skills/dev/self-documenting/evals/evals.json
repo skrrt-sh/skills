@@ -205,7 +205,7 @@
     },
     {
       "id": 14,
-      "prompt": "The team settings feature is merged and working. Tidy up its docs. (docs/settings/ holds plan-v1.md, plan-v1-stage2.md, and handoff-2026-10-16.md. They hold the stage plans, a walkthrough of how settings resolve, three open questions, and the decision that team-level settings override user-level ones, chosen over user-level precedence so admins can enforce policy.)",
+      "prompt": "The team settings feature is merged and working. Tidy up its docs. (docs/settings/ holds plan-v1.md, plan-v1-stage2.md, and handoff-2026-10-16.md. They hold the stage plans, a walkthrough of how settings resolve, three open questions, and the decision, which the user approved, that team-level settings override user-level ones, chosen over user-level precedence so admins can enforce policy.)",
       "expected_output": "The plan and handoff docs are retired: deleted, with the open questions moved to the tracker and the one lasting decision (team settings override user settings) moved into docs/decisions.md as an H2 heading and one or two lines with its stated reason, admin policy enforcement. The walkthrough of how settings resolve is dropped because the code now holds it.",
       "assertions": [
         "The stage plan docs and the handoff note are deleted rather than updated",
@@ -236,7 +236,7 @@
       "expected_output": "The Redis section in docs/decisions.md is rewritten in place into one decision for Postgres SKIP LOCKED, naming Redis as what it replaced and the user's reason, one less service to run. No history, date, status, or superseded entry is added, and docs/architecture.md is updated if it names Redis as a service.",
       "assertions": [
         "docs/decisions.md holds one section for the queue decision, with a heading stating that the job queue uses Postgres SKIP LOCKED",
-        "The section names Redis as what it was chosen over in one clause and gives the reason the user stated",
+        "The section names Redis as what it was chosen over, clear without other context, and gives the reason the user stated",
         "The old Redis decision is not kept beside the new one, and no superseded, deprecated, or history note is appended",
         "No date or status is added to the decision",
         "The section is the heading plus one or two lines",
@@ -245,6 +245,67 @@
       "files": [
         "docs/decisions.md",
         "docs/architecture.md"
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "Add rate limiting to the public API. Pick whatever backing store makes sense, I'm away today, so don't ask. (docs/plan-api.md holds the stages, done, and open lists. docs/decisions.md exists. Nothing about rate limiting has been decided.)",
+      "expected_output": "The agent picks a store and implements the limit without asking. Its store choice goes into the plan's open list, marked for approval, not into docs/decisions.md. The final report lists the choice for approval with what it was chosen over and a recommendation.",
+      "assertions": [
+        "Does not stop to ask which store to use",
+        "docs/decisions.md gains no entry for the store choice",
+        "The plan's open list holds the store choice, marked for approval, with what it was chosen over",
+        "No doc contains placeholder text such as pending, TBD, or 'asked in the report'",
+        "The final report lists the store choice for approval, saying what it is, what it was chosen over, and a recommendation"
+      ],
+      "files": [
+        "docs/plan-api.md",
+        "docs/decisions.md"
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "We're going with Postgres instead of MongoDB for the event store. Record it. (docs/decisions.md exists and has no entry on the event store.)",
+      "expected_output": "docs/decisions.md gains one H2 heading stating the event store uses Postgres and a line naming MongoDB as what it was chosen over, with no why line and no placeholder. The report asks for the reason.",
+      "assertions": [
+        "docs/decisions.md holds one H2 heading stating that the event store uses Postgres",
+        "The entry names MongoDB as what it was chosen over, clear without other context",
+        "No reason is invented, and no placeholder such as pending, TBD, or 'reason to follow' stands in for one",
+        "The final report asks the user for the reason, in a numbered list at the end",
+        "No date, status, or history is added"
+      ],
+      "files": [
+        "docs/decisions.md"
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "All four stages of the search effort are merged. Wrap it up. (docs/plan-search.md has every stage done and two user-approved decisions: search runs on Meilisearch over Elasticsearch because it ships as one binary, and documents are indexed on write rather than in a nightly batch so results are never stale. docs/decisions.md has four entries: 'Use Elasticsearch for search', chosen over Postgres full-text search for relevance; 'Keep the /v1/legacy-search endpoint', for a feature this effort removed; 'Write the backend in TypeScript', chosen over JavaScript; and 'Team settings override user settings', chosen over user-level precedence so admins can enforce policy.)",
+      "expected_output": "The plan is deleted. The two approved decisions move into docs/decisions.md, the Elasticsearch entry is replaced in place by the Meilisearch one, the legacy endpoint and TypeScript entries are deleted, and the team settings entry stays.",
+      "assertions": [
+        "docs/plan-search.md is deleted",
+        "docs/decisions.md holds the Meilisearch decision, rewritten in place of the Elasticsearch entry, naming Elasticsearch as what it was chosen over and the one-binary reason",
+        "docs/decisions.md holds the index-on-write decision, naming the nightly batch as what it was chosen over",
+        "The legacy search endpoint entry is deleted because its feature is gone",
+        "The TypeScript entry is deleted because the code makes it obvious",
+        "The team settings entry is kept unchanged",
+        "No superseded, history, or status note is added"
+      ],
+      "files": [
+        "docs/plan-search.md",
+        "docs/decisions.md"
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "Before we write any code, write a product spec for the habit tracker. It's for people who want one daily check-in, it runs offline-first, and we're using SQLite rather than a hosted database so it works without an account.",
+      "expected_output": "No spec file. The product goes in README.md, the SQLite decision in docs/decisions.md with its stated reason, and the remaining work in a plan.",
+      "assertions": [
+        "No spec, PRD, or requirements file is created",
+        "README.md states what the product is, who it is for, and the core idea",
+        "docs/decisions.md records SQLite over a hosted database with the reason the user gave, working without an account",
+        "The remaining work goes into a docs/plan-<effort>.md file",
+        "No doc contains placeholder text such as pending or TBD"
       ]
     }
   ]
