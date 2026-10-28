@@ -14,8 +14,7 @@ repository.
 
 1. Confirm the current directory is a Git repository.
 2. The instruction file is always `AGENTS.md` at the repository root; never ask which file to use.
-   Claude Code reads it from v2.1.277, and ignores it while `CLAUDE.md`, `.claude/CLAUDE.md`, or
-   `CLAUDE.local.md` exists.
+   Claude Code ignores it while `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` exists.
 3. Read [references/branching-strategies.md](references/branching-strategies.md). Inspect the
    repository signals it names, then present GitHub Flow, Trunk-Based Development, and Gitflow with
    one evidence-based recommendation. The user makes the final choice: wait for it before writing
