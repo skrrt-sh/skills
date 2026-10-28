@@ -85,7 +85,7 @@ FILE
 # Pre-existing project context, so /setup is filmed inserting its block into a
 # real instruction file rather than creating one. Makes "content outside the
 # markers survives" visible on screen instead of asserted.
-cat > "${dest}/CLAUDE.md" <<'FILE'
+cat > "${dest}/AGENTS.md" <<'FILE'
 ## Project
 
 Taskflow is a small task API. Source lives in `src/`, entry point `src/index.ts`.

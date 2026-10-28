@@ -21,12 +21,11 @@ chmod +x "${test_dir}/bin/gh"
 cd "${test_dir}/project"
 git init -q
 git remote add origin git@github.com:owner/project.git
-printf '# Project\n' > CLAUDE.md
+printf '# Project\n' > AGENTS.md
 
 CLAUDE_SKILL_DIR="${test_dir}/installed/setup"
-"${CLAUDE_SKILL_DIR}/scripts/configure-ship.sh" \
-  --instruction-file CLAUDE.md --strategy github-flow >/dev/null
-grep -Fq '<!-- skrrt:ship -->' CLAUDE.md
+"${CLAUDE_SKILL_DIR}/scripts/configure-ship.sh" --strategy github-flow >/dev/null
+grep -Fq '<!-- skrrt:ship -->' AGENTS.md
 grep -Fq '<!-- skrrt:strategy:github-flow -->' .agents/ship.md
 
 CLAUDE_SKILL_DIR="${test_dir}/installed/pr"

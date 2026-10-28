@@ -4,11 +4,12 @@
     {
       "id": 1,
       "prompt": "Use $setup to configure this small GitHub repository. It has CLAUDE.md, CI on pull requests, and three contributors.",
-      "expected_output": "An evidence-based strategy recommendation, user-confirmed selection, one short CLAUDE.md pointer, and one matching ship policy.",
+      "expected_output": "An evidence-based strategy recommendation and a note that CLAUDE.md will move into AGENTS.md, one user confirmation, then AGENTS.md holding the former CLAUDE.md content plus one short pointer, CLAUDE.md deleted, and one matching ship policy.",
       "assertions": [
         "All three supported strategies are presented and GitHub Flow is recommended from repository evidence",
-        "No configuration is written before the user chooses a strategy",
-        "CLAUDE.md contains exactly one short Skrrt marker block and preserves all other content",
+        "The strategy recommendation message also states that CLAUDE.md will be moved into AGENTS.md and deleted",
+        "No configuration is written and CLAUDE.md is not deleted before the user chooses a strategy",
+        "AGENTS.md contains exactly one short Skrrt marker block and all former CLAUDE.md content, and CLAUDE.md no longer exists",
         ".agents/ship.md contains only the selected strategy policy"
       ]
     },
@@ -30,26 +31,28 @@
       "assertions": [
         "The existing Gitflow configuration is reported before replacement",
         ".agents/ship.md contains GitHub Flow and no stale Gitflow rules",
-        "The selected instruction file contains exactly one Skrrt marker block"
+        "AGENTS.md contains exactly one Skrrt marker block"
       ]
     },
     {
       "id": 4,
       "prompt": "Use $setup in this new Git repository. It has no CLAUDE.md or AGENTS.md file.",
-      "expected_output": "A question asking which supported instruction file to create, with no files written before the answer.",
+      "expected_output": "A strategy recommendation and choice, then a new AGENTS.md with the Skrrt pointer, without asking which instruction file to create.",
       "assertions": [
-        "The agent asks whether to create CLAUDE.md or AGENTS.md",
-        "The agent does not choose an instruction-file format or write configuration without the user's answer"
+        "The agent does not ask which instruction file to create",
+        "No configuration is written before the user chooses a strategy",
+        "AGENTS.md is created at the repository root with exactly one Skrrt marker block",
+        "CLAUDE.md is not created"
       ]
     },
     {
       "id": 5,
       "prompt": "Run setup and make it work with our Cloudflare deploy, don't overengineer. (A new solo-maintained repository just pushed to GitHub; it has CLAUDE.md, deploys to Cloudflare Workers with wrangler on push to main, no develop branch, no feature flags.)",
-      "expected_output": "The agent presents the three strategies and recommends GitHub Flow from the evidence (solo maintainer, deploy on main, no stabilization branch), waits for the choice, then runs the configure script. Only CLAUDE.md and .agents/ship.md change; no CI, deploy, or wrangler files are added or edited.",
+      "expected_output": "The agent presents the three strategies and recommends GitHub Flow from the evidence (solo maintainer, deploy on main, no stabilization branch), waits for the choice, then runs the configure script. CLAUDE.md moves into AGENTS.md and is deleted; only those files and .agents/ship.md change; no CI, deploy, or wrangler files are added or edited.",
       "assertions": [
         "GitHub Flow is recommended with evidence from the repository, and Gitflow is not recommended",
         "No configuration is written before the user confirms a strategy",
-        "Only the instruction file and .agents/ship.md are modified",
+        "Only AGENTS.md, the deleted CLAUDE.md, and .agents/ship.md are modified",
         "No CI workflow, wrangler config, or deploy script is created or changed"
       ]
     },
@@ -72,7 +75,20 @@
         "No configuration is written before the user chooses a strategy",
         "No commit or push happens before .agents/ship.md exists",
         "Setup changes and feature work are not committed on main",
-        "The PR targets the branch defined by the newly written .agents/ship.md"
+        "The PR targets the branch defined by the newly written .agents/ship.md",
+        "CLAUDE.md is moved into AGENTS.md and deleted only after the strategy confirmation"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Use $setup with GitHub Flow. (The repository has a CLAUDE.md with custom rules, \"Use pnpm, never npm\" and \"Run make check before pushing\", and no AGENTS.md.)",
+      "expected_output": "Setup states that CLAUDE.md will be moved into AGENTS.md and deleted, then runs the configure script. AGENTS.md holds both custom rules plus one Skrrt marker block, and CLAUDE.md no longer exists.",
+      "assertions": [
+        "The agent states before writing that CLAUDE.md will be moved into AGENTS.md and deleted",
+        "AGENTS.md contains \"Use pnpm, never npm\" and \"Run make check before pushing\"",
+        "AGENTS.md contains exactly one Skrrt marker block",
+        "CLAUDE.md no longer exists",
+        "The migration is done by the configure script, not by hand edits"
       ]
     }
   ]
