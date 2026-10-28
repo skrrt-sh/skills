@@ -28,9 +28,9 @@ if [[ "${file_path}" == */.claude/* || "${file_path}" == .claude/* ]]; then
   exit 0
 fi
 
-# Meta files follow their own conventions. README is linted: it holds the product definition. Generic names
-# (SUPPORT, HISTORY, GOVERNANCE, ...) are excluded on purpose — a docs site may
-# legitimately have those pages.
+# Meta files follow their own conventions. README is linted: it holds the product.
+# Generic names (SUPPORT, HISTORY, GOVERNANCE, ...) are excluded on purpose: a docs
+# site may legitimately have those pages.
 stem="$(basename "${file_path}" .md | tr '[:lower:]' '[:upper:]')"
 case "${stem}" in
   CLAUDE | AGENTS | CONTRIBUTING | CHANGELOG | CODE_OF_CONDUCT \

@@ -21,8 +21,11 @@ after="$(cksum < "${test_dir}/CHANGELOG.md")"
 [[ "${before}" == "${after}" ]]
 grep -Fq 'skipping well-known meta file' <<< "${output}"
 
-printf '# Readme  \n' > "${test_dir}/README.md"
+printf '# Readme\n\nText.' > "${test_dir}/README.md"
 "${validator}" "${test_dir}/README.md" >/dev/null 2>&1
-[[ "$(head -n 1 "${test_dir}/README.md")" == '# Readme' ]]
+if [[ "$(tail -c 1 "${test_dir}/README.md" | wc -l | tr -d ' ')" -ne 1 ]]; then
+  printf 'validator skipped README instead of linting it\n' >&2
+  exit 1
+fi
 
 printf 'markdown validator tests passed\n'
