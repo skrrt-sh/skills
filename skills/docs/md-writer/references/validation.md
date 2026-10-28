@@ -19,3 +19,4 @@ when the script reports that it changed. Fix semantic or judgment-based findings
 The validator explicitly skips `.claude/` content and well-known repository meta files such as
 CLAUDE, AGENTS, CONTRIBUTING, CHANGELOG, SECURITY, and license files. Do not treat a skip as
 proof that linting ran. README is linted, because it holds the product definition.
+The bundled default allows the inline HTML common in READMEs (banners, badges, `<details>`).
