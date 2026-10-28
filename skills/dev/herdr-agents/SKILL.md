@@ -59,10 +59,10 @@ EOF
 
 End every brief with this, `$mail` expanded to its absolute path:
 
-> Work only in this checkout. Do not touch git: no commits, pushes, or PRs. To ask the orchestrator a question without
-> stopping, run `$mail send parent "<question>"`. Replies arrive as your next prompt. When done,
-> send your report with `$mail send parent - <<'EOF'`: files changed, acceptance output,
-> blockers, then `EOF`. Then end your turn.
+> Work only in this checkout. Never commit, push, or open PRs. To ask the orchestrator a question
+> without stopping, run `$mail send parent "<question>"`. Replies arrive as your next prompt. When
+> done, report via `$mail send parent - <<'EOF'`: files changed, acceptance output, blockers,
+> decisions with what each was chosen over and why, then `EOF`. Then end your turn.
 
 - Wait only through `"$mail" wait` as a background Bash command, never a sleep loop or watcher.
   It prints and exits on the next mail.
@@ -73,11 +73,11 @@ End every brief with this, `$mail` expanded to its absolute path:
   `herdr agent read "$name" --lines 60`. Answer a question yourself from the plan, with the
   recommended option. Bring a permission prompt to the user. Never approve it yourself.
 - A child's commit failure: tell it to stay uncommitted; you integrate the diff.
-- `done` without a report: read the agent, then ask it for the report.
+- `done` without a report: read the agent, then ask for it.
 
 ## Review and integrate
 
-Get the checkout `path` from `herdr worktree list --cwd "$PWD"` by matching the branch. Review
+Get the checkout `path` from `herdr worktree list --cwd "$PWD"`, matching the branch. Review
 with `git -C "$path" diff` and run the acceptance commands in the checkout. A wrong approach gets
 a fresh scope with a corrected brief. Scopes own disjoint files, so each diff applies cleanly:
 
@@ -95,5 +95,5 @@ git -C "$path" add -A && git -C "$path" diff --cached --binary | git apply --ind
 - End of run: no containers, simulators, or dev servers started by this run remain.
 - End of run: `git worktree prune`. `git worktree list` and `git branch --list 'scope/*'` must
   show nothing from this run.
-- `scope/*` worktrees from earlier runs are not yours. List them and ask before removing.
+- Earlier runs' `scope/*` worktrees are not yours. List them and ask before removing.
 - Never push `scope/*` branches.

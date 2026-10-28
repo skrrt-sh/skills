@@ -24,28 +24,25 @@ only when the code cannot say it.
   lines at most.
 - Keep tool directives and license headers. Delete a TODO, FIXME, or suppression the change
   resolves.
-- Asked to narrate code, rename and extract instead, say so in one sentence, and offer the literal
-  version; the user decides.
+- Asked to narrate code, rename and extract instead, say so in one sentence, and offer the user the
+  literal version.
 
 ## Docs
 
-A project keeps only these docs. The first three are long-term; only the plan holds short-term
-work:
+A project keeps only these docs; only the plan is short-term:
 
-- `README.md`: the approved product. What it is, who it is for, the core idea, how to start it.
+- `README.md`: the approved product: what, for whom, the core idea, how to start it.
 - `docs/architecture.md`: each module or service by role, its responsibility, and how they
   connect, with one Mermaid diagram.
 - `docs/decisions.md`: only decisions the user made or approved. One H2 heading per decision
   stating it, then one or two lines: what it was chosen over, clear without other context, then
   why. No dates, statuses, history, or ADRs.
-- `docs/plan-<effort>.md`: one per effort: stages, done, open. Updated in place each
-  session.
+- `docs/plan-<effort>.md`: one per effort: stages, done, open, updated in place.
 
 Rules:
 
 - No how-it-works docs, guides, specs, or runbooks; asked for one, record the decisions and
-  responsibilities instead. Delete any section that explains how something works; never rewrite
-  it.
+  responsibilities instead. Delete, never rewrite, any section explaining how something works.
 - When code and a doc disagree, the code wins: fix or delete the doc line in the same change.
 - Delete any paragraph a routine code change would make false.
 - Asked for a spec, PRD, or requirements doc before the code exists, put the product in the
@@ -54,23 +51,24 @@ Rules:
   the same change.
 - Agent choices and guesses wait in the plan's open list for approval. What clearly follows
   from the user's words, the code, or a checked source is fact.
-- No placeholders such as "pending" or "TBD". With no reason given, omit the why and put the
-  question in the report.
-- Delete a plan only once every stage is implemented. Before deleting it, move each approved
-  decision into `docs/decisions.md`, update the architecture and README, and move what is open
-  to the tracker.
+- No placeholders such as "pending" or "TBD"; lacking a reason, omit the why and ask in the
+  report.
+- Delete a plan only once every stage is implemented, first moving approved decisions into
+  `docs/decisions.md` and open items to the tracker, and updating the architecture and README.
 
 ## Instruction files
 
 AGENTS.md, rules, and skills load on every turn.
 
-- AGENTS.md is the only instruction file. Move any CLAUDE.md or `.claude/CLAUDE.md` into
-  AGENTS.md and delete it. Never move, edit, or delete CLAUDE.local.md; report that it stops
-  Claude Code from reading AGENTS.md.
+- AGENTS.md is the only instruction file. Merge any CLAUDE.md or `.claude/CLAUDE.md` into it,
+  prefixing the latter's relative `@` imports with `.claude/`, and delete it. Never touch
+  CLAUDE.local.md or a parent folder's CLAUDE.md, `.claude/CLAUDE.md`, or CLAUDE.local.md; report
+  each as blocking AGENTS.md; `~/.claude/CLAUDE.md` does not block.
 - AGENTS.md holds how to work that nearly every thread needs: style, conventions, commands,
   internal know-how, and what the operator expects.
 - Never store the state of the code, such as status, notes, progress, recent fixes, tickets, file
-  maps, or how it works; that belongs in the code, git history, the plan, or the tracker.
+  maps, or how it works. Move open work to the plan, or the tracker the user names, never dropping
+  it; the code and git history hold the rest.
 - Keep a line only if the agent would act differently without it.
 - A few hundred lines per file at most.
 

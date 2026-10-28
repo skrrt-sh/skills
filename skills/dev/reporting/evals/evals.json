@@ -85,12 +85,12 @@
     {
       "id": 8,
       "prompt": "Remove the dead feature flags from the web app and swap the date library for something lighter. Don't ask me, just do it.",
-      "expected_output": "The agent finishes without asking and ends with one numbered list that puts each decision it took, such as the replacement date library and what it was chosen over, and each key action, such as which flags and files it deleted, up for approval, each with enough context to read alone and a recommendation.",
+      "expected_output": "The agent finishes without asking and ends with one numbered list that puts each decision it took, such as the replacement date library and what it was chosen over, up for approval, each with enough context to read alone and a recommendation, and reports the requested flag and file deletions as done.",
       "assertions": [
         "Does not stop mid-run to ask a question",
         "The numbered list at the end includes the choice of date library, naming the old library and any alternatives it was chosen over, and a recommendation",
-        "The numbered list includes the flag and file deletions for approval, naming what each flag controlled",
-        "Each item says in a few words what the thing is, with no internal labels or names the user has not seen",
+        "Reports the flag and file deletions as done, naming what each flag controlled, and does not put them up for approval",
+        "Every name the user may not know, such as the new library, comes with a few words on what it is; no internal labels",
         "Items for approval and open questions share one numbered list at the end"
       ]
     }

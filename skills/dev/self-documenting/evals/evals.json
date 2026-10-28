@@ -168,14 +168,15 @@
     {
       "id": 11,
       "prompt": "Our CLAUDE.md has 120 lines: code style rules, the test and lint commands, a 'Current status' section listing in-progress features, a file map of src/, notes from last week's incident, and how the billing service processes webhooks. There is no AGENTS.md, and a gitignored CLAUDE.local.md holds one developer's preferences. Tidy up our agent instructions.",
-      "expected_output": "AGENTS.md is created with only the how-to-work content (style rules, commands), CLAUDE.md is deleted, CLAUDE.local.md is left untouched and reported, and the status, file map, incident notes, and webhook mechanics are dropped with a note on where each belongs.",
+      "expected_output": "AGENTS.md is created with only the how-to-work content (style rules, commands), CLAUDE.md is deleted, CLAUDE.local.md is left untouched and reported, the in-progress features and status move to the plan rather than being dropped, and the file map, incident notes, and webhook mechanics are removed with a note on where each belongs.",
       "assertions": [
         "Creates AGENTS.md containing the code style rules and the test and lint commands",
         "CLAUDE.md is deleted, with no CLAUDE.md left in the project",
         "AGENTS.md has no current status, in-progress features, or progress notes",
         "AGENTS.md has no file map of src/",
         "AGENTS.md has no incident notes and no description of how webhook processing works",
-        "The response says where the removed content belongs: git history, the tracker, or the code",
+        "The in-progress features and status notes move to a plan, not silently dropped",
+        "The response says where the rest of the removed content belongs: git history or the code",
         "CLAUDE.local.md is not moved, edited, or deleted, and the response reports that it stops Claude Code from reading AGENTS.md"
       ]
     },
