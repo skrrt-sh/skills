@@ -22,7 +22,8 @@ plugins, so there is no single number a repo-wide `vX.Y.Z` tag could carry.
 
 - Release tags are bucket-scoped: exactly one `<bucket>@X.Y.Z` tag per release —
   `ship@5.2.0`, `docs@3.0.0`, `dev@1.0.0`. Never create a repo-wide `vX.Y.Z` tag.
-- Create it with `git tag -a <bucket>@X.Y.Z` and push that tag. Do not use `claude plugin tag`:
+- Create it with `git tag -a <bucket>@X.Y.Z` and push that tag. The tag is both the plugin marker
+  and the release of record. Do not use `claude plugin tag`:
   it only emits `<bucket>--vX.Y.Z`, which reads as a prerelease suffix rather than a scope.
 - The version carries no `v` prefix. `<pkg>@<semver>` is the convention changesets, Lerna and Nx
   use for per-package releases in a monorepo, and it is what the plugin ecosystem reads.
