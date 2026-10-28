@@ -20,3 +20,4 @@ The validator explicitly skips `.claude/` content and well-known repository meta
 CLAUDE, AGENTS, CONTRIBUTING, CHANGELOG, SECURITY, and license files. Do not treat a skip as
 proof that linting ran. README is linted, because it holds the product definition.
 The bundled default allows the inline HTML common in READMEs (banners, badges, `<details>`).
+Only a README may put that HTML before its H1; every other file must open with the H1.

@@ -73,9 +73,14 @@ cleanup_dir=""
 cleanup() { [[ -n "${cleanup_dir}" ]] && rm -rf "${cleanup_dir}"; }
 trap cleanup EXIT
 
+# Only README may open with an HTML banner before its H1; the README config extends
+# the default by relative path, so both are linked side by side.
 if [[ -z "${config}" ]]; then
   cleanup_dir="$(mktemp -d)"
-  ln -sf "${plugin_dir}/config/markdownlint-default.json" "${cleanup_dir}/.markdownlint.json"
+  bundled="markdownlint-default.json"
+  [[ "${stem}" == "README" ]] && bundled="markdownlint-readme.json"
+  ln -sf "${plugin_dir}/config/markdownlint-default.json" "${cleanup_dir}/markdownlint-default.json"
+  ln -sf "${plugin_dir}/config/${bundled}" "${cleanup_dir}/.markdownlint.json"
   config="${cleanup_dir}/.markdownlint.json"
 fi
 
@@ -105,7 +110,7 @@ set -e
 
 sum_after="$(cksum < "${file_path}")"
 
-# Fires on exit 0 too — the caller's in-memory copy is stale either way.
+# Fires on exit 0 too: the caller's in-memory copy is stale either way.
 if [[ "${sum_before}" != "${sum_after}" ]]; then
   printf 'auto-fixed formatting in place (re-read before further edits): %s\n' "${file_path}" >&2
 fi

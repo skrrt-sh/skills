@@ -31,8 +31,5 @@
   },
   "MD060": {
     "style": "compact"
-  },
-  "MD041": {
-    "allow_preamble": true
   }
 }
