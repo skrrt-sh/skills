@@ -109,4 +109,46 @@ ln -s AGENTS.md CLAUDE.md
 [[ ! -e CLAUDE.md && ! -L CLAUDE.md ]] || fail 'CLAUDE.md symlink remained'
 [[ "$(grep -cF 'Shared rule.' AGENTS.md)" -eq 1 ]] || fail 'symlinked content was duplicated'
 
+self_import_dir="${test_dir}/self-import"
+mkdir -p "${self_import_dir}"
+cd "${self_import_dir}"
+git init -q
+printf '  @AGENTS.md  \n' > CLAUDE.md
+"${setup_script}" --strategy github-flow >/dev/null
+[[ ! -e CLAUDE.md ]] || fail 'self-importing CLAUDE.md remained'
+if grep -Fq '@AGENTS.md' AGENTS.md; then fail 'AGENTS.md imports itself'; fi
+
+imports_dir="${test_dir}/imports"
+mkdir -p "${imports_dir}/.claude"
+cd "${imports_dir}"
+git init -q
+printf 'Shared rule.\n' > AGENTS.md
+printf 'Nested rule.\n\nSee @rules.md\n' > .claude/CLAUDE.md
+imports_sum="$(cksum AGENTS.md .claude/CLAUDE.md)"
+if output="$("${setup_script}" --strategy github-flow 2>&1)"; then
+  fail 'relative imports in .claude/CLAUDE.md were accepted'
+fi
+grep -Fq 'STATUS=relative-imports FILE=.claude/CLAUDE.md' <<<"${output}" ||
+  fail 'relative imports were not reported'
+[[ "${imports_sum}" == "$(cksum AGENTS.md .claude/CLAUDE.md)" ]] ||
+  fail 'files changed despite relative imports'
+[[ ! -e .agents ]] || fail '.agents was created despite relative imports'
+
+# The fake HOME is the parent itself, so its user-scope file must be skipped while the
+# project-style CLAUDE.md beside it is reported.
+ancestor_dir="${test_dir}/ancestor"
+mkdir -p "${ancestor_dir}/.claude" "${ancestor_dir}/repo"
+printf 'Parent rule.\n' > "${ancestor_dir}/CLAUDE.md"
+printf 'User rule.\n' > "${ancestor_dir}/.claude/CLAUDE.md"
+cd "${ancestor_dir}/repo"
+git init -q
+output="$(HOME="${ancestor_dir}" "${setup_script}" --strategy github-flow)"
+ancestor_physical="$(cd "${ancestor_dir}" && pwd -P)"
+grep -Fxq "BLOCKING_FILE=${ancestor_physical}/CLAUDE.md" <<<"${output}" ||
+  fail 'ancestor CLAUDE.md was not reported'
+if grep -Fq "BLOCKING_FILE=${ancestor_physical}/.claude/CLAUDE.md" <<<"${output}"; then
+  fail 'user-scope CLAUDE.md was reported as blocking'
+fi
+[[ -f "${ancestor_dir}/CLAUDE.md" ]] || fail 'ancestor CLAUDE.md was touched'
+
 printf 'setup tests passed\n'

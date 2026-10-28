@@ -45,11 +45,25 @@ for required_file in "${pointer_asset}" "${strategy_asset}"; do
 done
 
 cd "${repo_root}"
-mkdir -p .agents
 
 instruction_file='AGENTS.md'
+nested_file='.claude/CLAUDE.md'
+
+# Imports resolve relative to the importing file, so moving this one to the root would retarget
+# them. Checked before anything is written.
+if [[ -f "${nested_file}" && ! "${nested_file}" -ef "${instruction_file}" ]] &&
+  awk '
+    /^[[:space:]]*(```|~~~)/ { fenced = !fenced; next }
+    !fenced && /(^|[[:space:]])@[^[:space:]\/~]/ { found = 1; exit }
+    END { exit !found }
+  ' "${nested_file}"; then
+  printf 'STATUS=relative-imports FILE=%s\n' "${nested_file}" >&2
+  exit 1
+fi
+
+mkdir -p .agents
 # Claude Code reads AGENTS.md only while none of these exists, so their content moves into it.
-migrate_candidates=(CLAUDE.md .claude/CLAUDE.md)
+migrate_candidates=(CLAUDE.md "${nested_file}")
 
 instruction_tmp="$(mktemp "${instruction_file}.tmp.XXXXXX")"
 merged_tmp="$(mktemp "${instruction_file}.merged.XXXXXX")"
@@ -73,6 +87,15 @@ check_markers() {
   if [[ "${start_count}" -gt 1 || "${end_count}" -gt 1 || "${start_count}" -ne "${end_count}" ]]; then
     printf 'STATUS=%s FILE=%s\n' "${status}" "${file}" >&2
     exit 1
+  fi
+}
+
+# A root CLAUDE.md that imports AGENTS.md would make AGENTS.md import itself.
+drop_self_import() {
+  if [[ "${1}" == CLAUDE.md ]]; then
+    awk '!/^[[:space:]]*@(\.\/)?AGENTS\.md[[:space:]]*$/'
+  else
+    cat
   fi
 }
 
@@ -109,7 +132,8 @@ for candidate in "${migrate_candidates[@]}"; do
   check_markers "${candidate}" "${start_marker}" "${end_marker}" invalid-markers
   check_markers "${candidate}" "${legacy_start}" "${legacy_end}" invalid-legacy-markers
   strip_block "${candidate}" "${legacy_start}" "${legacy_end}" |
-    strip_block - "${start_marker}" "${end_marker}" > "${stripped_tmp}"
+    strip_block - "${start_marker}" "${end_marker}" |
+    drop_self_import "${candidate}" > "${stripped_tmp}"
   append_section "${merged_tmp}" "${stripped_tmp}"
 done
 
@@ -191,6 +215,26 @@ done
 if [[ -e CLAUDE.local.md ]]; then
   printf 'BLOCKING_FILE=CLAUDE.local.md\n'
 fi
+# Claude Code also loads these from every parent directory; only the user-scope file is exempt.
+user_memory=''
+user_memory_physical=''
+if [[ -n "${HOME:-}" ]]; then
+  user_memory="${HOME%/}/.claude/CLAUDE.md"
+  user_memory_physical="${user_memory}"
+  if home_physical="$(cd "${HOME}" 2>/dev/null && pwd -P)"; then
+    user_memory_physical="${home_physical%/}/.claude/CLAUDE.md"
+  fi
+fi
+ancestor="${repo_root}"
+while [[ "${ancestor}" != / ]]; do
+  ancestor="$(dirname "${ancestor}")"
+  for name in CLAUDE.md .claude/CLAUDE.md CLAUDE.local.md; do
+    blocker="${ancestor%/}/${name}"
+    [[ -e "${blocker}" ]] || continue
+    [[ "${blocker}" == "${user_memory}" || "${blocker}" == "${user_memory_physical}" ]] && continue
+    printf 'BLOCKING_FILE=%s\n' "${blocker}"
+  done
+done
 printf 'POLICY_FILE=.agents/ship.md\n'
 printf 'POLICY_STATUS=%s\n' "${policy_status}"
 printf 'STRATEGY=%s\n' "${strategy}"

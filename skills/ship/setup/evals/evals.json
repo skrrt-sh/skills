@@ -90,6 +90,26 @@
         "CLAUDE.md no longer exists",
         "The migration is done by the configure script, not by hand edits"
       ]
+    },
+    {
+      "id": 9,
+      "prompt": "Use $setup with GitHub Flow. (The repository has AGENTS.md and a .claude/CLAUDE.md that contains the line \"See @docs/rules.md\".)",
+      "expected_output": "The configure script stops with STATUS=relative-imports and changes nothing. The agent reports that the import would resolve from the repository root after the move, asks the user to rewrite it relative to the root, and reruns only after they do.",
+      "assertions": [
+        "AGENTS.md, .claude/CLAUDE.md, and .agents/ship.md are unchanged after the failed run",
+        "The agent explains that the @ import must be rewritten relative to the repository root",
+        "The agent does not edit .claude/CLAUDE.md or migrate it by hand"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Use $setup with trunk-based development. (The repository has AGENTS.md; its parent directory holds a CLAUDE.md that the configure script reports as BLOCKING_FILE.)",
+      "expected_output": "Setup completes, and the agent reports the parent CLAUDE.md as stopping Claude Code from reading AGENTS.md without touching it.",
+      "assertions": [
+        "The parent directory's CLAUDE.md is reported by its absolute path as blocking AGENTS.md",
+        "The parent directory's CLAUDE.md is not edited, moved, or deleted",
+        ".agents/ship.md contains the trunk-based policy"
+      ]
     }
   ]
 }

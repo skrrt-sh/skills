@@ -14,7 +14,8 @@ repository.
 
 1. Confirm the current directory is a Git repository.
 2. The instruction file is always `AGENTS.md` at the repository root; never ask which file to use.
-   Claude Code ignores it while `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` exists.
+   Claude Code ignores it while `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` exists
+   here or in any parent directory, except the user's own `~/.claude/CLAUDE.md`.
 3. Read [references/branching-strategies.md](references/branching-strategies.md). Inspect the
    repository signals it names, then present GitHub Flow, Trunk-Based Development, and Gitflow with
    one evidence-based recommendation. The user makes the final choice: wait for it before writing
@@ -33,9 +34,12 @@ repository.
    The script appends the content of `CLAUDE.md` and `.claude/CLAUDE.md` to `AGENTS.md`, keeps one
    `skrrt:ship` block, and deletes them. Never migrate them by hand.
 
-6. Report the selected strategy, whether each file changed, and every `MIGRATED_FILE`. If the
-   script prints `BLOCKING_FILE=CLAUDE.local.md`, report that this personal file stops Claude Code
-   from reading `AGENTS.md`; never edit or delete it.
+   If it exits with `STATUS=relative-imports`, nothing was written: report that the moved file's
+   `@` imports would resolve from the repository root instead, ask the user to rewrite them
+   relative to the root, and rerun after they do.
+
+6. Report the selected strategy, whether each file changed, and every `MIGRATED_FILE`. Report each
+   `BLOCKING_FILE` as stopping Claude Code from reading `AGENTS.md`; never edit or delete it.
 
 The script may modify only `AGENTS.md`, the migrated `CLAUDE.md` files, and `.agents/ship.md`. It
 preserves content outside Skrrt markers, removes the legacy `skrrt:branching` block, and is safe to
