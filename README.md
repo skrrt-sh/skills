@@ -217,8 +217,9 @@ Implementation workflow tools. Bucket index: [`skills/dev/`](skills/dev/README.m
   Delete tests for removed or replaced behavior.
 - **[research](skills/dev/research/SKILL.md)**: Decide from current docs, peer projects, and
   claims verified against the code.
-- **[reporting](skills/dev/reporting/SKILL.md)**: Plain, concrete reports. No mid-run questions;
-  open questions as one numbered list with recommendations at the end.
+- **[reporting](skills/dev/reporting/SKILL.md)**: Plain, concrete reports. No mid-run questions
+  unless a skill requires the user's choice; open questions as one numbered list with
+  recommendations at the end.
 - **[self-documenting](skills/dev/self-documenting/SKILL.md)**: The code is the single source of
   truth. Docs are only the README, architecture, decisions, and a transient plan. AGENTS.md is the
   only instruction file, and every change fixes or deletes the prose it makes false.

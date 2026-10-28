@@ -72,9 +72,9 @@ Rules:
 
 AGENTS.md, rules, and skills load on every turn.
 
-- AGENTS.md is the only instruction file. A project has no CLAUDE.md, `.claude/CLAUDE.md`, or
-  CLAUDE.local.md: Claude Code reads AGENTS.md only when none exists. If one exists, move its
-  content into AGENTS.md and delete it.
+- AGENTS.md is the only instruction file. Move any CLAUDE.md or `.claude/CLAUDE.md` into
+  AGENTS.md and delete it. Never move, edit, or delete CLAUDE.local.md; report that it stops
+  Claude Code from reading AGENTS.md.
 - AGENTS.md answers how to work, for what nearly every thread needs: style guidelines,
   conventions, commands, internal know-how, and what the operator expects.
 - Never store the state of the code: current status, notes, progress, recent fixes, tickets, file

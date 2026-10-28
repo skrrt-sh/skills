@@ -40,7 +40,7 @@
       "prompt": "Write docs/queue.md describing how the packages/queue module works: the job lifecycle, the retry policy, how workers pick up jobs, and the database tables involved.",
       "expected_output": "A short document that captures the decisions behind the queue and their reasons rather than a walkthrough of its mechanics, well under a few hundred lines.",
       "assertions": [
-        "The document records design decisions, rejected alternatives, and constraints rather than describing the current mechanics step by step",
+        "The document records design decisions and constraints rather than describing the current mechanics step by step, and asks for any reason or rejected alternative the code and prompt do not state instead of inventing one",
         "No paragraph would become false through a routine code change such as renaming a table or changing a retry count",
         "The document is under a few hundred lines",
         "The response explains that mechanics were left to the code and why",
@@ -167,15 +167,16 @@
     },
     {
       "id": 11,
-      "prompt": "Our CLAUDE.md has 120 lines: code style rules, the test and lint commands, a 'Current status' section listing in-progress features, a file map of src/, notes from last week's incident, and how the billing service processes webhooks. There is no AGENTS.md. Tidy up our agent instructions.",
-      "expected_output": "AGENTS.md is created with only the how-to-work content (style rules, commands), CLAUDE.md is deleted, and the status, file map, incident notes, and webhook mechanics are dropped with a note on where each belongs.",
+      "prompt": "Our CLAUDE.md has 120 lines: code style rules, the test and lint commands, a 'Current status' section listing in-progress features, a file map of src/, notes from last week's incident, and how the billing service processes webhooks. There is no AGENTS.md, and a gitignored CLAUDE.local.md holds one developer's preferences. Tidy up our agent instructions.",
+      "expected_output": "AGENTS.md is created with only the how-to-work content (style rules, commands), CLAUDE.md is deleted, CLAUDE.local.md is left untouched and reported, and the status, file map, incident notes, and webhook mechanics are dropped with a note on where each belongs.",
       "assertions": [
         "Creates AGENTS.md containing the code style rules and the test and lint commands",
         "CLAUDE.md is deleted, with no CLAUDE.md left in the project",
         "AGENTS.md has no current status, in-progress features, or progress notes",
         "AGENTS.md has no file map of src/",
         "AGENTS.md has no incident notes and no description of how webhook processing works",
-        "The response says where the removed content belongs: git history, the tracker, or the code"
+        "The response says where the removed content belongs: git history, the tracker, or the code",
+        "CLAUDE.local.md is not moved, edited, or deleted, and the response reports that it stops Claude Code from reading AGENTS.md"
       ]
     },
     {
@@ -204,12 +205,12 @@
     },
     {
       "id": 14,
-      "prompt": "The team settings feature is merged and working. Tidy up its docs. (docs/settings/ holds plan-v1.md, plan-v1-stage2.md, and handoff-2026-10-16.md. They hold the stage plans, a walkthrough of how settings resolve, three open questions, and the decision that team-level settings override user-level ones.)",
-      "expected_output": "The plan and handoff docs are retired: deleted, with the open questions moved to the tracker and the one lasting decision (team settings override user settings) moved into docs/decisions.md as an H2 heading and one or two lines. The walkthrough of how settings resolve is dropped because the code now holds it.",
+      "prompt": "The team settings feature is merged and working. Tidy up its docs. (docs/settings/ holds plan-v1.md, plan-v1-stage2.md, and handoff-2026-10-16.md. They hold the stage plans, a walkthrough of how settings resolve, three open questions, and the decision that team-level settings override user-level ones, chosen over user-level precedence so admins can enforce policy.)",
+      "expected_output": "The plan and handoff docs are retired: deleted, with the open questions moved to the tracker and the one lasting decision (team settings override user settings) moved into docs/decisions.md as an H2 heading and one or two lines with its stated reason, admin policy enforcement. The walkthrough of how settings resolve is dropped because the code now holds it.",
       "assertions": [
         "The stage plan docs and the handoff note are deleted rather than updated",
         "The open questions are moved to the tracker or listed for the user to file, not kept in a doc",
-        "The team-over-user precedence decision is moved into docs/decisions.md as one H2 heading stating it and one or two lines on what it was chosen over and why",
+        "The team-over-user precedence decision is moved into docs/decisions.md as one H2 heading stating it and one or two lines naming user-level precedence as what it was chosen over and admin policy enforcement as the reason",
         "No section describing how settings resolve is kept or rewritten",
         "No new doc is created that points into the code by path or symbol"
       ]
