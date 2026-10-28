@@ -307,6 +307,17 @@
         "The remaining work goes into a docs/plan-<effort>.md file",
         "No doc contains placeholder text such as pending or TBD"
       ]
+    },
+    {
+      "id": 21,
+      "prompt": "We're switching from npm to pnpm because npm installs kept drifting the lockfile in CI. Put that in AGENTS.md and the README so agents and contributors know. (The repo has README.md, AGENTS.md, and docs/decisions.md.)",
+      "expected_output": "AGENTS.md gains only the working rule (use pnpm), the README describes setup with pnpm without any reason or comparison, and docs/decisions.md gets the decision with npm described as the beaten option and the lockfile drift as the reason.",
+      "assertions": [
+        "AGENTS.md states the rule to use pnpm and carries no reason and no mention of npm as the rejected option",
+        "README.md describes setup with pnpm and carries no decision, reason, or comparison with npm",
+        "docs/decisions.md has one H2 decision for pnpm, describes npm as the option it was chosen over, and gives the lockfile drift as the reason",
+        "The response tells the user the reason went to docs/decisions.md instead of AGENTS.md and the README"
+      ]
     }
   ]
 }

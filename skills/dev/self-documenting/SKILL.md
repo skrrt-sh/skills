@@ -8,8 +8,8 @@ description: Keep comments and docs minimal so the code stays the single source 
 The code is the single source of truth. Every comment and doc is a copy that drifts. Write prose
 only when the code cannot say it.
 
-- Docs hold the product, the modules, and the decisions. Comments hold why. AGENTS.md holds how
-  to work. Everything else is code.
+- Only `docs/decisions.md` holds decisions and their reasons. README, architecture, and AGENTS.md
+  describe the project and how to work, with no decisions. Comments hold why.
 - Prose never points into the code by path, symbol, or line number. Name a module by role or
   architecture layer, such as MVC; agents search for the rest.
 
@@ -32,7 +32,7 @@ only when the code cannot say it.
 A project keeps only these docs. The first three are long-term; only the plan holds short-term
 work:
 
-- `README.md`: the product. What it is, who it is for, the core idea, how to start it.
+- `README.md`: the approved product. What it is, who it is for, the core idea, how to start it.
 - `docs/architecture.md`: each module or service by role, its responsibility, and how they
   connect, with one Mermaid diagram.
 - `docs/decisions.md`: only decisions the user made or approved. One H2 heading per decision
@@ -51,8 +51,8 @@ Rules:
 - Asked for a spec, PRD, or requirements doc before the code exists, put the product in the
   README, the decisions in `docs/decisions.md`, and the rest in a plan.
 - Record a decision the user states that the code cannot show, such as a provider, in
-  `docs/decisions.md` in the same change, AGENTS.md only if it changes how to work.
-- A decision the agent took waits in the plan's open list, marked for approval.
+  `docs/decisions.md` in the same change.
+- Anything the agent decided or assumed waits in the plan's open list, marked for approval.
 - No placeholders such as "pending" or "TBD". With no reason given, omit the why and put the
   question in the report.
 - Delete a plan only once every stage is implemented. Before deleting it, move each approved
