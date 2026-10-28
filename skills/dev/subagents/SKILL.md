@@ -46,8 +46,9 @@ The main thread plans, briefs, dispatches, and reviews. Subagents write the code
    affected scopes, re-brief, and tell the user what changed and why. Only the user changes the
    goal.
 5. Finish. Verify every scope item landed, nothing beyond it, and no `HACK:` comment remains in
-   the changed code. Report each stage's result, the commands run and their output, your fixes,
-   and what remains. Report failures as failures.
+   the changed code. Report what each stage delivered, named by its content, not its number,
+   then the commands run and their output, your fixes, and what remains. Report failures as
+   failures.
 
 ## Quality bar
 

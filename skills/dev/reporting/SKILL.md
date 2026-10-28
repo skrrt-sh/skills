@@ -13,9 +13,13 @@ The user reads every report fast. Write so it needs no second read.
 - Define every technical term at first use, including the user's own; they may not remember it. Never cite internal
   labels such as stage numbers, decision IDs, or codenames.
 - Concrete specifics, never vague summaries. "Fixed two bugs" is vague; name each bug.
-- No filler, buzzwords, hedging, or em dashes. Lists, not tables. Mermaid diagrams go in a
-  separate `.md` file.
-- These rules apply to docs, READMEs, and emails too.
+- No filler, buzzwords, hedging, or em dashes.
+- These language rules apply to chat, docs, and emails. Format follows the medium:
+  - Chat: a list or a table, whichever reads faster; a table to compare several items on the
+    same fields. Never a diagram: write it into the doc it belongs to, or for a one-off, a
+    Markdown file outside the project, and give the path.
+  - Emails: lists, not tables.
+  - Docs: follow the `md-writer` skill.
 
 ## Text for others
 
@@ -41,6 +45,7 @@ The user reads every report fast. Write so it needs no second read.
 ## Asking
 
 - Do not ask during the work. Take the recommended option, record the question, and continue.
+- A skill that requires the user's choice overrides this: ask once, at that step.
 - Ask only what the plan, the docs, or how established projects do it cannot settle. Ask before
   an action that is destructive or irreversible and not yet approved.
 - Put open questions at the end as one numbered list. Each item: its effect on the user first,

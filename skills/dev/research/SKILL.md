@@ -15,7 +15,8 @@ UI and UX choices take their sources from the `design` skill instead.
 - Find how established projects and direct competitors solve the same problem. Study them; never
   copy. Pick the best approach and improve on it.
 - Prefer a mature library over writing your own. A new service, framework, or runtime needs the
-  user's approval.
+  user's approval. Verification tooling, such as a headless browser, simulator, or test harness,
+  does not.
 - Use the latest stable versions and current idioms.
 
 ## Sources

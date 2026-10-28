@@ -27,9 +27,9 @@
     {
       "id": 3,
       "prompt": "Draw the architecture of the sync flow as a mermaid diagram.",
-      "expected_output": "The diagram is written to a separate markdown file and the reply points to it, because the terminal cannot render Mermaid.",
+      "expected_output": "The diagram is written into the doc it belongs to, such as docs/architecture.md, or for a one-off to a markdown file outside the project, and the reply points to it, because the terminal cannot render Mermaid.",
       "assertions": [
-        "Writes the Mermaid diagram to a separate .md file",
+        "Writes the Mermaid diagram into the doc it belongs to, or for a one-off to a .md file outside the project",
         "Does not paste the raw Mermaid source as the main reply",
         "Tells the user where the file is"
       ]
