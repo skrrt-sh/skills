@@ -17,5 +17,5 @@ Auto-fixes can change whitespace, list markers, fences, tables, and final newlin
 when the script reports that it changed. Fix semantic or judgment-based findings manually.
 
 The validator explicitly skips `.claude/` content and well-known repository meta files such as
-README, CLAUDE, AGENTS, CONTRIBUTING, CHANGELOG, SECURITY, and license files. Do not treat a skip as
-proof that linting ran.
+CLAUDE, AGENTS, CONTRIBUTING, CHANGELOG, SECURITY, and license files. Do not treat a skip as
+proof that linting ran. README is linted, because it holds the product definition.

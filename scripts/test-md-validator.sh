@@ -14,11 +14,15 @@ if [[ "$(tail -c 1 "${test_dir}/guide.md" | wc -l | tr -d ' ')" -ne 1 ]]; then
   exit 1
 fi
 
-printf '# Readme  \n' > "${test_dir}/README.md"
-before="$(cksum < "${test_dir}/README.md")"
-output="$("${validator}" "${test_dir}/README.md" 2>&1)"
-after="$(cksum < "${test_dir}/README.md")"
+printf '# Changelog  \n' > "${test_dir}/CHANGELOG.md"
+before="$(cksum < "${test_dir}/CHANGELOG.md")"
+output="$("${validator}" "${test_dir}/CHANGELOG.md" 2>&1)"
+after="$(cksum < "${test_dir}/CHANGELOG.md")"
 [[ "${before}" == "${after}" ]]
 grep -Fq 'skipping well-known meta file' <<< "${output}"
+
+printf '# Readme  \n' > "${test_dir}/README.md"
+"${validator}" "${test_dir}/README.md" >/dev/null 2>&1
+[[ "$(head -n 1 "${test_dir}/README.md")" == '# Readme' ]]
 
 printf 'markdown validator tests passed\n'

@@ -3,44 +3,45 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Write docs/local-postgres.md: a local-development guide for PostgreSQL in Docker with a Mermaid container diagram. This repository has no documentation convention or related documents yet.",
-      "expected_output": "One validated guide with truthful frontmatter, a matching H1, a Mermaid diagram, and language-labeled code fences.",
+      "prompt": "Write docs/architecture.md for this project: a web API, a background worker, and PostgreSQL, with one Mermaid diagram of how they connect. This repository has no documentation convention yet.",
+      "expected_output": "One validated architecture doc with no frontmatter, each module and its responsibility, one Mermaid diagram, and language-labeled code fences.",
       "assertions": [
-        "Only docs/local-postgres.md is created",
-        "Frontmatter contains no invented author or external reference",
-        "The H1 matches the frontmatter title",
-        "The document contains a Mermaid diagram and every code fence has a language",
+        "Only docs/architecture.md is created",
+        "The document has no frontmatter and no dates, status, or version",
+        "The document contains exactly one Mermaid diagram and no ASCII-art diagram",
+        "Every code fence has a language and no Mermaid label contains a literal \\n",
         "The bundled validator is run and its actual result is reported"
       ]
     },
     {
       "id": 2,
-      "prompt": "Add an authentication endpoint specification beside docs/api/errors.md. Existing API docs use title, owner, and last_reviewed frontmatter fields. Do not add backlinks unless I ask.",
-      "expected_output": "A validated endpoint specification that follows the local API-doc convention and links only genuinely related documents.",
+      "prompt": "Add docs/architecture.md describing the API gateway, auth service, and billing service with one Mermaid diagram. The existing docs under docs/api/ use title, owner, and last_reviewed frontmatter fields. Do not edit the existing docs.",
+      "expected_output": "A validated architecture doc that follows the local frontmatter convention without adding fields of its own.",
       "assertions": [
-        "The new document uses the existing title, owner, and last_reviewed vocabulary rather than the skill defaults",
-        "The related path is relative and included only when the content genuinely overlaps",
-        "docs/api/errors.md is not edited",
-        "Every changed in-scope Markdown file is validated"
+        "The new document uses the existing title, owner, and last_reviewed vocabulary and no other fields",
+        "No frontmatter value is invented; unknown values are left out or flagged",
+        "docs/api/errors.md and docs/api/pagination.md are not edited",
+        "Every changed Markdown file is validated"
       ]
     },
     {
       "id": 3,
-      "prompt": "Update docs/adr/0012-cache.md with the final Redis decision while preserving its established ADR structure and status and decision-date metadata.",
-      "expected_output": "A minimal, validated ADR edit that preserves the repository's structure and changes only supplied facts.",
+      "prompt": "We are switching sessions from Memcached to Redis because we need persistence across restarts. Update docs/decisions.md.",
+      "expected_output": "A minimal, validated edit that rewrites the cache decision in place as a Redis decision and leaves the Postgres decision untouched.",
       "assertions": [
-        "The established ADR structure and metadata vocabulary are preserved",
-        "Only facts supplied by the prompt or existing repository are added",
-        "No unnecessary table of contents or version reset is introduced",
+        "The Memcached heading is rewritten in place to a Redis decision rather than a new decision added below it",
+        "The rewritten decision names what it was chosen over and the reason the prompt gave",
+        "No history, date, status, or superseded note is added",
+        "The Postgres decision is unchanged",
         "The bundled validator is run after editing"
       ]
     },
     {
       "id": 4,
-      "prompt": "Create docs/runbook.md and validate it. The environment has neither markdownlint-cli2 nor npx.",
-      "expected_output": "The requested runbook plus an honest validation-unavailable report and a concrete installation remedy.",
+      "prompt": "Create docs/architecture.md for the ingest pipeline and validate it. The environment has neither markdownlint-cli2 nor npx.",
+      "expected_output": "The requested architecture doc plus an honest validation-unavailable report and a concrete installation remedy.",
       "assertions": [
-        "docs/runbook.md is created",
+        "docs/architecture.md is created",
         "The response reports that validation could not run",
         "The response does not claim the document is lint-clean",
         "The response identifies how to make markdownlint available"
@@ -49,37 +50,35 @@
     {
       "id": 5,
       "prompt": "Tell me the status: what our changes bring and how it looks before and after, concise and in simple terms. Use Mermaid diagrams and report it as an md doc, I can't view Mermaid in the terminal. (The repository has a docs/ folder with no frontmatter convention.)",
-      "expected_output": "A single new lowercase-hyphenated Markdown file with frontmatter, an H1 matching the title, a one-line summary, and two Mermaid diagrams (before and after). Labels use <br/> for line breaks. The validator runs and the file path is reported instead of pasting the diagrams into chat.",
+      "expected_output": "A single Markdown file written outside the project, such as the system temp folder, with two Mermaid diagrams (before and after) whose labels use <br/> for line breaks. The validator runs and the file path is reported instead of pasting the diagrams into chat.",
       "assertions": [
         "A Markdown file is written rather than diagrams only printed in chat",
+        "The file is outside the project and nothing is added to docs/ or elsewhere in the repo",
         "The document contains Mermaid before and after diagrams and no ASCII-art diagrams",
         "No Mermaid label contains a literal \\n",
-        "The bundled validator is run on the file and its result reported",
-        "The response gives the file path"
+        "The bundled validator is run on the file and the response gives its path"
       ]
     },
     {
       "id": 6,
-      "prompt": "Draw one simple Mermaid schema of the overall architecture: which modules produce events onto NATS and which consume them. One doc only, not several. (docs/architecture/ exists with an overview.md that uses title and description frontmatter.)",
-      "expected_output": "Exactly one new document in docs/architecture/ using the existing title/description frontmatter vocabulary, containing a single flowchart showing producers and consumers connected through NATS, a related link to overview.md, and a passing validator run.",
+      "prompt": "Draw one simple Mermaid schema of the overall architecture: which modules produce events onto NATS and which consume them. One diagram only. (docs/architecture.md exists with module sections and no diagram.)",
+      "expected_output": "The diagram is added to the existing docs/architecture.md as a single flowchart showing producers and consumers connected through NATS, and the validator passes.",
       "assertions": [
-        "Exactly one new Markdown file is created",
+        "No new Markdown file is created; the diagram goes into docs/architecture.md",
         "The document contains exactly one Mermaid diagram showing producer to NATS to consumer relationships",
-        "The frontmatter follows the existing title and description vocabulary without invented metadata",
-        "overview.md is listed in related as a relative path and is not edited",
-        "The bundled validator is run on the new file"
+        "Modules are named by role, not by file path or symbol",
+        "The bundled validator is run on the changed file"
       ]
     },
     {
       "id": 7,
-      "prompt": "Move our permission-layer plan docs into docs/agent/permissions/, check what other agent docs we have and link them if needed, and fact-check the plan against the code. Keep it short. (Three plan files are in docs/ root; docs/agent/ holds two existing agent docs; one plan claims a checkPermission middleware that the code does not have.)",
-      "expected_output": "The three plans are moved into docs/agent/permissions/ with lowercase hyphenated names, their related fields point to genuinely overlapping agent docs via correct relative paths, the claim that contradicts the code is corrected or flagged, and every moved file is validated.",
+      "prompt": "Start docs/plan-permissions.md for the permission-layer effort: stages are a role model, a middleware check, and an audit log; the role model is done. Compare the two candidate policy engines, Casbin and OPA, in the plan.",
+      "expected_output": "A validated plan doc with no frontmatter listing stages, done, and open, with a compact table comparing the two engines.",
       "assertions": [
-        "All three plan files end up under docs/agent/permissions/ and the old copies are removed",
-        "related entries are relative paths that resolve from the new location",
-        "The checkPermission claim is corrected or explicitly flagged as not present in the code",
-        "Existing agent docs are not edited beyond related and updated fields",
-        "The validator is run on every moved or changed file"
+        "Only docs/plan-permissions.md is created",
+        "The plan has no frontmatter, dates, or status fields and marks only the role model as done",
+        "The engine comparison is a compact table and invents no facts beyond widely known ones or flags them",
+        "The bundled validator is run on the file"
       ]
     }
   ]

@@ -1,46 +1,54 @@
 [
   {
+    "query": "write docs/architecture.md with the services and one Mermaid diagram",
+    "should_trigger": true
+  },
+  {
+    "query": "record the Redis cache choice in docs/decisions.md",
+    "should_trigger": true
+  },
+  {
+    "query": "rewrite the What it is section of README.md for the product",
+    "should_trigger": true
+  },
+  {
+    "query": "update docs/plan-billing.md: stage two is done, the export stage is still open",
+    "should_trigger": true
+  },
+  {
+    "query": "add a Mermaid sequence diagram of the login flow to the architecture doc",
+    "should_trigger": true
+  },
+  {
+    "query": "lint the Markdown in docs/ and fix what markdownlint reports",
+    "should_trigger": true
+  },
+  {
+    "query": "start a plan doc for the search rewrite with stages and open items",
+    "should_trigger": true
+  },
+  {
+    "query": "add a table comparing Postgres and SQLite to the decisions doc",
+    "should_trigger": true
+  },
+  {
+    "query": "make a Mermaid diagram of what changed before and after, as an md file I can open",
+    "should_trigger": true
+  },
+  {
+    "query": "tighten the README intro so it says who the product is for",
+    "should_trigger": true
+  },
+  {
     "query": "write a runbook for rotating signing keys under docs/operations",
-    "should_trigger": true
+    "should_trigger": false
   },
   {
-    "query": "update our API authentication spec and its Mermaid sequence diagram",
-    "should_trigger": true
+    "query": "make a local setup guide in docs/getting-started",
+    "should_trigger": false
   },
   {
-    "query": "record the Redis cache choice as an architecture decision",
-    "should_trigger": true
-  },
-  {
-    "query": "make a local setup guide in docs/getting-started with proper frontmatter",
-    "should_trigger": true
-  },
-  {
-    "query": "document the database migration procedure for the engineering knowledge base",
-    "should_trigger": true
-  },
-  {
-    "query": "turn these incident notes into a troubleshooting page with a flowchart",
-    "should_trigger": true
-  },
-  {
-    "query": "add a deployment specification beside the existing platform docs",
-    "should_trigger": true
-  },
-  {
-    "query": "clean up docs/security/threat-model.md and validate all its Markdown",
-    "should_trigger": true
-  },
-  {
-    "query": "create an operator guide for restoring backups and link the related recovery doc",
-    "should_trigger": true
-  },
-  {
-    "query": "write the service ownership page for our internal docs site",
-    "should_trigger": true
-  },
-  {
-    "query": "fix the installation wording in README.md",
+    "query": "write an OpenAPI-style spec for the payments endpoints",
     "should_trigger": false
   },
   {
@@ -52,7 +60,7 @@
     "should_trigger": false
   },
   {
-    "query": "add a repository rule to CLAUDE.md",
+    "query": "add a repository rule to AGENTS.md",
     "should_trigger": false
   },
   {
@@ -61,10 +69,6 @@
   },
   {
     "query": "improve the docstring on this Python function",
-    "should_trigger": false
-  },
-  {
-    "query": "add explanatory comments to the Terraform module",
     "should_trigger": false
   },
   {
