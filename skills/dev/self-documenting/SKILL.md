@@ -8,8 +8,8 @@ description: Keep comments and docs minimal so the code stays the single source 
 The code is the single source of truth. Every comment and doc is a copy that drifts. Write prose
 only when the code cannot say it.
 
-- Only `docs/decisions.md` holds decisions and their reasons. README, architecture, and AGENTS.md
-  describe the project and how to work, with no decisions. Comments hold why.
+- Only `docs/decisions.md` holds decisions and reasons. README, architecture, and AGENTS.md only
+  describe. Comments hold why.
 - Prose never points into the code by path, symbol, or line number. Name a module by role or
   architecture layer, such as MVC; agents search for the rest.
 
@@ -50,9 +50,10 @@ Rules:
 - Delete any paragraph a routine code change would make false.
 - Asked for a spec, PRD, or requirements doc before the code exists, put the product in the
   README, the decisions in `docs/decisions.md`, and the rest in a plan.
-- Record a decision the user states that the code cannot show, such as a provider, in
-  `docs/decisions.md` in the same change.
-- Anything the agent decided or assumed waits in the plan's open list, marked for approval.
+- Record a user decision the code cannot show, such as a provider, in `docs/decisions.md` in
+  the same change.
+- Agent choices and guesses wait in the plan's open list for approval. What clearly follows
+  from the user's words, the code, or a checked source is fact.
 - No placeholders such as "pending" or "TBD". With no reason given, omit the why and put the
   question in the report.
 - Delete a plan only once every stage is implemented. Before deleting it, move each approved

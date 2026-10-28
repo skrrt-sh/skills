@@ -318,6 +318,16 @@
         "docs/decisions.md has one H2 decision for pnpm, describes npm as the option it was chosen over, and gives the lockfile drift as the reason",
         "The response tells the user the reason went to docs/decisions.md instead of AGENTS.md and the README"
       ]
+    },
+    {
+      "id": 22,
+      "prompt": "Start the README for our invoicing service. It's a Go service for small accounting firms; it turns time entries into PDF invoices and emails them to clients. The repo already has go.mod and a cmd/invoicer entry point.",
+      "expected_output": "The README describes the product from the user's stated facts and the repository directly. Those facts are not put in the plan for approval and not listed for approval in the report.",
+      "assertions": [
+        "README.md states the audience, what the service does, and that it is written in Go, as plain description",
+        "None of the user's stated facts or the facts visible in the repository are marked for approval in a plan or in the report",
+        "README.md carries no decision or reason"
+      ]
     }
   ]
 }

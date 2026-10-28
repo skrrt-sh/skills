@@ -58,9 +58,10 @@ The user reads every report fast. Write so it needs no second read.
 - Each ask: done or not done, and why not.
 - Commands run and their real results. Failures as failures.
 - What changed, in a few lines. Not how.
-- Every decision you took, such as a name, version, or dependency, and every key action, such
-  as deleting files or recording a decision, goes in the numbered list at the end for approval:
-  what it is, what it was chosen over, why, and your recommendation.
+- Every choice you made that the user's words, the code, or a checked source did not settle,
+  such as a name, version, or dependency, and every key action, such as deleting files or
+  recording a decision, goes in the numbered list at the end for approval: what it is, what it
+  was chosen over, why, and your recommendation. Clear, supported facts need no approval.
 - Every question the user asked, answered.
 - What remains and the recommended next step.
 - When the user will run the app: one block with start, URLs, test accounts, and stop.
