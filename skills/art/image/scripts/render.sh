@@ -39,17 +39,20 @@ log_job() {
   local out_dir="${1}" job_id="${2}" model="${3}" name="${4}" spec="${5}"
   shift 5
   mkdir -p "${out_dir}"
-  jq -cn --arg time "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --arg job_id "${job_id}" --arg model "${model}" \
+  local record
+  # One printf is one write, so parallel renders cannot split each other's records.
+  record="$(jq -cn --arg time "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --arg job_id "${job_id}" --arg model "${model}" \
     --arg name "${name}" --argjson prompt "${spec}" \
     '{time: $time, job_id: $job_id, model: $model, name: $name, flags: $ARGS.positional, prompt: $prompt}' \
-    --args -- "$@" >> "${out_dir}/jobs.jsonl"
+    --args -- "$@")"
+  printf '%s\n' "${record}" >> "${out_dir}/jobs.jsonl"
 }
 
 fetch() {
   local out_dir="${1}" name="${2}" job_id="${3}" url="${4}" out
   out="${out_dir}/${name}__${job_id}.png"
   mkdir -p "${out_dir}"
-  curl -sfL --retry 3 --retry-delay 2 --retry-all-errors -o "${out}.part" "${url}" || {
+  curl -sfL --connect-timeout 20 --max-time 300 --retry 3 --retry-delay 2 --retry-all-errors -o "${out}.part" "${url}" || {
     rm -f "${out}.part"
     fail "download failed for job ${job_id}: ${url}"
   }
