@@ -1,0 +1,22 @@
+[
+  {"query": "keep this backpack exactly the same in every image", "should_trigger": true},
+  {"query": "render the mascot from all angles", "should_trigger": true},
+  {"query": "make a turnaround of the robot character", "should_trigger": true},
+  {"query": "I need a reference sheet for the lantern so it stays consistent", "should_trigger": true},
+  {"query": "the toolbox looks different in every illustration, lock it down", "should_trigger": true},
+  {"query": "make a pink variant of the lunchbox prop", "should_trigger": true},
+  {"query": "render the open version of the treasure chest prop", "should_trigger": true},
+  {"query": "the side view of the kettle prop keeps coming out wrong, redo that angle", "should_trigger": true},
+  {"query": "create the master render for our new coffee cup object", "should_trigger": true},
+  {"query": "generate the six feature illustrations for the landing page", "should_trigger": false},
+  {"query": "make icons for the settings screen", "should_trigger": false},
+  {"query": "regenerate the hero image with the lamp in blue", "should_trigger": false},
+  {"query": "copy the look of these reference images into a style", "should_trigger": false},
+  {"query": "define an art style for the whole site", "should_trigger": false},
+  {"query": "design a product card component", "should_trigger": false},
+  {"query": "turn this product photo into a spinning video", "should_trigger": false},
+  {"query": "retouch the product photos from the shoot", "should_trigger": false},
+  {"query": "make a 3D model of the chair as a GLB", "should_trigger": false},
+  {"query": "write tests for the image upload service", "should_trigger": false},
+  {"query": "build a character face lock for a photoreal actor", "should_trigger": false}
+]

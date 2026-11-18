@@ -1,0 +1,43 @@
+{
+  "skill_name": "style",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Here are three reference images. Make our site illustrations look like these, but don't attach them to every render.",
+      "expected_output": "The agent reads every reference, writes the JSON prompt fields (task, style, frame) and the subject shape in concrete plain sentences, proves them by rendering 4-6 unrelated subjects with no images attached and identical params, compares a sheet against the references, iterates one change per numbered round, and freezes the style file as JSON on approval.",
+      "assertions": [
+        "Reads every reference image",
+        "Writes every prompt as a JSON specification, not prose blocks",
+        "Writes task, style and frame fields with a flat hex frame.background, plus the subject object shape",
+        "Uses vivid colour names, full plain sentences and concrete descriptions instead of keyword lists or genre labels",
+        "Describes nothing from the references' own contents",
+        "Renders 4-6 unrelated subjects with no images attached and identical params",
+        "Builds a sheet with the references beside the renders and reads it",
+        "Changes one thing per round and keeps numbered versions",
+        "Writes art/styles/<style>.json with model, params, task, style, frame, banned words, and traps on approval"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Like this one (points at a glossy 3D render of a chess set). Make our icons and the big hero illustrations in that style.",
+      "expected_output": "The agent settles which trait the user means, such as the glossy finish, rather than copying chess pieces, and writes one style file with a scales entry for icons and one for illustrations.",
+      "assertions": [
+        "Asks or infers which trait of the reference to take instead of copying its objects",
+        "Keeps chess pieces out of the style and frame fields",
+        "Adds scales for icons (one object, bold silhouette, no small detail) and illustrations, each with its own readability, framing, aspect ratio and resolution",
+        "Keeps one shared style object for both"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We already have 20 images in the frozen 'paper' style. Tweak the style to make the colours warmer.",
+      "expected_output": "The agent does not reword the existing style file. It creates a new version, proves it, and tells the user existing images must be re-rendered or stay on the old version.",
+      "assertions": [
+        "Does not edit the frozen style in place",
+        "Creates a new numbered version of the style",
+        "Tells the user the existing images are re-rendered or stay on the old version",
+        "Writes the new version as a separate art/styles JSON file and leaves the frozen one's sentences unchanged"
+      ]
+    }
+  ]
+}

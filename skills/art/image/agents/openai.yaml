@@ -1,0 +1,6 @@
+interface:
+  display_name: "Image"
+  short_description: "Consistent Higgsfield image sets from a style file and props"
+  default_prompt: "Use $image to generate the illustrations for this page."
+policy:
+  allow_implicit_invocation: true

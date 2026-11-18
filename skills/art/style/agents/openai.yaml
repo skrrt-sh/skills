@@ -1,0 +1,6 @@
+interface:
+  display_name: "Style"
+  short_description: "Write an art style from reference images and prove it without them"
+  default_prompt: "Use $style to turn these reference images into a style file."
+policy:
+  allow_implicit_invocation: true

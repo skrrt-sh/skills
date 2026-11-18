@@ -1,0 +1,79 @@
+{
+  "skill_name": "image",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We have art/styles/clay.json and a prop for the toolbox. Generate the six feature illustrations for the landing page.",
+      "expected_output": "The agent checks Higgsfield credits, writes one JSON prompt file per illustration with task, style and frame copied from the style file and only the subject (and references) changing, attaches the toolbox angle only where the toolbox appears, quotes the cost, renders 2-3 takes each with the style file's model and params, and reads a contact sheet before showing it.",
+      "assertions": [
+        "Checks credits before rendering: the connector's balance, or higgsfield account status without the connector",
+        "Writes each prompt file as a JSON specification, not prose",
+        "Copies task, style and frame from the style file unchanged and changes only subject and references",
+        "Attaches the toolbox reference only to images that show it, with a references role naming what to keep and what to ignore",
+        "Renders with the style file's model and params, 2-3 takes per illustration",
+        "Quotes the batch cost (estimate_image_cost or render.sh --cost) and tells the user before rendering over ~20 credits",
+        "Builds a contact sheet with magick montage and reads it before showing the user"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Make me a set of 12 icons for the app's settings screen. No style yet, just make them look nice.",
+      "expected_output": "The agent sees there is no style file and uses the style skill first, then renders the icons at 1:1 1k from the frozen style, one object each.",
+      "assertions": [
+        "Notices no style file exists and uses the style skill before rendering icons",
+        "Renders icons at aspect ratio 1:1 and resolution 1k with one model for the whole set",
+        "Does not render icons in a style that was never written down",
+        "Renders from JSON prompt files built from the new style file"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "The hero illustration is approved but the lamp should be blue instead of orange. Just recolour it in Photoshop or with a script.",
+      "expected_output": "The agent does not recolour locally. It attaches the approved image and renders a JSON edit prompt whose task states the change and lists what must stay, re-renders siblings in a matching set, and checks the result.",
+      "assertions": [
+        "Does not recolour, mask, or pixel-edit the image locally",
+        "Attaches the approved image and sends a JSON prompt whose task is 'Edit this image. <change>. Keep the rest exactly as it is: <list>.'",
+        "Re-renders the matching siblings if the hero belongs to a matching set",
+        "Edits from the sharp original rather than chaining more than two edits"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I need the trophy as a cut-out PNG with a transparent background for the hero section.",
+      "expected_output": "The agent renders on a flat pure #00FF00 background with no shadows and keys it out locally, instead of using Higgsfield's background remover on soft effects or expecting the model to output transparency.",
+      "assertions": [
+        "Sets frame.background to a flat pure #00FF00 and frame.shadows to none in the JSON prompt",
+        "Keys the green out locally after rendering",
+        "Does not expect a Nano Banana model to output transparency"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "The Higgsfield connector is connected in this session. Render the three hero illustrations from art/styles/clay.json; the toolbox prop is in art/props/toolbox/.",
+      "expected_output": "The agent renders through the connector, not the CLI: balance for credits, estimate_image_cost for the quote, each prompt from render.sh --prompt, references passed in medias as job ids or uploaded media ids, generate_image_batch with at most 8 requests, render.sh --log for every job id straight after the submit, jobs_wait until terminal, and render.sh --fetch for each full-size PNG.",
+      "assertions": [
+        "Uses the connector's tools and does not run the higgsfield CLI or render.sh in its CLI render mode",
+        "Checks credits with balance and quotes the cost with estimate_image_cost",
+        "Sets each request's prompt to the output of render.sh --prompt for that prompt file",
+        "Passes the toolbox reference in medias with role image_references as a job id or uploaded media id, never a URL",
+        "Sends at most 8 requests per generate_image_batch call",
+        "Runs render.sh --log for each job id right after the submit, before waiting",
+        "Waits with jobs_wait until every job is terminal and reports a failed job's error",
+        "Downloads each result with render.sh --fetch from the full PNG URL, not a _min preview",
+        "On an unlim_choice reply, asks the user which balance pays before resending"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "No Higgsfield connector here, but the higgsfield CLI is signed in. Render the four settings icons from art/styles/clay.json.",
+      "expected_output": "The agent falls back to the CLI: higgsfield account status for credits, render.sh --cost for the quote, and one render.sh job per take with the style's params as flags, at most 6 at once.",
+      "assertions": [
+        "Does not try to call connector tools such as generate_image_batch",
+        "Runs higgsfield account status before rendering",
+        "Quotes the cost with render.sh --cost",
+        "Renders through ${CLAUDE_SKILL_DIR}/scripts/render.sh with the style file's model and params as --<param> <value> flags",
+        "Runs at most 6 render jobs in parallel"
+      ]
+    }
+  ]
+}

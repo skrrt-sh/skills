@@ -1,0 +1,42 @@
+{
+  "skill_name": "prop",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "The red backpack shows up in eight of our illustrations. Make sure it looks the same in all of them.",
+      "expected_output": "The agent writes a frozen identity paragraph with proportions, counts, material, vivid colour names and marks, renders three master takes in the project's style on a flat background, lets the user pick, renders each angle from the master with the fixed references role and a geometric frame.view sentence in a JSON prompt, checks one sheet, and saves prop.json.",
+      "assertions": [
+        "Writes the identity paragraph before rendering, with proportions, counts, material, colour names, and marks",
+        "Sends every render as a JSON specification built from the style file, not a prose prompt",
+        "Renders the master alone, three-quarter view, flat plain background, no cast shadow, 3 takes, and lets the user pick",
+        "Attaches the master to every angle render with a references role that keeps identity and ignores pose",
+        "Sets frame.view to a geometric angle sentence rather than just a name",
+        "Uses the identity paragraph verbatim as subject.object in every prompt",
+        "Builds one sheet of master and angles and compares each with the master before asking for approval",
+        "Saves prop.json with the identity paragraph, style, model, angles map, and job ids"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The side view of the kettle keeps coming out three-quarter. Can you just warp it in an editor?",
+      "expected_output": "The agent does not pixel-edit. It re-renders the side angle with the master plus a second image whose role is pose only, and checks it against the master.",
+      "assertions": [
+        "Does not warp or pixel-edit the render",
+        "Adds a second reference whose references role is 'pose reference only: take nothing from it but the pose'",
+        "Compares the new render with the master on a sheet"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We have the violet lunchbox as a prop. Now I need a pink one and an open one.",
+      "expected_output": "The agent attaches the master and states only what changes for each variant, then renders and checks the variant's angles like any prop.",
+      "assertions": [
+        "Attaches the existing master for each variant",
+        "States only the change in subject.object, such as 'Only the body colour changes, from violet to pink.'",
+        "Keeps the rest of the identity paragraph verbatim",
+        "Sends each variant render as a JSON specification",
+        "Checks the variant renders on a sheet against the master"
+      ]
+    }
+  ]
+}

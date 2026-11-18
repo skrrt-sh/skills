@@ -6,7 +6,7 @@
 
 <p align="center">
   Agent skills by skrrt-sh — ship your git work properly. Commits, pull requests and releases,<br>
-  docs, coding discipline, UI design, and a status line for Claude Code.
+  docs, coding discipline, UI design, consistent image sets, and a status line for Claude Code.
 </p>
 
 <p align="center">
@@ -43,6 +43,7 @@ claude plugin install ship@skrrt
 claude plugin install docs@skrrt
 claude plugin install dev@skrrt
 claude plugin install ui@skrrt
+claude plugin install art@skrrt
 claude plugin install term@skrrt
 ```
 
@@ -54,6 +55,7 @@ Or, from inside a session:
 /plugin install docs@skrrt
 /plugin install dev@skrrt
 /plugin install ui@skrrt
+/plugin install art@skrrt
 /plugin install term@skrrt
 ```
 
@@ -145,12 +147,16 @@ Coding and design are separate tracks. Call one entry point per track:
 | Write or fix code | `/dev:subagents <task>` |
 | Design or polish UI | `/ui:design <task>` |
 | Build a feature with UI | `/dev:subagents /ui:design <task>` |
+| Make a consistent image set | `/art:image <task>` |
 | Commit, open a PR, release | `/ship:commit`, `/ship:pr`, `/ship:release` |
 
 `subagents` pulls in `design-principles`, `testing`, `self-documenting`, `research`, and
 `reporting` on its own; you never call them. `design` loads `emil-design-eng`, `apple-design`,
 and `animate` (or `animate-expo` in Expo), so install those too, plus `expo-native-ui` for Expo
 screens.
+
+`image` sends you to `style` when there is no style file yet and to `prop` for every object that
+appears in more than one image.
 
 `statusline` sits outside the flow and only styles the Claude Code terminal.
 
@@ -249,6 +255,24 @@ UI design, separate from coding. Bucket index: [`skills/ui/`](skills/ui/README.m
 /design redesign the settings screen, it looks generic
 ```
 
+### art
+
+Consistent image sets with the Higgsfield connector, or its CLI as a fallback. Bucket index:
+[`skills/art/`](skills/art/README.md).
+
+- **[style](skills/art/style/SKILL.md)**: Turn reference images into a written style file, proven
+  on unrelated subjects with no images attached, then frozen.
+- **[prop](skills/art/prop/SKILL.md)**: Freeze an object's identity and render a master plus every
+  angle, so it looks identical in every image.
+- **[image](skills/art/image/SKILL.md)**: Render the set from the style file and props, two or
+  three takes each, check every image on a contact sheet, and re-render misses.
+
+```text
+/style turn these three references into our illustration style
+/prop keep the red backpack identical in every image
+/image generate the six feature illustrations for the landing page
+```
+
 ### term
 
 Terminal look and feel for Claude Code. Bucket index: [`skills/term/`](skills/term/README.md).
@@ -269,6 +293,8 @@ Terminal look and feel for Claude Code. Bucket index: [`skills/term/`](skills/te
 - Node.js 22.20+ — the `npx skills` installer declares `>=22.20.0`, and the `md-writer`
   validator's `markdownlint-cli2` requires `>=22` as of 0.23
 - `python3`, `jq`, and a [Nerd Font](https://www.nerdfonts.com) for `statusline`
+- The [Higgsfield](https://higgsfield.ai) connector, or the signed-in `higgsfield` CLI as a
+  fallback, plus `jq`, `curl`, and ImageMagick (`magick`) for `art`
 
 ## Repository Structure
 
@@ -288,6 +314,7 @@ Terminal look and feel for Claude Code. Bucket index: [`skills/term/`](skills/te
 │   ├── docs/md-writer/
 │   ├── dev/                       # subagents, herdr-agents, design-principles, testing, research, reporting, self-documenting
 │   ├── ui/design/
+│   ├── art/                       # style, prop, image
 │   └── term/                      # statusline
 └── templates/claude-settings.json # Recommended Claude permissions
 ```

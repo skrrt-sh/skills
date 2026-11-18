@@ -1,0 +1,22 @@
+[
+  {"query": "generate the illustrations for the pricing page in our clay style", "should_trigger": true},
+  {"query": "make 10 icons for the feature grid with higgsfield", "should_trigger": true},
+  {"query": "regenerate the hero image, the cup has the wrong number of handles", "should_trigger": true},
+  {"query": "render the six onboarding images using the toolbox prop", "should_trigger": true},
+  {"query": "the third illustration has stray text in it, redo it", "should_trigger": true},
+  {"query": "create images for every blog post card on the site", "should_trigger": true},
+  {"query": "I need a transparent cut-out of the trophy for the landing page", "should_trigger": true},
+  {"query": "make the blue lamp in the approved illustration green instead", "should_trigger": true},
+  {"query": "generate a composition with the robot and the crate for the 404 page", "should_trigger": true},
+  {"query": "copy the style of these three reference images into a style file", "should_trigger": false},
+  {"query": "define an art style for our illustrations from this moodboard", "should_trigger": false},
+  {"query": "keep this backpack exactly the same in every image", "should_trigger": false},
+  {"query": "render the mascot from all angles for a turnaround sheet", "should_trigger": false},
+  {"query": "make a reference sheet for the lantern object", "should_trigger": false},
+  {"query": "redesign the settings screen, it looks generic", "should_trigger": false},
+  {"query": "animate this photo into a 5 second video", "should_trigger": false},
+  {"query": "remove the blemishes from my headshot photo", "should_trigger": false},
+  {"query": "make a product video ad for our shoes", "should_trigger": false},
+  {"query": "add a hover animation to the cards", "should_trigger": false},
+  {"query": "commit the new images and open a PR", "should_trigger": false}
+]

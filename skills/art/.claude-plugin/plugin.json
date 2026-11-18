@@ -1,0 +1,25 @@
+{
+  "name": "art",
+  "version": "1.0.0",
+  "description": "Consistent image sets with Higgsfield: a written style, props that look identical from every angle, and checked renders.",
+  "author": {
+    "name": "skrrt-sh",
+    "url": "https://github.com/skrrt-sh"
+  },
+  "homepage": "https://github.com/skrrt-sh/skills",
+  "repository": "https://github.com/skrrt-sh/skills",
+  "license": "MIT",
+  "keywords": [
+    "art",
+    "image-generation",
+    "illustration",
+    "icons",
+    "higgsfield",
+    "nano-banana"
+  ],
+  "skills": [
+    "./image",
+    "./prop",
+    "./style"
+  ]
+}
