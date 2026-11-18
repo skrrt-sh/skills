@@ -1,0 +1,22 @@
+[
+  {"query": "copy this style for our illustrations", "should_trigger": true},
+  {"query": "make images in the style of these references", "should_trigger": true},
+  {"query": "define an art style for the website's images", "should_trigger": true},
+  {"query": "lock down the look of our illustrations so they all match", "should_trigger": true},
+  {"query": "describe the style of these three pictures so we can reproduce it without them", "should_trigger": true},
+  {"query": "our icons and hero art look like different artists, give them one style", "should_trigger": true},
+  {"query": "like this one: glossy, chunky, soft light. write that up as our style", "should_trigger": true},
+  {"query": "make the colours of our frozen illustration style warmer", "should_trigger": true},
+  {"query": "turn this moodboard into a style file", "should_trigger": true},
+  {"query": "generate the six feature illustrations for the landing page", "should_trigger": false},
+  {"query": "regenerate the hero image, the cup is wrong", "should_trigger": false},
+  {"query": "make 12 icons for the settings screen in our clay style", "should_trigger": false},
+  {"query": "keep this backpack the same in every image", "should_trigger": false},
+  {"query": "render the mascot from all angles", "should_trigger": false},
+  {"query": "make a turnaround sheet of the robot", "should_trigger": false},
+  {"query": "pick a font and colour palette for the dashboard UI", "should_trigger": false},
+  {"query": "make a video in the style of this music clip", "should_trigger": false},
+  {"query": "apply a vintage filter to my vacation photos", "should_trigger": false},
+  {"query": "build a brand kit with logo and typography for the startup", "should_trigger": false},
+  {"query": "refactor the CSS so the buttons share one style", "should_trigger": false}
+]
